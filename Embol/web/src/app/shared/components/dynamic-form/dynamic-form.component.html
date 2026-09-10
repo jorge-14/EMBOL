@@ -1,0 +1,124 @@
+@if (isOpen()) {
+  <div class="fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <!-- Backdrop -->
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" (click)="onCancel()"></div>
+
+    <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+      <div class="relative transform rounded-xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg animate-in fade-in zoom-in duration-200">
+
+        <!-- Header -->
+        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+          <h3 class="text-lg font-bold text-gray-900" id="modal-title">
+            {{ config().title }}
+          </h3>
+          <button (click)="onCancel()" class="text-gray-400 hover:text-gray-500 transition-colors">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Form Body -->
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="bg-white px-6 py-5 overflow-visible">
+            <div class="grid grid-cols-2 gap-x-4 gap-y-4">
+              @for (field of config().fields; track field.key) {
+                <div [ngClass]="getFieldClasses(field)">
+                  <label [for]="field.key" class="block text-sm font-semibold text-gray-700 mb-1">
+                    {{ field.label }}
+                    @if (field.required) {
+                      <span class="text-red-500">*</span>
+                    }
+                  </label>
+
+                  <!-- Text, Email, Password, Number Inputs -->
+                  @if (['text', 'email', 'password', 'number'].includes(field.type)) {
+                    <input
+                      [id]="field.key"
+                      [type]="field.type"
+                      [formControlName]="field.key"
+                      [placeholder]="field.placeholder || ''"
+                      class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border transition-colors"
+                      [class.border-red-500]="form.get(field.key)?.touched && form.get(field.key)?.invalid"
+                    />
+                  }
+
+                  <!-- Datepicker (Custom Component) -->
+                  @else if (field.type === 'datepicker' || field.type === 'date') {
+                    <app-horizontal-datepicker
+                      [placeholder]="field.placeholder || 'Seleccione fecha...'"
+                      [formControlName]="field.key"
+                      [id]="field.key"
+                    ></app-horizontal-datepicker>
+                  }
+
+                  <!-- Textarea -->
+                  @else if (field.type === 'textarea') {
+                    <textarea
+                      [id]="field.key"
+                      [formControlName]="field.key"
+                      [placeholder]="field.placeholder || ''"
+                      rows="3"
+                      class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border transition-colors"
+                      [class.border-red-500]="form.get(field.key)?.touched && form.get(field.key)?.invalid"
+                    ></textarea>
+                  }
+
+                  <!-- Select -->
+                  @else if (field.type === 'select') {
+                    <app-horizontal-select
+                      [options]="field.options || []"
+                      [placeholder]="field.placeholder || 'Seleccione...'"
+                      [formControlName]="field.key"
+                      [id]="field.key"
+                    ></app-horizontal-select>
+                  }
+
+                  <!-- Checkbox -->
+                  @else if (field.type === 'checkbox') {
+                    <div class="flex items-center h-10">
+                      <input
+                        [id]="field.key"
+                        type="checkbox"
+                        [formControlName]="field.key"
+                        class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      />
+                      <label [for]="field.key" class="ml-2 block text-sm text-gray-700 cursor-pointer">
+                        {{ field.placeholder || field.label }}
+                      </label>
+                    </div>
+                  }
+
+                  <!-- Error message -->
+                  @if (form.get(field.key)?.touched && form.get(field.key)?.invalid) {
+                    <p class="mt-1 text-xs text-red-600">
+                      @if (form.get(field.key)?.errors?.['required']) { Campo requerido }
+                      @if (form.get(field.key)?.errors?.['email']) { Email inválido }
+                    </p>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Footer Actions -->
+          <div class="bg-gray-50 px-6 py-4 flex flex-row-reverse gap-3 border-t border-gray-200">
+            <button
+              type="submit"
+              class="inline-flex w-full justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 transition-all sm:w-auto"
+            >
+              {{ config().submitLabel || 'Guardar' }}
+            </button>
+            <button
+              type="button"
+              (click)="onCancel()"
+              class="inline-flex w-full justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 transition-all sm:w-auto"
+            >
+              {{ config().cancelLabel || 'Cancelar' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+}
