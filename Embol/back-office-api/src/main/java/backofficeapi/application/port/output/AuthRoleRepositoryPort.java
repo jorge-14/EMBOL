@@ -1,4 +1,6 @@
-package backofficeapi.infrastructure.adapter.ouput.jpa.repository;
+package backofficeapi.application.port.output;
+
+import backofficeapi.domain.model.AuthRoleModel;
 
 /*
  *----------------------------------------
@@ -11,5 +13,8 @@ package backofficeapi.infrastructure.adapter.ouput.jpa.repository;
  *   11.09.2026 | Jorge Luis Choque Callizaya | Creación Inicial
  *----------------------------------------
  */
-public class dgd {
+public interface AuthRoleRepositoryPort {
+
+    AuthRoleModel saveRole(AuthRoleModel authRoleModel);
+
 }

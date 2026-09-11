@@ -1,4 +1,8 @@
-package backofficeapi.infrastructure.adapter.input.rest.response;
+package backofficeapi.infrastructure.adapter.ouput.jpa.repository;
+
+import backofficeapi.infrastructure.adapter.ouput.jpa.entity.AuthRole;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 /*
  *----------------------------------------
@@ -11,5 +15,6 @@ package backofficeapi.infrastructure.adapter.input.rest.response;
  *   11.09.2026 | Jorge Luis Choque Callizaya | Creación Inicial
  *----------------------------------------
  */
-public class dgd {
+@Repository
+public interface AuthRoleRepository extends JpaRepository<AuthRole, Long> {
 }

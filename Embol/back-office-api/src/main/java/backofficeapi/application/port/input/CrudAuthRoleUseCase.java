@@ -1,4 +1,6 @@
-package backofficeapi.domain.model;
+package backofficeapi.application.port.input;
+
+import backofficeapi.domain.model.AuthRoleModel;
 
 /*
  *----------------------------------------
@@ -11,5 +13,8 @@ package backofficeapi.domain.model;
  *   11.09.2026 | Jorge Luis Choque Callizaya | Creación Inicial
  *----------------------------------------
  */
-public class dgd {
+
+public interface CrudAuthRoleUseCase {
+
+    AuthRoleModel createRole(AuthRoleModel authRoleModel);
 }

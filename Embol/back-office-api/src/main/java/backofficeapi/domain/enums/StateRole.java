@@ -1,4 +1,7 @@
-package backofficeapi.infrastructure.adapter.input.rest.request;
+package backofficeapi.domain.enums;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /*
  *----------------------------------------
@@ -11,5 +14,14 @@ package backofficeapi.infrastructure.adapter.input.rest.request;
  *   11.09.2026 | Jorge Luis Choque Callizaya | Creación Inicial
  *----------------------------------------
  */
-public class dgd {
+
+@Getter
+@AllArgsConstructor
+public enum StateRole {
+
+    ACTIVE("ACTIVE"),
+    INACTIVE("INACTIVE"),
+    DELETED("DELETED");
+
+    private final String stateRole;
 }
