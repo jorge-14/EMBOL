@@ -23,8 +23,8 @@ public class AuthRoleRestMapper {
     public AuthRoleModel toModel(AuthRoleRequestDto authRoleRequestDto) {
         AuthRoleModel authRoleModel = new AuthRoleModel();
 
-        authRoleModel.setName(authRoleRequestDto.getName());
-        authRoleModel.setDescription(authRoleRequestDto.getDescription());
+        authRoleModel.setName(authRoleRequestDto.getName() != null ? authRoleRequestDto.getName().trim() : null);
+        authRoleModel.setDescription(authRoleRequestDto.getDescription() != null ? authRoleRequestDto.getDescription().trim() : null);
         authRoleModel.setBaseRole(authRoleRequestDto.isBaseRole());
         authRoleModel.setRoleStatus(authRoleRequestDto.getRoleStatus());
 

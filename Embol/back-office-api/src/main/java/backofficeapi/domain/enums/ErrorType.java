@@ -1,4 +1,4 @@
-package backofficeapi.infrastructure.adapter.input.rest.advice;
+package backofficeapi.domain.enums;
 
 /*
  *----------------------------------------
@@ -11,5 +11,7 @@ package backofficeapi.infrastructure.adapter.input.rest.advice;
  *   11.09.2026 | Jorge Luis Choque Callizaya | Creación Inicial
  *----------------------------------------
  */
-public class dgd {
+public enum ErrorType {
+    TECHNICAL,
+    BUSINESS
 }
