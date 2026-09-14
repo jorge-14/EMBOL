@@ -102,12 +102,12 @@ export class PlanillaListComponent implements OnInit {
   globalActions = signal<DataTableGlobalAction[]>([
     {
       label: 'Personal',
-      colorClass: 'bg-blue-600 hover:bg-blue-700 text-white',
+      colorClass: 'btn-primary',
       handler: () => this.onAddPersonal(),
     },
     {
       label: 'Ajustes',
-      colorClass: 'bg-emerald-600 hover:bg-emerald-700 text-white',
+      colorClass: 'btn-primary',
       handler: () => this.onOpenSettingsForm(),
     },
     {

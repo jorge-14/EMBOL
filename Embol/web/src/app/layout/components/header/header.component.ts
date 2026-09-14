@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
-// import Keycloak from 'keycloak-js';
+import { MsalService } from '@azure/msal-angular';
 import { filter } from 'rxjs/operators';
 import { BreadcrumbItem, HeaderBadge } from '../../models/menu.model';
 
@@ -12,8 +12,8 @@ import { BreadcrumbItem, HeaderBadge } from '../../models/menu.model';
   templateUrl: './header.component.html',
 })
 export class HeaderComponent {
-  private router    = inject(Router);
-  // private keycloak  = inject(Keycloak);
+  private router      = inject(Router);
+  private msalService = inject(MsalService);
 
   breadcrumbs = signal<BreadcrumbItem[]>([]);
   userName    = signal('Usuario');
@@ -69,19 +69,28 @@ export class HeaderComponent {
     this.breadcrumbs.set(crumbs);
   }
 
-  private async loadUserInfo(): Promise<void> {
-    try {
-      /*
-      const profile = await this.keycloak.loadUserProfile();
-      const fullName = `${profile.firstName || ''} ${profile.lastName || ''}`.trim();
-      this.userName.set(fullName || profile.username || 'Usuario');
-      const initials = ((profile.firstName?.[0] || '') + (profile.lastName?.[0] || '')).toUpperCase();
-      this.userInitials.set(initials || 'US');
-      */
+  private loadUserInfo(): void {
+    let activeAccount = this.msalService.instance.getActiveAccount();
+
+    console.log("REVISANDO", activeAccount);
+    
+    if (activeAccount) {
+      // MSAL usually provides the full name in activeAccount.name, or fallback to username (email)
+      const fullName = activeAccount.name || activeAccount.username || 'Usuario';
+      this.userName.set(fullName);
+
+      // Create initials from the name (e.g. "Marco Roca" -> "MR")
+      const nameParts = fullName.split(' ').filter(part => part.length > 0);
+      let initials = 'US';
+      if (nameParts.length >= 2) {
+        initials = (nameParts[0].charAt(0) + nameParts[nameParts.length - 1].charAt(0)).toUpperCase();
+      } else if (fullName.length > 0) {
+        initials = fullName.substring(0, 2).toUpperCase();
+      }
+      this.userInitials.set(initials);
+    } else {
       this.userName.set('Usuario Invitado');
       this.userInitials.set('UI');
-    } catch {
-      // Keycloak not available, keep defaults
     }
   }
 
@@ -90,7 +99,6 @@ export class HeaderComponent {
   }
 
   logout(): void {
-    // this.keycloak.logout();
-    console.log('Logout placeholder');
+    this.msalService.logoutRedirect();
   }
 }

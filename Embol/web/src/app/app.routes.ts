@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
 import { MsalGuard } from '@azure/msal-angular';
 import { MainLayoutComponent } from './layout/components/main-layout/main-layout.component';
-import { LoginComponent } from './public/login/login.component';
+
 
 export const routes: Routes = [
   // ── Rutas públicas (sin layout) ──
-  { path: 'login', component: LoginComponent },
+
 
   // ── Rutas autenticadas (con layout: sidebar + header) ──
   {
@@ -26,5 +26,5 @@ export const routes: Routes = [
   },
   
   // Ruta comodín para capturar errores 404 o rutas no encontradas
-  { path: '**', redirectTo: 'login' }
+  { path: '**', redirectTo: '' }
 ];
