@@ -15,6 +15,7 @@ public class AuthUserMapper {
         return AuthUser.builder()
                 .id(model.getId())
                 .entraId(model.getEntraId())
+                .username(model.getUsername())
                 .name(model.getName())
                 .fatherLastname(model.getFatherLastname())
                 .motherLastname(model.getMotherLastname())
@@ -23,12 +24,17 @@ public class AuthUserMapper {
     }
 
     public AuthUserModel toModel(AuthUser entity) {
+        if (entity == null) {
+            return null;
+        }
         return new AuthUserModel(
+                entity.getId(),
                 entity.getEntraId(),
                 entity.getUsername(),
                 entity.getName(),
                 entity.getFatherLastname(),
-                entity.getMotherLastname()
+                entity.getMotherLastname(),
+                entity.getUserStatus()
         );
     }
 }

@@ -17,13 +17,13 @@ import java.util.List;
 public class AuthUserRestMapper {
 
     public AuthUserModel toModelCreate(AuthUserCreateRequestDto request) {
-        AuthUserModel authUserModel = new AuthUserModel();
-        authUserModel.setEntraId(request.getEntraId());
-        authUserModel.setUsername(request.getUsername());
-        authUserModel.setName(request.getName());
-        authUserModel.setFatherLastname(request.getFatherLastname());
-        authUserModel.setMotherLastname(request.getMotherLastname());
-        return authUserModel;
+        return new AuthUserModel(
+                request.getEntraId(),
+                request.getUsername(),
+                request.getName(),
+                request.getFatherLastname(),
+                request.getMotherLastname()
+        );
     }
 
     public AuthUserModel toModelUpdate(AuthUserUpdateRequestDto request) {
