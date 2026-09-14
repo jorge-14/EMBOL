@@ -18,12 +18,7 @@ package backofficeapi.domain.enums;
  *----------------------------------------
  */
 public enum ErrorType {
-<<<<<<< HEAD
     BUSINESS,
     TECHNICAL,
     EXTERNAL
-=======
-    TECHNICAL,
-    BUSINESS
->>>>>>> 286c1944e9a0455898fb3d32a06a876229a9e002
 }

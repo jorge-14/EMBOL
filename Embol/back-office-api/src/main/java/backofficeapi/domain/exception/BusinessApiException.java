@@ -39,11 +39,7 @@ public class BusinessApiException extends RuntimeException {
     }
 
     public BusinessApiException(HttpStatus httpStatus, String errorCode) {
-<<<<<<< HEAD
         this(httpStatus, errorCode, new Object[] {});
-=======
-        this(httpStatus, errorCode, new Object[]{});
->>>>>>> 286c1944e9a0455898fb3d32a06a876229a9e002
     }
 
     private static String resolveMessage(String errorCode, Object... args) {
