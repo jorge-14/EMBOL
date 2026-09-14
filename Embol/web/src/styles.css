@@ -7,6 +7,7 @@
     /* RGB format for Tailwind compatibility (allows opacity modifiers like bg-brand/50) */
     --color-brand: 220 38 38; /* Red 600 */
     --color-brand-hover: 185 28 28; /* Red 700 */
+    --color-table-accent: 162 167 169; /* #a2a7a9 */
     /* azul oscuro es : 30 58 138 */
   }
 

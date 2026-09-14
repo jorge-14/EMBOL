@@ -53,8 +53,14 @@ export class DataTableComponent {
 
   showFilter      = input<boolean>(false);
   showCustomFilters = input<boolean>(false);
-  headerCssClass  = input<string>('bg-[#222]');
-  footerCssClass  = input<string>('bg-[#222] text-white font-bold');
+  headerBgClass   = input<string>('bg-table-accent');
+  headerTextClass = input<string>('text-gray-900');
+
+  totalsBgClass   = input<string>('bg-table-accent');
+  totalsTextClass = input<string>('text-gray-900');
+
+  footerBgClass   = input<string>('bg-gray-100');
+  footerTextClass = input<string>('text-gray-700');
 
   // ── Outputs ──
   tabChange       = output<DataTableTab>();

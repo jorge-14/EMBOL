@@ -37,7 +37,7 @@
 <div class="bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200">
   <!-- ── TOOLBAR / FILTER ── -->
   @if (showFilter() || showCustomFilters()) {
-    <div class="p-4 border-b border-gray-200 bg-gray-50 flex flex-col gap-4">
+    <div class="p-4 border-b border-gray-200 flex flex-col gap-4">
       
       <!-- Custom Filters (Top side) -->
       @if (showCustomFilters()) {
@@ -70,16 +70,16 @@
     <table class="min-w-full divide-y divide-gray-200">
 
       <!-- THEAD -->
-      <thead [ngClass]="headerCssClass()">
+      <thead [ngClass]="headerBgClass()">
         <tr>
           @for (col of enrichedColumns(); track col.key) {
             <th
               scope="col"
-              class="px-4 py-3 text-xs font-semibold text-gray-200 uppercase tracking-wider whitespace-nowrap first:rounded-tl-lg last:rounded-tr-lg"
+              class="px-4 py-3 text-xs font-semibold uppercase tracking-wider whitespace-nowrap first:rounded-tl-lg last:rounded-tr-lg"
+              [ngClass]="[headerTextClass(), col.sticky ? headerBgClass() : '']"
               [class.sticky]="col.sticky"
               [style.left]="col.leftOffset"
               [class.z-10]="col.sticky"
-              [class.bg-[#222]]="col.sticky"
               [class.text-left]="col.align !== 'right' && col.align !== 'center'"
               [class.text-right]="col.align === 'right'"
               [class.text-center]="col.align === 'center'"
@@ -90,7 +90,7 @@
             </th>
           }
           @if (rowActions().length > 0) {
-            <th scope="col" class="px-4 py-3 text-xs font-semibold text-gray-200 uppercase tracking-wider text-center last:rounded-tr-lg">
+            <th scope="col" class="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center last:rounded-tr-lg" [ngClass]="headerTextClass()">
               Acciones
             </th>
           }
@@ -203,18 +203,20 @@
       <!-- TOTALS ROW -->
       @if (showTotalsRow()) {
         <tfoot>
-          <tr [ngClass]="footerCssClass()">
+          <tr [ngClass]="totalsBgClass()">
             <!-- Span the non-summable leading columns -->
             <td
               [attr.colspan]="nonSummableLeadColumns().length"
               class="px-4 py-3 text-sm font-bold uppercase tracking-wide first:rounded-bl-lg"
+              [ngClass]="totalsTextClass()"
             >
               {{ totalsLabel() }}
             </td>
             <!-- Summable columns with totals -->
             @for (col of summableColumns(); track col.key) {
               <td
-                class="px-4 py-3 text-sm font-bold whitespace-nowrap text-yellow-500 last:rounded-br-lg"
+                class="px-4 py-3 text-sm font-bold whitespace-nowrap last:rounded-br-lg"
+                [ngClass]="totalsTextClass()"
                 [class.text-right]="col.align === 'right'"
               >
                 @if (col.type === 'currency') {
@@ -296,7 +298,8 @@
   }
 
   <!-- ── FOOTER BAR ── -->
-  <div class="bg-gray-100 px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-t border-gray-200">
+  <div class="px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-t border-gray-200"
+       [ngClass]="[footerBgClass(), footerTextClass()]">
     @if (globalActions().length > 0) {
       <div class="flex gap-2">
         @for (action of globalActions(); track action.label) {
