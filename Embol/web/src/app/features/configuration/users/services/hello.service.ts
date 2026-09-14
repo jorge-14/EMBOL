@@ -26,4 +26,8 @@ export class UserService {
 
     return this.http.get<Page<User>>(this.apiUrl, { params });
   }
+
+  getHello(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/hello`);
+  }
 }

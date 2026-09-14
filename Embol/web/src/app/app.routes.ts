@@ -1,16 +1,17 @@
 import { Routes } from '@angular/router';
-import { AuthGuard } from './core/auth/auth.guard';
+import { MsalGuard } from '@azure/msal-angular';
 import { MainLayoutComponent } from './layout/components/main-layout/main-layout.component';
+import { LoginComponent } from './public/login/login.component';
 
 export const routes: Routes = [
   // ── Rutas públicas (sin layout) ──
-  // { path: 'login', loadChildren: () => import('./public/public.routes').then(m => m.publicRoutes) },
+  { path: 'login', component: LoginComponent },
 
   // ── Rutas autenticadas (con layout: sidebar + header) ──
   {
     path: '',
     component: MainLayoutComponent,
-    canActivate: [AuthGuard],
+    canActivate: [MsalGuard],
     children: [
       { path: '', redirectTo: 'estimator/salaries', pathMatch: 'full' },
       {
@@ -23,4 +24,7 @@ export const routes: Routes = [
       },
     ],
   },
+  
+  // Ruta comodín para capturar errores 404 o rutas no encontradas
+  { path: '**', redirectTo: 'login' }
 ];

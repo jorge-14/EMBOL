@@ -17,6 +17,8 @@
     "@angular/forms": "^22.1.0",
     "@angular/platform-browser": "^22.1.0",
     "@angular/router": "^22.1.0",
+    "@azure/msal-angular": "^6.2.0",
+    "@azure/msal-browser": "^5.21.0",
     "@primeng/themes": "^21.0.4",
     "keycloak-angular": "^22.0.0",
     "keycloak-js": "^26.2.4",

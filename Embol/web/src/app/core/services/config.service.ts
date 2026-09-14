@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
 
 export interface AppConfig {
   apiBaseUrl: string;
@@ -7,74 +8,33 @@ export interface AppConfig {
   environment: 'development' | 'staging' | 'production';
 }
 
-const DEFAULT_CONFIG: AppConfig = {
-  apiBaseUrl: 'http://localhost:8080/api/v1',
-  appName: 'EMBOL CMO System',
-  version: '2.4.0',
-  environment: 'development',
-};
-
 /**
  * Singleton — Configuración global de la aplicación.
- * providedIn: 'root' garantiza una ÚNICA instancia.
- *
- * Centraliza todas las configuraciones de la app:
- *  - URL base del API
- *  - Nombre y versión
- *  - Entorno activo
- *
- * Uso:
- *   private config = inject(ConfigService);
- *   const url = this.config.apiBaseUrl;
+ * Ahora utiliza environment.ts como ÚNICA fuente de verdad.
+ * Todo se maneja en el build de Angular (Run-time dynamic config eliminado).
  */
 @Injectable({
   providedIn: 'root'
 })
 export class ConfigService {
-  private _config = signal<AppConfig>(DEFAULT_CONFIG);
-
-  /** Configuración actual (readonly signal) */
-  readonly config = this._config.asReadonly();
-
-  /** Accesos directos */
+  
   get apiBaseUrl(): string {
-    return this._config().apiBaseUrl;
+    return environment.apiBaseUrl;
   }
 
   get appName(): string {
-    return this._config().appName;
+    return 'EMBOL CMO System'; // O moverlo a environment si lo deseas
   }
 
   get version(): string {
-    return this._config().version;
+    return '2.4.0';
   }
 
   get environment(): string {
-    return this._config().environment;
+    return environment.production ? 'production' : 'development';
   }
 
   get isProduction(): boolean {
-    return this._config().environment === 'production';
-  }
-
-  /**
-   * Carga configuración desde un JSON externo (e.g. /assets/app-config.json).
-   * Útil para cambiar config sin rebuilds — ideal para staging/prod.
-   */
-  async loadFromAssets(path: string = '/assets/app-config.json'): Promise<void> {
-    try {
-      const response = await fetch(path);
-      if (response.ok) {
-        const externalConfig = await response.json();
-        this._config.set({ ...DEFAULT_CONFIG, ...externalConfig });
-      }
-    } catch {
-      // Silently fall back to defaults — config file is optional
-    }
-  }
-
-  /** Actualiza la configuración parcialmente */
-  update(partial: Partial<AppConfig>): void {
-    this._config.set({ ...this._config(), ...partial });
+    return environment.production;
   }
 }
