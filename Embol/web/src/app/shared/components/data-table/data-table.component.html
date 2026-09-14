@@ -83,8 +83,9 @@
               [class.text-left]="col.align !== 'right' && col.align !== 'center'"
               [class.text-right]="col.align === 'right'"
               [class.text-center]="col.align === 'center'"
-              [style.min-width]="col.minWidth || 'auto'"
+              [style.min-width]="col.minWidth || col.width || 'auto'"
               [style.width]="col.width || 'auto'"
+              [style.max-width]="col.width || 'none'"
             >
               {{ col.header }}
             </th>
@@ -99,8 +100,10 @@
 
       <!-- TBODY -->
       <tbody class="bg-white divide-y divide-gray-100">
-        @for (row of filteredData(); track trackByFn($index, row); let i = $index) {
+        @for (row of filteredData(); track trackByFn($index, row); let i = $index; let isEvenRow = $even) {
           <tr class="hover:bg-blue-50/40 transition-colors duration-100"
+              [class.bg-[#f2f2f2]]="isEvenRow && !dirtyCells().has(toStr(row[trackByKey()]))"
+              [class.bg-white]="!isEvenRow && !dirtyCells().has(toStr(row[trackByKey()]))"
               [class.bg-yellow-50/30]="dirtyCells().has(toStr(row[trackByKey()]))">
 
             @for (col of enrichedColumns(); track col.key) {
@@ -109,12 +112,16 @@
                 [class.sticky]="col.sticky"
                 [style.left]="col.leftOffset"
                 [class.z-10]="col.sticky"
-                [class.bg-white]="col.sticky && !dirtyCells().has(toStr(row[trackByKey()]))"
+                [class.bg-[#f2f2f2]]="col.sticky && isEvenRow && !dirtyCells().has(toStr(row[trackByKey()]))"
+                [class.bg-white]="col.sticky && !isEvenRow && !dirtyCells().has(toStr(row[trackByKey()]))"
                 [class.bg-yellow-50/30]="col.sticky && dirtyCells().has(toStr(row[trackByKey()]))"
                 [class.text-left]="col.align !== 'right' && col.align !== 'center'"
                 [class.text-right]="col.align === 'right'"
                 [class.text-center]="col.align === 'center'"
                 [class.font-medium]="col.type === 'currency'"
+                [style.min-width]="col.minWidth || col.width || 'auto'"
+                [style.width]="col.width || 'auto'"
+                [style.max-width]="col.width || 'none'"
                 [ngClass]="col.cssClass"
               >
                 <!-- BADGE Type -->

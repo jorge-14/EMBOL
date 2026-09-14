@@ -66,37 +66,62 @@ export class PlanillaListComponent implements OnInit {
     ];
   });
 
+  periodoActual = signal<'Q1'|'Q2'|'Q3'|'Q4'|'S1'|'S2'|'ANUAL'|'TRIMESTRAL'>('ANUAL');
+
   // ── Column Definitions ──
-  columns = signal<DataTableColumn<PlanillaRow>[]>([
-    { key: 'nroPers',      header: 'N° Pers.',     type: 'text',     sticky: true, width: '80px' },
-    { key: 'nombre',       header: 'Nombre',       type: 'text',     sticky: true, minWidth: '160px', cssClass: 'bg-red-200 font-semibold' },
-    { key: 'familia',      header: 'Familia',      type: 'text',     width: '70px', align: 'center' },
-    { key: 'cargo',        header: 'Cargo',        type: 'text',     minWidth: '180px' },
-    { key: 'area',         header: 'Área',         type: 'badge',    width: '70px', align: 'center',
-      badgeColorMap: {
-        'ADM':  'bg-red-100 text-red-700',
-        'PROD': 'bg-green-100 text-green-700',
-        'COM':  'bg-blue-100 text-blue-700',
-        'FIN':  'bg-purple-100 text-purple-700',
-        'MANT': 'bg-teal-100 text-teal-700',
-      }
-    },
-    { key: 'haberBasico',  header: 'Haber Básico', type: 'currency', align: 'right', summable: true, editable: true },
-    { key: 'ene',          header: 'Ene',          type: 'currency', align: 'right', summable: true, editable: true },
-    { key: 'feb',          header: 'Feb',          type: 'currency', align: 'right', summable: true, editable: true },
-    { key: 'mar',          header: 'Mar',          type: 'currency', align: 'right', summable: true, editable: true },
-    { key: 'abr',          header: 'Abr',          type: 'currency', align: 'right', summable: true, editable: true },
-    { key: 'may',          header: 'May',          type: 'currency', align: 'right', summable: true, editable: true },
-    { key: 'jun',          header: 'Jun',          type: 'currency', align: 'right', summable: true, editable: true },
-    { key: 'jul',          header: 'Jul',          type: 'currency', align: 'right', summable: true, editable: true },
-    { key: 'ago',          header: 'Ago',          type: 'currency', align: 'right', summable: true, editable: true },
-    { key: 'sep',          header: 'Sep',          type: 'currency', align: 'right', summable: true, editable: true },
-    { key: 'oct',          header: 'Oct',          type: 'currency', align: 'right', summable: true, editable: true },
-    { key: 'nov',          header: 'Nov',          type: 'currency', align: 'right', summable: true, editable: true },
-    { key: 'dic',          header: 'Dic',          type: 'currency', align: 'right', summable: true, editable: true },
-    { key: 'totalAnual',   header: 'Total Anual',  type: 'currency', align: 'right', summable: true, cssClass: 'font-bold text-blue-700' },
-    { key: 'cargasPorcentaje', header: 'Cargas (43.2%)', type: 'currency', align: 'right', summable: true, cssClass: 'text-brand' },
-  ]);
+  columns = computed<DataTableColumn<PlanillaRow>[]>(() => {
+    const periodo = this.periodoActual();
+
+    const baseCols: DataTableColumn<PlanillaRow>[] = [
+      { key: 'nroPers',      header: 'N° Pers.',     type: 'text',     sticky: true, width: '80px' },
+      { key: 'nombre',       header: 'Nombre',       type: 'text',     sticky: true, minWidth: '160px', cssClass: 'bg-red-200 font-semibold' },
+      { key: 'familia',      header: 'Familia',      type: 'text',     width: '70px', align: 'center' },
+      { key: 'cargo',        header: 'Cargo',        type: 'text',     minWidth: '180px' },
+      { key: 'area',         header: 'Área',         type: 'badge',    width: '70px', align: 'center',
+        badgeColorMap: {
+          'ADM':  'bg-red-100 text-red-700',
+          'PROD': 'bg-green-100 text-green-700',
+          'COM':  'bg-blue-100 text-blue-700',
+          'FIN':  'bg-purple-100 text-purple-700',
+          'MANT': 'bg-teal-100 text-teal-700',
+        }
+      },
+      { key: 'haberBasico',  header: 'Haber Básico', type: 'currency', align: 'right', summable: true, editable: true }
+    ];
+
+    const allMonths = [
+      { key: 'ene', header: 'Ene' }, { key: 'feb', header: 'Feb' }, { key: 'mar', header: 'Mar' },
+      { key: 'abr', header: 'Abr' }, { key: 'may', header: 'May' }, { key: 'jun', header: 'Jun' },
+      { key: 'jul', header: 'Jul' }, { key: 'ago', header: 'Ago' }, { key: 'sep', header: 'Sep' },
+      { key: 'oct', header: 'Oct' }, { key: 'nov', header: 'Nov' }, { key: 'dic', header: 'Dic' }
+    ].map(m => ({ ...m, type: 'currency', align: 'right', summable: true, editable: true } as DataTableColumn<PlanillaRow>));
+
+    let monthCols: DataTableColumn<PlanillaRow>[] = [];
+    switch (periodo) {
+      case 'Q1': monthCols = allMonths.slice(0, 3); break;
+      case 'Q2': monthCols = allMonths.slice(3, 6); break;
+      case 'Q3': monthCols = allMonths.slice(6, 9); break;
+      case 'Q4': monthCols = allMonths.slice(9, 12); break;
+      case 'S1': monthCols = allMonths.slice(0, 6); break;
+      case 'S2': monthCols = allMonths.slice(6, 12); break;
+      case 'TRIMESTRAL': 
+        monthCols = [
+          { key: 'q1' as any, header: 'Q1 (Ene-Mar)', type: 'currency', align: 'right', summable: true },
+          { key: 'q2' as any, header: 'Q2 (Abr-Jun)', type: 'currency', align: 'right', summable: true },
+          { key: 'q3' as any, header: 'Q3 (Jul-Sep)', type: 'currency', align: 'right', summable: true },
+          { key: 'q4' as any, header: 'Q4 (Oct-Dic)', type: 'currency', align: 'right', summable: true },
+        ];
+        break;
+      case 'ANUAL': default: monthCols = allMonths; break;
+    }
+
+    const endCols: DataTableColumn<PlanillaRow>[] = [
+      { key: 'totalAnual',   header: 'Total Anual',  type: 'currency', align: 'right', summable: true, cssClass: 'font-bold text-blue-700' },
+      { key: 'cargasPorcentaje', header: 'Cargas (43.2%)', type: 'currency', align: 'right', summable: true, cssClass: 'text-brand' },
+    ];
+
+    return [...baseCols, ...monthCols, ...endCols];
+  });
 
   // ── Global Actions ──
   globalActions = signal<DataTableGlobalAction[]>([
@@ -130,9 +155,42 @@ export class PlanillaListComponent implements OnInit {
   // ── Collapsible Sections ──
   collapsibleSections = signal<DataTableCollapsibleSection[]>([]);
 
+  // ── Custom Filters (Área / Cargo) ──
+  areaFilter = signal<string>('');
+  cargoFilter = signal<string>('');
+
+  areasDisponibles = computed(() => {
+    return [...new Set(this.store.data().map(r => r.area))].filter(Boolean).sort();
+  });
+
+  cargosDisponibles = computed(() => {
+    // Si hay un área seleccionada, filtramos los cargos disponibles para esa área
+    let data = this.store.data();
+    if (this.areaFilter()) {
+      data = data.filter(r => r.area === this.areaFilter());
+    }
+    return [...new Set(data.map(r => r.cargo))].filter(Boolean).sort();
+  });
+
   // ── Working data from store ──
-  workingData = computed(() => this.store.data());
-  recordCount = computed(() => this.store.data().length);
+  workingData = computed(() => {
+    let data = this.store.data();
+    if (this.areaFilter()) {
+      data = data.filter(r => r.area === this.areaFilter());
+    }
+    if (this.cargoFilter()) {
+      data = data.filter(r => r.cargo === this.cargoFilter());
+    }
+    // Inyectamos las sumas trimestrales por fila
+    return data.map(r => ({
+      ...r,
+      q1: (r.ene || 0) + (r.feb || 0) + (r.mar || 0),
+      q2: (r.abr || 0) + (r.may || 0) + (r.jun || 0),
+      q3: (r.jul || 0) + (r.ago || 0) + (r.sep || 0),
+      q4: (r.oct || 0) + (r.nov || 0) + (r.dic || 0),
+    }));
+  });
+  recordCount = computed(() => this.workingData().length);
   lastUpdated = computed(() => '15-Jun-2026 14:32'); // TODO: Obtener del backend si es necesario
 
   ngOnInit(): void {
