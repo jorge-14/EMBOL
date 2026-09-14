@@ -1,7 +1,9 @@
-import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptorsFromDi, withInterceptors } from '@angular/common/http';
 // import { includeBearerTokenInterceptor, INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG } from 'keycloak-angular';
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeng/themes/aura';
 
 import { routes } from './app.routes';
 import { CORE_PROVIDERS } from './core/core-providers';
@@ -17,12 +19,25 @@ import { CORE_PROVIDERS } from './core/core-providers';
  */
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes),
     provideHttpClient(
       // withInterceptors([includeBearerTokenInterceptor]),
       withInterceptorsFromDi()
     ),
+    providePrimeNG({
+      license:
+        '',
+      theme: {
+        preset: Aura,
+        options: {
+          darkModeSelector: 'none',
+          cssLayer: false,
+        },
+      },
+      ripple: true,
+    }),
     /*
     {
       provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
@@ -34,3 +49,5 @@ export const appConfig: ApplicationConfig = {
     ...CORE_PROVIDERS,
   ]
 };
+
+
