@@ -16,9 +16,9 @@ export class PlanillaService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8080/api/v1/planilla';
 
-  getPlanillas(page: number = 0, size: number = 8): Observable<Page<PlanillaRow>> {
+  getPlanillas(page: number = 0, size: number = 8, area?: string, cargo?: string): Observable<Page<PlanillaRow>> {
     // TODO: Reemplazar con llamada real
-    return of(this.getMockPlanillasPage(page, size)).pipe(delay(600));
+    return of(this.getMockPlanillasPage(page, size, area, cargo)).pipe(delay(600));
   }
 
   getSummary(): Observable<PlanillaSummary> {
@@ -48,7 +48,7 @@ export class PlanillaService {
   }
 
   // ─── Datos Mock ────────────────────────────────────────────
-  private getMockPlanillasPage(page: number, size: number): Page<PlanillaRow> {
+  private getMockPlanillasPage(page: number, size: number, area?: string, cargo?: string): Page<PlanillaRow> {
     const allRows: PlanillaRow[] = [
       { id: 1, nroPers: 1001, nombre: 'Carlos Rodríguez',    familia: 'A', cargo: 'Gerente de Planta',          area: 'ADM',  haberBasico: 18500, ene: 18500, feb: 18500, mar: 18500, abr: 18500, may: 18500, jun: 18500, jul: 18500, ago: 18500, sep: 18500, oct: 18500, nov: 18500, dic: 18500, totalAnual: 222000, cargasPorcentaje: 47952 },
       { id: 2, nroPers: 1042, nombre: 'Lucía Fernández',     familia: 'B', cargo: 'Jefa de RRHH',               area: 'ADM',  haberBasico: 12800, ene: 12800, feb: 12800, mar: 12800, abr: 12800, may: 12800, jun: 12800, jul: 12800, ago: 12800, sep: 12800, oct: 12800, nov: 12800, dic: 12800, totalAnual: 153600, cargasPorcentaje: 33178 },
@@ -60,16 +60,24 @@ export class PlanillaService {
       { id: 8, nroPers: 1195, nombre: 'Carmen Ticona',       familia: 'H', cargo: 'Técnica de Mantenimiento',   area: 'MANT', haberBasico: 7200,  ene: 7200,  feb: 7200,  mar: 7200,  abr: 7200,  may: 7200,  jun: 7200,  jul: 7200,  ago: 7200,  sep: 7200,  oct: 7200,  nov: 7200,  dic: 7200,  totalAnual: 86400,  cargasPorcentaje: 18662 },
     ];
 
+    let filteredRows = allRows;
+    if (area) {
+      filteredRows = filteredRows.filter(r => r.area === area);
+    }
+    if (cargo) {
+      filteredRows = filteredRows.filter(r => r.cargo === cargo);
+    }
+
     const start = page * size;
-    const content = allRows.slice(start, start + size);
+    const content = filteredRows.slice(start, start + size);
 
     return {
       content,
       page: {
         number: page,
         size: size,
-        totalElements: allRows.length,
-        totalPages: Math.ceil(allRows.length / size)
+        totalElements: filteredRows.length,
+        totalPages: Math.ceil(filteredRows.length / size)
       }
     };
   }

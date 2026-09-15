@@ -10,7 +10,6 @@ import {
   DataTableSummaryCard,
   DataTableRowAction,
   DataTableGlobalAction,
-  DataTableCollapsibleSection,
   CellChangeEvent,
 } from './models/data-table.model';
 import { PageMetadata } from '../../models/pagination.model';
@@ -37,11 +36,8 @@ export class DataTableComponent {
   // ── Inputs ──
   data            = input.required<any[]>();
   columns         = input.required<DataTableColumn[]>();
-  tabs            = input<DataTableTab[]>([]);
   summaryCards    = input<DataTableSummaryCard[]>([]);
   rowActions      = input<DataTableRowAction[]>([]);
-  globalActions   = input<DataTableGlobalAction[]>([]);
-  collapsibleSections = input<DataTableCollapsibleSection[]>([]);
   showTotalsRow   = input<boolean>(false);
   totalsLabel     = input<string>('TOTAL');
   recordCount     = input<number>(0);
@@ -63,7 +59,6 @@ export class DataTableComponent {
   footerTextClass = input<string>('text-gray-700');
 
   // ── Outputs ──
-  tabChange       = output<DataTableTab>();
   cellChange      = output<CellChangeEvent>();
   rowActionClick  = output<{ action: DataTableRowAction; row: any; index: number }>();
   pageChange      = output<number>();
@@ -143,11 +138,6 @@ export class DataTableComponent {
     const info = this.pageInfo();
     if (!info) return 0;
     return Math.min((info.number + 1) * info.size, info.totalElements);
-  }
-
-  // ── Tab handling ──
-  onTabClick(tab: DataTableTab): void {
-    this.tabChange.emit(tab);
   }
 
   // ── Filter handling ──
@@ -257,11 +247,6 @@ export class DataTableComponent {
     return this.filteredData().reduce((sum, row) => sum + (Number(row[columnKey]) || 0), 0);
   }
 
-
-  // ── Collapsible sections ──
-  toggleSection(section: DataTableCollapsibleSection): void {
-    section.expanded = !section.expanded;
-  }
 
   // ── Badge color ──
   getBadgeClasses(col: DataTableColumn, value: string): string {
