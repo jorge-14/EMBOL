@@ -12,4 +12,5 @@ package backofficeapi.application;
  *----------------------------------------
  */
 public class prueba {
+    private String nombre;
 }
