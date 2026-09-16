@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: back-office-api
+
+  # Oracle DataSource
+  datasource:
+    url: jdbc:oracle:thin:@192.168.6.37:1521/presupuestadorcmo
+    username: presupuestadorcmo_user
+    password: zahznFmmcgy
+    driver-class-name: oracle.jdbc.OracleDriver
+
+  # JPA / Hibernate
+  jpa:
+    database-platform: org.hibernate.dialect.OracleDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  # OAuth2 Login
+  security:
+    oauth2:
+      client:
+        registration:
+          entra:
+            client-id: ${entra.client-id}
+            client-secret: ${entra.client-secret}
+            scope: openid,profile,email
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_post
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          entra:
+            issuer-uri: https://login.microsoftonline.com/${entra.tenant-id}/v2.0
+      resourceserver:
+        jwt:
+          issuer-uri: https://login.microsoftonline.com/${entra.tenant-id}/v2.0
+          audiences: ${entra.client-id}
+
+# Microsoft Entra ID
+entra:
+  tenant-id: 93294bfd-d915-45bf-884f-787290ec034d
+  client-id: 5f0872cd-df06-4ab5-89f7-d04a5c0fbd50
+  client-secret: ${ENTRA_CLIENT_SECRET}
+
+# Logs
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
