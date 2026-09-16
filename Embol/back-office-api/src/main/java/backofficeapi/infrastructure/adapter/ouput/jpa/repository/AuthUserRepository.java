@@ -1,33 +1,39 @@
 package backofficeapi.infrastructure.adapter.ouput.jpa.repository;
 
 import backofficeapi.infrastructure.adapter.ouput.jpa.entity.AuthUser;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-/**
- * @author Douglas Cristhian Javieri Vino
- * @created 11/09/2026
+/*
+ *----------------------------------------
+ *   Código de Aplicación: EMBOL
+ *   Código de Objeto: AuthUserRepository
+ *   Descripción: Repositorio JPA para operaciones en la tabla TBL_USUARIO (Oracle)
+ *   Author Prog: Douglas Javieri / Camila Ledezma
+ *----------------------------------------
+ *   Fecha | Autor | Comentario
+ *   11.09.2026 | Douglas Javieri | Creación Inicial
+ *   16.09.2026 | Camila Ledezma | Actualización a estructura TBL_USUARIO
+ *----------------------------------------
  */
+
 @Repository
 public interface AuthUserRepository extends JpaRepository<AuthUser, Long> {
 
-    @Query("SELECT au " +
-            "FROM AuthUser au " +
-            "WHERE au.entraId = :entraId")
-    Optional<AuthUser> findByEntraId(@Param("entraId") String entraId);
+    Optional<AuthUser> findByUsernameIgnoreCase(String username);
 
-    @Query("SELECT CASE WHEN COUNT(au) > 0 THEN TRUE ELSE FALSE END " +
-            "FROM AuthUser au " +
-            "WHERE au.entraId = :entraId")
-    Boolean existsByEntraId(@Param("entraId") String entraId);
+    boolean existsByUsernameIgnoreCase(String username);
 
-    @Query("SELECT au " +
-            "FROM AuthUser au " +
-            "ORDER BY au.fatherLastname, au.motherLastname, au.name ")
-    List<AuthUser> findAllUser();
+    Optional<AuthUser> findByEmailIgnoreCase(String email);
+
+    boolean existsByEmailIgnoreCase(String email);
+
+    List<AuthUser> findByDeletedFalseOrderByNameAscLastnameAsc();
+
+    Page<AuthUser> findByDeletedFalse(Pageable pageable);
 }

@@ -4,22 +4,39 @@ import backofficeapi.domain.model.AuthUserModel;
 import backofficeapi.infrastructure.adapter.ouput.jpa.entity.AuthUser;
 import org.springframework.stereotype.Component;
 
-/**
- * @author Douglas Cristhian Javieri Vino
- * @created 11/09/2026
+/*
+ *----------------------------------------
+ *   Código de Aplicación: EMBOL
+ *   Código de Objeto: AuthUserMapper
+ *   Descripción: Mapper JPA entre entidad AuthUser (TBL_USUARIO) y AuthUserModel
+ *   Author Prog: Douglas Javieri / Camila Ledezma
+ *----------------------------------------
+ *   Fecha | Autor | Comentario
+ *   11.09.2026 | Douglas Javieri | Creación Inicial
+ *   16.09.2026 | Camila Ledezma | Actualización a estructura TBL_USUARIO y auditoría
+ *----------------------------------------
  */
+
 @Component
 public class AuthUserMapper {
 
     public AuthUser toEntity(AuthUserModel model) {
+        if (model == null) {
+            return null;
+        }
         return AuthUser.builder()
                 .id(model.getId())
-                .entraId(model.getEntraId())
                 .username(model.getUsername())
                 .name(model.getName())
-                .fatherLastname(model.getFatherLastname())
-                .motherLastname(model.getMotherLastname())
+                .lastname(model.getLastname())
+                .email(model.getEmail())
                 .userStatus(model.getUserStatus())
+                .deleted(model.getDeleted() != null && model.getDeleted())
+                .version(model.getVersion())
+                .createdDate(model.getCreatedDate())
+                .createdBy(model.getCreatedBy())
+                .modifiedDate(model.getModifiedDate())
+                .modifiedBy(model.getModifiedBy())
                 .build();
     }
 
@@ -27,14 +44,19 @@ public class AuthUserMapper {
         if (entity == null) {
             return null;
         }
-        return new AuthUserModel(
-                entity.getId(),
-                entity.getEntraId(),
-                entity.getUsername(),
-                entity.getName(),
-                entity.getFatherLastname(),
-                entity.getMotherLastname(),
-                entity.getUserStatus()
-        );
+        return AuthUserModel.builder()
+                .id(entity.getId())
+                .username(entity.getUsername())
+                .name(entity.getName())
+                .lastname(entity.getLastname())
+                .email(entity.getEmail())
+                .userStatus(entity.getUserStatus())
+                .deleted(entity.isDeleted())
+                .version(entity.getVersion())
+                .createdDate(entity.getCreatedDate())
+                .createdBy(entity.getCreatedBy())
+                .modifiedDate(entity.getModifiedDate())
+                .modifiedBy(entity.getModifiedBy())
+                .build();
     }
 }

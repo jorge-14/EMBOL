@@ -91,7 +91,7 @@ public class AuthRegionalController {
         return ResponseEntity.ok(ResponseBody.success("Regional actualizada exitosamente", response));
     }
 
-    @DeleteMapping("/delete-regional/{id}")
+    @PutMapping("/delete-regional/{id}")
     public ResponseEntity<ResponseBody<Void>> delete(@PathVariable Long id) {
         log.info("Eliminando regional con ID: {}", id);
         crudAuthRegionalUseCase.deleteRegionalById(id);

@@ -1,50 +1,69 @@
 package backofficeapi.infrastructure.adapter.ouput.jpa.entity;
 
 import backofficeapi.domain.enums.UserStatus;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
-/**
- * @author Douglas Cristhian Javieri Vino
- * @created 11/09/2026
+/*
+ *----------------------------------------
+ *   Código de Aplicación: EMBOL
+ *   Código de Objeto: AuthUser
+ *   Descripción: Entidad JPA para la tabla TBL_USUARIO (Oracle)
+ *   Author Prog: Douglas Javieri / Camila Ledezma
+ *----------------------------------------
+ *   Fecha | Autor | Comentario
+ *   11.09.2026 | Douglas Javieri | Creación Inicial
+ *   16.09.2026 | Camila Ledezma | Actualización a nueva nomenclatura de tabla TBL_USUARIO y auditoría
+ *----------------------------------------
  */
+
 @Entity
-@Builder
+@Table(name = "TBL_USUARIO")
+@SuperBuilder
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "AUTH_USER")
-public class AuthUser {
+public class AuthUser extends AuditableEntity {
 
     @Id
-    @Column(name = "ID")
-    @SequenceGenerator(name = "SEQ_AUTH_USER_ID_GENERATOR", sequenceName = "SEQ_AUTH_USER_ID", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_AUTH_USER_ID_GENERATOR")
+    @Column(name = "IIDUSUARIO")
+    @SequenceGenerator(name = "SEQ_TBL_USUARIO_ID_GENERATOR", sequenceName = "SEQ_TBL_USUARIO", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_TBL_USUARIO_ID_GENERATOR")
     private Long id;
 
     @Basic
-    @Column(name = "ENTRA_ID", nullable = false)
-    private String entraId;
-
-    @Basic
-    @Column(name = "USERNAME", nullable = false, length = 40)
-    private String username;
-
-    @Basic
-    @Column(name = "NAME", nullable = false, length = 40)
+    @Column(name = "SNOMBRE", nullable = false, length = 100)
     private String name;
 
     @Basic
-    @Column(name = "FATHER_LASTNAME", length = 60)
-    private String fatherLastname;
+    @Column(name = "SAPELLIDO", nullable = false, length = 100)
+    private String lastname;
 
     @Basic
-    @Column(name = "MOTHER_LASTNAME", length = 60)
-    private String motherLastname;
+    @Column(name = "SCORREO", length = 150)
+    private String email;
+
+    @Basic
+    @Column(name = "SUSUARIO", nullable = false, unique = true, length = 50)
+    private String username;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "USER_STATUS", nullable = false, length = 20)
+    @Column(name = "SESTADO", nullable = false, length = 20)
     private UserStatus userStatus;
 }

@@ -1,28 +1,42 @@
 package backofficeapi.application.port.input;
 
 import backofficeapi.domain.model.AuthUserModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
-/**
- * @author Douglas Cristhian Javieri Vino
- * @created 11/09/2026
+/*
+ *----------------------------------------
+ *   Código de Aplicación: EMBOL
+ *   Código de Objeto: CrudAuthUserUseCase
+ *   Descripción: Puerto de entrada (caso de uso) para operaciones CRUD de AuthUser (TBL_USUARIO)
+ *   Author Prog: Douglas Javieri / Camila Ledezma
+ *----------------------------------------
+ *   Fecha | Autor | Comentario
+ *   11.09.2026 | Douglas Javieri | Creación Inicial
+ *   16.09.2026 | Camila Ledezma | Actualización a estructura TBL_USUARIO y paginación
+ *----------------------------------------
  */
+
 public interface CrudAuthUserUseCase {
 
-    AuthUserModel create(AuthUserModel authUserModel);
+    AuthUserModel createUser(AuthUserModel authUserModel);
 
-    AuthUserModel update(AuthUserModel authUserModel);
+    AuthUserModel updateUser(Long id, AuthUserModel authUserModel);
 
-    AuthUserModel findByEntraId(String entraId);
+    Optional<AuthUserModel> getUserById(Long id);
 
-    AuthUserModel findById(Long id);
+    Optional<AuthUserModel> getUserByUsername(String username);
 
-    List<AuthUserModel> findAll();
+    List<AuthUserModel> listAllUsers();
 
-    void delete(String entraId);
+    Page<AuthUserModel> getListPageUsers(Pageable pageable);
 
-    AuthUserModel activate(String entraId);
+    void deleteUserById(Long id);
 
-    AuthUserModel deactivate(String entraId);
+    AuthUserModel activateUserById(Long id);
+
+    AuthUserModel deactivateUserById(Long id);
 }

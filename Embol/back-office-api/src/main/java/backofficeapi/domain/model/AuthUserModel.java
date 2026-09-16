@@ -1,52 +1,48 @@
 package backofficeapi.domain.model;
 
 import backofficeapi.domain.enums.UserStatus;
-import backofficeapi.domain.model.base.Auditable;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-/**
- * @author Douglas Cristhian Javieri Vino
- * @created 11/09/2026
+import java.time.LocalDateTime;
+
+/*
+ *----------------------------------------
+ *   Código de Aplicación: EMBOL
+ *   Código de Objeto: AuthUserModel
+ *   Descripción: Modelo de dominio para AuthUser (TBL_USUARIO)
+ *   Author Prog: Douglas Javieri / Camila Ledezma
+ *----------------------------------------
+ *   Fecha | Autor | Comentario
+ *   11.09.2026 | Douglas Javieri | Creación Inicial
+ *   16.09.2026 | Camila Ledezma | Actualización a estructura TBL_USUARIO y Lombok
+ *----------------------------------------
  */
-public class AuthUserModel extends Auditable {
+
+@Getter
+@Setter
+@Builder
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+public class AuthUserModel {
+
     private Long id;
-    private String entraId;
     private String username;
     private String name;
-    private String fatherLastname;
-    private String motherLastname;
+    private String lastname;
+    private String email;
     private UserStatus userStatus;
-
-    public AuthUserModel() {
-
-    }
-
-    public AuthUserModel(Long id, String entraId, String username, String name,
-                         String fatherLastname, String motherLastname, UserStatus userStatus) {
-        this.id = id;
-        this.entraId = entraId;
-        this.username = username;
-        this.name = name;
-        this.fatherLastname = fatherLastname;
-        this.motherLastname = motherLastname;
-        this.userStatus = userStatus;
-    }
-
-    public AuthUserModel(String entraId, String username, String name,
-                         String fatherLastname, String motherLastname) {
-        this.entraId = entraId;
-        this.username = username;
-        this.name = name;
-        this.fatherLastname = fatherLastname;
-        this.motherLastname = motherLastname;
-        this.userStatus = UserStatus.ACTIVE;
-    }
-    public void updateFromEntraId(String username, String name,
-                                  String fatherLastname, String motherLastname) {
-        this.username = username;
-        this.name = name;
-        this.fatherLastname = fatherLastname;
-        this.motherLastname = motherLastname;
-    }
+    private Boolean deleted;
+    private Long version;
+    private LocalDateTime createdDate;
+    private String createdBy;
+    private LocalDateTime modifiedDate;
+    private String modifiedBy;
 
     public void activate() {
         this.userStatus = UserStatus.ACTIVE;
@@ -58,66 +54,10 @@ public class AuthUserModel extends Auditable {
 
     public void delete() {
         this.userStatus = UserStatus.DELETED;
-        markAsDeleted();
+        this.deleted = true;
     }
 
     public boolean isActive() {
         return this.userStatus == UserStatus.ACTIVE;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getEntraId() {
-        return entraId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getFatherLastname() {
-        return fatherLastname;
-    }
-
-    public String getMotherLastname() {
-        return motherLastname;
-    }
-
-    public UserStatus getUserStatus() {
-        return userStatus;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setEntraId(String entraId) {
-        this.entraId = entraId;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setFatherLastname(String fatherLastname) {
-        this.fatherLastname = fatherLastname;
-    }
-
-    public void setMotherLastname(String motherLastname) {
-        this.motherLastname = motherLastname;
-    }
-
-    public void setUserStatus(UserStatus userStatus) {
-        this.userStatus = userStatus;
     }
 }

@@ -1,21 +1,45 @@
 package backofficeapi.infrastructure.adapter.input.rest.request;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-/**
- * @author Douglas Cristhian Javieri Vino
- * @created 11/09/2026
+/*
+ *----------------------------------------
+ *   Código de Aplicación: EMBOL
+ *   Código de Objeto: AuthUserCreateRequestDto
+ *   Descripción: DTO de solicitud para creación de AuthUser (TBL_USUARIO)
+ *   Author Prog: Douglas Javieri / Camila Ledezma
+ *----------------------------------------
+ *   Fecha | Autor | Comentario
+ *   11.09.2026 | Douglas Javieri | Creación Inicial
+ *   16.09.2026 | Camila Ledezma | Creación y validaciones Bean Validation
+ *----------------------------------------
  */
-@Getter
-@Setter
+
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AuthUserCreateRequestDto {
 
-    private String entraId;
+    @NotBlank(message = "El nombre de usuario es obligatorio")
+    @Size(max = 50, message = "El nombre de usuario no debe exceder los 50 caracteres")
     private String username;
+
+    @NotBlank(message = "El nombre es obligatorio")
+    @Size(max = 100, message = "El nombre no debe exceder los 100 caracteres")
     private String name;
-    private String fatherLastname;
-    private String motherLastname;
+
+    @NotBlank(message = "El apellido es obligatorio")
+    @Size(max = 100, message = "El apellido no debe exceder los 100 caracteres")
+    private String lastname;
+
+    @Email(message = "El formato del correo electrónico no es válido")
+    @Size(max = 150, message = "El correo electrónico no debe exceder los 150 caracteres")
+    private String email;
 }
