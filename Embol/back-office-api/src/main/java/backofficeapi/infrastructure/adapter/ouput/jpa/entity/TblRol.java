@@ -1,8 +1,23 @@
 package backofficeapi.infrastructure.adapter.ouput.jpa.entity;
 
 import backofficeapi.domain.enums.SEstadoRol;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.type.NumericBooleanConverter;
 
 /*
@@ -21,11 +36,11 @@ import org.hibernate.type.NumericBooleanConverter;
 @Builder
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "TBL_ROL")
-public class TblRol {
+public class TblRol extends AuditableEntity {
 
     @Id
     @Column(name = "IIDROL")

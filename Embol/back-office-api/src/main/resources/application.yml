@@ -43,7 +43,7 @@ spring:
 entra:
   tenant-id: 93294bfd-d915-45bf-884f-787290ec034d
   client-id: 5f0872cd-df06-4ab5-89f7-d04a5c0fbd50
-  client-secret: ${ENTRA_CLIENT_SECRET}
+  client-secret: ${ENTRA_CLIENT_SECRET:}
 
 # Logs
 logging:

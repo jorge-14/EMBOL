@@ -1,7 +1,21 @@
 package backofficeapi.infrastructure.adapter.ouput.jpa.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 /**
  * @author Douglas Cristhian Javieri Vino
@@ -9,14 +23,15 @@ import lombok.*;
  */
 
 @Entity
-@Builder
+@SuperBuilder
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "TBL_RECURSO")
-public class TblRecurso {
+public class TblRecurso extends AuditableEntity {
+
     @Id
     @Column(name = "IIDRECURSO")
     @SequenceGenerator(name = "SEQ_TBL_RECURSO_ID_GENERATOR", sequenceName = "SEQ_TBL_RECURSO_ID", allocationSize = 1)
@@ -33,7 +48,6 @@ public class TblRecurso {
     private String icono;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "IIDRECURSOPADRE", referencedColumnName = "IIDRECURSO", nullable = false)
+    @JoinColumn(name = "IIDRECURSOPADRE", referencedColumnName = "IIDRECURSO")
     private TblRecurso iIdRecursoPadre;
-
 }

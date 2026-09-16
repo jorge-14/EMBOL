@@ -24,11 +24,12 @@ import java.time.LocalDateTime;
  *----------------------------------------
  *   Código de Aplicación: EMBOL
  *   Código de Objeto: AuditableEntity
- *   Descripción: Entidad base MappedSuperclass para auditoría JPA automática
+ *   Descripción: Entidad base MappedSuperclass para auditoría JPA automática (TBL_AUDITORIA)
  *   Author Prog: Camila Ledezma
  *----------------------------------------
  *   Fecha | Autor | Comentario
  *   13.09.2026 | Camila Ledezma | Creación Inicial
+ *   16.09.2026 | Camila Ledezma | Mapeo a columnas TBL_AUDITORIA (DTFECHAC, SUSUARIOC, DTFECHAM, SUSUARIOM)
  *----------------------------------------
  */
 
@@ -44,19 +45,19 @@ import java.time.LocalDateTime;
 public abstract class AuditableEntity implements Serializable, Cloneable {
 
     @CreatedDate
-    @Column(name = "CREATED_DATE", nullable = false, updatable = false)
+    @Column(name = "DTFECHAC", nullable = false, updatable = false)
     protected LocalDateTime createdDate;
 
     @CreatedBy
-    @Column(name = "CREATED_BY", updatable = false, length = 150)
+    @Column(name = "SUSUARIOC", updatable = false, length = 150)
     protected String createdBy;
 
     @LastModifiedDate
-    @Column(name = "MODIFIED_DATE")
+    @Column(name = "DTFECHAM")
     protected LocalDateTime modifiedDate;
 
     @LastModifiedBy
-    @Column(name = "MODIFIED_BY", length = 150)
+    @Column(name = "SUSUARIOM", length = 150)
     protected String modifiedBy;
 
     @Version

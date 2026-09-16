@@ -1,7 +1,18 @@
 package backofficeapi.infrastructure.adapter.ouput.jpa.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 /**
  * @author Douglas Cristhian Javieri Vino
@@ -9,14 +20,15 @@ import lombok.*;
  */
 
 @Entity
-@Builder
+@SuperBuilder
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "TBL_GRUPO")
-public class TblGrupo {
+public class TblGrupo extends AuditableEntity {
+
     @Id
     @Column(name = "IIDGRUPO")
     @SequenceGenerator(name = "SEQ_TBL_GRUPO_ID_GENERATOR", sequenceName = "SEQ_TBL_GRUPO_ID", allocationSize = 1)
