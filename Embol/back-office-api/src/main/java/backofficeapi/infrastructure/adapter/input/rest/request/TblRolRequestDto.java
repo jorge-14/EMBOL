@@ -1,6 +1,6 @@
-package backofficeapi.domain.model;
+package backofficeapi.infrastructure.adapter.input.rest.request;
 
-import backofficeapi.domain.enums.StateRole;
+import backofficeapi.domain.enums.SEstadoRol;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,26 +17,14 @@ import lombok.Setter;
  *----------------------------------------
  */
 
+
 @Getter
 @Setter
 @Builder
-public class AuthRoleModel {
+public class TblRolRequestDto {
 
-    private Long id;
     private String name;
     private String description;
     private boolean baseRole;
-    private StateRole roleStatus;
-
-    public AuthRoleModel() {
-
-    }
-
-    public AuthRoleModel(Long id, String name, String description, boolean baseRole, StateRole roleStatus) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.baseRole = baseRole;
-        this.roleStatus = roleStatus;
-    }
+    private SEstadoRol roleStatus;
 }

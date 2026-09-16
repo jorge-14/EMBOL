@@ -1,9 +1,6 @@
-package backofficeapi.infrastructure.adapter.input.rest.request;
+package backofficeapi.application.port.output;
 
-import backofficeapi.domain.enums.StateRole;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import backofficeapi.domain.model.TblRolModel;
 
 /*
  *----------------------------------------
@@ -16,15 +13,8 @@ import lombok.Setter;
  *   11.09.2026 | Jorge Luis Choque Callizaya | Creación Inicial
  *----------------------------------------
  */
+public interface TblRolRepositoryPort {
 
+    TblRolModel saveRole(TblRolModel tblRolModel);
 
-@Getter
-@Setter
-@Builder
-public class AuthRoleRequestDto {
-
-    private String name;
-    private String description;
-    private boolean baseRole;
-    private StateRole roleStatus;
 }
