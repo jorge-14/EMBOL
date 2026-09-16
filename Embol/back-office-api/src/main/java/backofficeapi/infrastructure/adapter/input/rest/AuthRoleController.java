@@ -1,9 +1,9 @@
 package backofficeapi.infrastructure.adapter.input.rest;
 
-import backofficeapi.application.port.input.CrudAuthRoleUseCase;
-import backofficeapi.domain.model.AuthRoleModel;
-import backofficeapi.infrastructure.adapter.input.rest.mapper.AuthRoleRestMapper;
-import backofficeapi.infrastructure.adapter.input.rest.request.AuthRoleRequestDto;
+import backofficeapi.application.port.input.CrudTblRolUseCase;
+import backofficeapi.domain.model.TblRolModel;
+import backofficeapi.infrastructure.adapter.input.rest.mapper.TblRolRestMapper;
+import backofficeapi.infrastructure.adapter.input.rest.request.TblRolRequestDto;
 import backofficeapi.infrastructure.adapter.input.rest.response.AuthRoleResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -33,17 +33,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/auth-role")
 public class AuthRoleController {
 
-    private final CrudAuthRoleUseCase crudAuthRoleUseCase;
-    private final AuthRoleRestMapper authRoleRestMapper;
+    private final CrudTblRolUseCase crudTblRolUseCase;
+    private final TblRolRestMapper tblRolRestMapper;
 
-    public AuthRoleController(CrudAuthRoleUseCase crudAuthRoleUseCase, AuthRoleRestMapper authRoleRestMapper) {
-        this.crudAuthRoleUseCase = crudAuthRoleUseCase;
-        this.authRoleRestMapper = authRoleRestMapper;
+    public AuthRoleController(CrudTblRolUseCase crudTblRolUseCase, TblRolRestMapper tblRolRestMapper) {
+        this.crudTblRolUseCase = crudTblRolUseCase;
+        this.tblRolRestMapper = tblRolRestMapper;
     }
 
     @PostMapping("/create-role")
     public ResponseEntity<AuthRoleResponseDto> createRole(
-            @RequestBody AuthRoleRequestDto authRoleRequestDto,
+            @RequestBody TblRolRequestDto tblRolRequestDto,
             Authentication authentication) {
 
         if (authentication != null && authentication.isAuthenticated()
@@ -56,9 +56,9 @@ public class AuthRoleController {
             log.warn("Petición sin autenticación válida");
         }
 
-        AuthRoleModel authRoleModel = authRoleRestMapper.toModel(authRoleRequestDto);
-        AuthRoleModel authRoleModelCreate = crudAuthRoleUseCase.createRole(authRoleModel);
-        AuthRoleResponseDto authRoleResponseDto = authRoleRestMapper.toAuthRoleResponseDto(authRoleModelCreate);
+        TblRolModel tblRolModel = tblRolRestMapper.toModel(tblRolRequestDto);
+        TblRolModel tblRolModelCreate = crudTblRolUseCase.createRole(tblRolModel);
+        AuthRoleResponseDto authRoleResponseDto = tblRolRestMapper.toAuthRoleResponseDto(tblRolModelCreate);
         return ResponseEntity.ok(authRoleResponseDto);
     }
 }

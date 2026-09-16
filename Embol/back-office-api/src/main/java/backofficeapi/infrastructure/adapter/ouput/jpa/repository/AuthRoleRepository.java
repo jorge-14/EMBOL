@@ -1,6 +1,6 @@
 package backofficeapi.infrastructure.adapter.ouput.jpa.repository;
 
-import backofficeapi.infrastructure.adapter.ouput.jpa.entity.AuthRole;
+import backofficeapi.infrastructure.adapter.ouput.jpa.entity.TblRol;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,5 +16,5 @@ import org.springframework.stereotype.Repository;
  *----------------------------------------
  */
 @Repository
-public interface AuthRoleRepository extends JpaRepository<AuthRole, Long> {
+public interface AuthRoleRepository extends JpaRepository<TblRol, Long> {
 }

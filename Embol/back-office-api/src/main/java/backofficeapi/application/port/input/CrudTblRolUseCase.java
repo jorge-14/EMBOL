@@ -1,7 +1,6 @@
-package backofficeapi.domain.enums;
+package backofficeapi.application.port.input;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import backofficeapi.domain.model.TblRolModel;
 
 /*
  *----------------------------------------
@@ -15,13 +14,7 @@ import lombok.Getter;
  *----------------------------------------
  */
 
-@Getter
-@AllArgsConstructor
-public enum StateRole {
+public interface CrudTblRolUseCase {
 
-    ACTIVE("ACTIVE"),
-    INACTIVE("INACTIVE"),
-    DELETED("DELETED");
-
-    private final String stateRole;
+    TblRolModel createRole(TblRolModel tblRolModel);
 }

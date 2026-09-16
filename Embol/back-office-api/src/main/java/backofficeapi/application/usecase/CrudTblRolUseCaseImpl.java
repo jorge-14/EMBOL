@@ -1,10 +1,10 @@
 package backofficeapi.application.usecase;
 
-import backofficeapi.application.port.input.CrudAuthRoleUseCase;
-import backofficeapi.application.port.output.AuthRoleRepositoryPort;
+import backofficeapi.application.port.input.CrudTblRolUseCase;
+import backofficeapi.application.port.output.TblRolRepositoryPort;
 import backofficeapi.domain.exception.BusinessApiException;
 import backofficeapi.domain.exception.TechnicalApiException;
-import backofficeapi.domain.model.AuthRoleModel;
+import backofficeapi.domain.model.TblRolModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,36 +24,36 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
-public class CrudAuthRoleUseCaseImpl implements CrudAuthRoleUseCase {
+public class CrudTblRolUseCaseImpl implements CrudTblRolUseCase {
 
-    private final AuthRoleRepositoryPort authRoleRepositoryPort;
+    private final TblRolRepositoryPort tblRolRepositoryPort;
 
-    public CrudAuthRoleUseCaseImpl(AuthRoleRepositoryPort authRoleRepositoryPort){
-        this.authRoleRepositoryPort = authRoleRepositoryPort;
+    public CrudTblRolUseCaseImpl(TblRolRepositoryPort tblRolRepositoryPort){
+        this.tblRolRepositoryPort = tblRolRepositoryPort;
     }
 
     @Override
     @Transactional
-    public AuthRoleModel createRole(AuthRoleModel authRoleModel) {
+    public TblRolModel createRole(TblRolModel tblRolModel) {
 
-        if (authRoleModel.getName() == null || authRoleModel.getName().trim().isEmpty()) {
+        if (tblRolModel.getSNombre() == null || tblRolModel.getSNombre().trim().isEmpty()) {
             log.error("Error de validación: el nombre es requerido");
             throw new BusinessApiException(HttpStatus.BAD_REQUEST, "El nombre del role es requerido");
         }
 
-        if (authRoleModel.getDescription() == null || authRoleModel.getDescription().trim().isEmpty()) {
+        if (tblRolModel.getSDescripcion() == null || tblRolModel.getSDescripcion().trim().isEmpty()) {
             log.error("Error de validación: la descripción es requerido");
             throw new BusinessApiException(HttpStatus.BAD_REQUEST, "La descripcion del role es requerido");
         }
 
-        if (authRoleModel.getRoleStatus() == null) {
+        if (tblRolModel.getSEstado() == null) {
             log.error("Error de validación: el estado es requerido");
             throw new BusinessApiException(HttpStatus.BAD_REQUEST, "El estado del role es requerido");
         }
 
-        AuthRoleModel saveRole = authRoleRepositoryPort.saveRole(authRoleModel);
+        TblRolModel saveRole = tblRolRepositoryPort.saveRole(tblRolModel);
 
-        if (saveRole == null || saveRole.getId() == null) {
+        if (saveRole == null || saveRole.getIIdRol() == null) {
             log.error("Error crítico: Error al guardar el role: {}", saveRole);
             throw new TechnicalApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al guardar el role");
         }

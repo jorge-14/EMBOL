@@ -1,6 +1,7 @@
-package backofficeapi.application.port.output;
+package backofficeapi.domain.enums;
 
-import backofficeapi.domain.model.AuthRoleModel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /*
  *----------------------------------------
@@ -13,8 +14,14 @@ import backofficeapi.domain.model.AuthRoleModel;
  *   11.09.2026 | Jorge Luis Choque Callizaya | Creación Inicial
  *----------------------------------------
  */
-public interface AuthRoleRepositoryPort {
 
-    AuthRoleModel saveRole(AuthRoleModel authRoleModel);
+@Getter
+@AllArgsConstructor
+public enum SEstadoRol {
 
+    ACTIVE("ACTIVE"),
+    INACTIVE("INACTIVE"),
+    DELETED("DELETED");
+
+    private final String stateRole;
 }
