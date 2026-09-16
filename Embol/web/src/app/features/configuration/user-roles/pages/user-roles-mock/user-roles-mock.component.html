@@ -1,0 +1,72 @@
+<div class="max-w-7xl mx-auto">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Usuarios y Roles</h1>
+      <p class="text-sm text-gray-500">Gestión de usuarios, roles y grupos del sistema</p>
+    </div>
+    <button class="bg-[#D32F2F] text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-[#B71C1C] transition-colors shadow-sm">
+      <span class="text-lg leading-none">+</span> {{ addButtonLabel }}
+    </button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex flex-wrap gap-1 mb-4">
+    @for (tab of tabs(); track tab.id) {
+    <button (click)="onTabChange(tab)"
+      [class]="tab.active
+            ? 'px-4 py-2 text-sm font-medium rounded-lg bg-[#6B6661] text-white shadow-sm hover:bg-[#5A5551] transition-all flex items-center gap-2'
+            : 'px-4 py-2 text-sm font-medium rounded-lg bg-white text-gray-500 hover:bg-gray-50 border border-gray-200 transition-all flex items-center gap-2'">
+      <span class="text-base">
+        @if (tab.id === 'usuarios') { 👥 }
+        @else if (tab.id === 'roles') { 🗝️ }
+        @else if (tab.id === 'grupos') { 📦 }
+      </span>
+      {{ tab.label }}
+    </button>
+    }
+  </div>
+
+  <!-- Content -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+
+    <!-- Tab Usuarios -->
+    @if (activeTabId() === 'usuarios') {
+      <app-data-table
+        [data]="users()"
+        [columns]="userColumns()"
+        [rowActions]="rowActions()"
+        [trackByKey]="'id'"
+        headerBgClass="bg-[#F8F9FA]"
+        headerTextClass="text-[#6B7280]"
+      >
+      </app-data-table>
+    }
+
+    <!-- Tab Roles -->
+    @if (activeTabId() === 'roles') {
+      <app-data-table
+        [data]="roles()"
+        [columns]="roleColumns()"
+        [rowActions]="rowActions()"
+        [trackByKey]="'id'"
+        headerBgClass="bg-[#F8F9FA]"
+        headerTextClass="text-[#6B7280]"
+      >
+      </app-data-table>
+    }
+
+    <!-- Tab Grupos -->
+    @if (activeTabId() === 'grupos') {
+      <app-data-table
+        [data]="groups()"
+        [columns]="groupColumns()"
+        [rowActions]="rowActions()"
+        [trackByKey]="'id'"
+        headerBgClass="bg-[#F8F9FA]"
+        headerTextClass="text-[#6B7280]"
+      >
+      </app-data-table>
+    }
+  </div>
+</div>

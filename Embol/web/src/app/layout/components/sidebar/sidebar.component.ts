@@ -60,10 +60,9 @@ export class SidebarComponent {
       label: 'CONFIGURACIÓN',
       icon: 'cog',
       children: [
-        // { id: 'parametros',  label: 'Parámetros Generales' },
-        // { id: 'escenarios',  label: 'Escenarios' },
-        { id: 'usuarios',    label: 'Usuarios y Roles',    route: '/configuration/users' },
-        // { id: 'auditoria',   label: 'Auditoría' },
+        { id: 'usuarios',    label: 'Usuarios',    route: '/configuration/users' },
+        { id: 'user-roles',  label: 'Usuarios y Roles', route: '/configuration/user-roles' },
+        { id: 'accesos',     label: 'Accesos',     route: '/configuration/accesses' },
       ],
     },
   ]);

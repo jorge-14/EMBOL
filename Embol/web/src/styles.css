@@ -14,13 +14,13 @@
    /* 2. TEMA OSCURO (Se activa SOLO si el dispositivo del usuario está en modo oscuro) */
   @media (prefers-color-scheme: dark) {
     :root {
-      --color-brand: 30 58 138; /* Azul oscuro */
-      --color-brand-hover: 23 37 84; /* Un azul un poco más oscuro para el hover */
+      --color-brand: 226 30 22; /* Azul oscuro */
+      --color-brand-hover: 185 28 28; /* Un azul un poco más oscuro para el hover */
     }
   }
 
-  /* 
-   * ESCALA GLOBAL DE LA APLICACIÓN 
+  /*
+   * ESCALA GLOBAL DE LA APLICACIÓN
    * Tailwind usa 'rem' para márgenes, paddings, fuentes y tamaños.
    * Cambiando el font-size de html, escalamos TODA la app proporcionalmente.
    * 16px es el 100%. Usar 80%-85% simula un "zoom out" para mostrar más datos.
