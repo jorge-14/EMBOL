@@ -28,12 +28,5 @@ export class UserRolesListComponent {
     this.activeTabId.set(tab.id);
   }
 
-  get addButtonLabel(): string {
-    switch (this.activeTabId()) {
-      case 'usuarios': return 'Nuevo Usuario';
-      case 'roles':    return 'Nuevo Rol';
-      case 'grupos':   return 'Nuevo Grupo';
-      default:         return 'Nuevo';
-    }
-  }
+
 }
