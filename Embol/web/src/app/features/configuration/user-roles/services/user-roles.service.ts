@@ -18,8 +18,19 @@ import { MOCK_USERS, MOCK_ROLES, MOCK_GROUPS } from '../configs/mock-data.config
 export class UserRolesService {
 
   // ── Usuarios ────────────────────────────────────────────────────────────────
-  getPagedUsers(page = 0, size = 20): Observable<Page<UserRow>> {
-    return paginateArray(MOCK_USERS, page, size);
+  getPagedUsers(page = 0, size = 20, filters?: { role?: string | null, group?: string | null }): Observable<Page<UserRow>> {
+    let data = [...MOCK_USERS];
+    
+    if (filters) {
+      if (filters.role) {
+        data = data.filter(u => u.rol === filters.role);
+      }
+      if (filters.group) {
+        data = data.filter(u => u.grupo === filters.group);
+      }
+    }
+    
+    return paginateArray(data, page, size);
   }
 
   // ── Roles ───────────────────────────────────────────────────────────────────

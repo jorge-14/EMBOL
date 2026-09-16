@@ -71,6 +71,7 @@ export class DataTableComponent {
   dirtyCells      = signal<Map<string, Set<string>>>(new Map());
   filterText      = signal<string>('');
   openActionMenu  = signal<number | null>(null);
+  menuPosition    = signal<{ top: number, left: number } | null>(null);
 
   // ── Computed ──
   filteredData = computed(() => {
@@ -268,21 +269,39 @@ export class DataTableComponent {
   }
 
   // ── Action Menu ──
-  toggleActionMenu(index: number, event: Event): void {
+  toggleActionMenu(index: number, event: MouseEvent): void {
     event.stopPropagation();
     if (this.openActionMenu() === index) {
-      this.openActionMenu.set(null);
+      this.closeActionMenu();
     } else {
+      const button = event.currentTarget as HTMLElement;
+      const rect = button.getBoundingClientRect();
+      
       this.openActionMenu.set(index);
+      
+      let top = rect.top;
+      // Ajustar si está muy cerca del borde inferior
+      if (window.innerHeight - rect.bottom < 150) {
+         top = rect.bottom - 120; // Aparece hacia arriba
+      }
+
+      this.menuPosition.set({
+        top: top,
+        left: rect.right + 5 // Un pequeño espacio a la derecha del botón
+      });
     }
   }
 
   closeActionMenu(): void {
     this.openActionMenu.set(null);
+    this.menuPosition.set(null);
   }
 
-  @HostListener('document:click')
-  onDocumentClick(): void {
+  @HostListener('document:click', ['$event'])
+  @HostListener('document:scroll', ['$event'])
+  @HostListener('window:resize', ['$event'])
+  onGlobalInteraction(event: Event): void {
+    // Evitar cerrar si el click fue dentro del menú mismo (aunque detenemos la propagación, esto asegura)
     this.closeActionMenu();
   }
 

@@ -18,8 +18,8 @@
    /* 2. TEMA OSCURO (Se activa SOLO si el dispositivo del usuario está en modo oscuro) */
   @media (prefers-color-scheme: dark) {
     :root {
-      --color-brand: 226 30 22; /* Azul oscuro */
-      --color-brand-hover: 185 28 28; /* Un azul un poco más oscuro para el hover */
+      --color-brand: 30 58 138; /* Azul oscuro */
+      --color-brand-hover: 23 37 84; /* Un azul un poco más oscuro para el hover */
     }
   }
 

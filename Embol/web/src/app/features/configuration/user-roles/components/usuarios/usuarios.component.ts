@@ -6,11 +6,13 @@ import { PageMetadata } from '../../../../../shared/models/pagination.model';
 import { DataTableColumn, DataTableRowAction } from '../../../../../shared/components/data-table/models/data-table.model';
 import { buildUsuariosColumns } from '../../configs/users/usuarios-columns.config';
 import { buildUserRowActions } from '../../configs/users/usuarios-actions.config';
+import { ROLE_OPTIONS_CONFIG, GROUP_OPTIONS_CONFIG } from '../../configs/users/usuarios-filters.config';
+import { HorizontalSelectComponent } from '../../../../../shared/components/horizontal-controls/horizontal-select/horizontal-select.component';
 
 @Component({
   selector: 'app-usuarios',
   standalone: true,
-  imports: [...USER_ROLES_IMPORTS],
+  imports: [...USER_ROLES_IMPORTS, HorizontalSelectComponent],
   templateUrl: './usuarios.component.html',
 })
 export class UsuariosComponent implements OnInit {
@@ -23,10 +25,17 @@ export class UsuariosComponent implements OnInit {
   users   = signal<UserRow[]>([]);
   pageInfo = signal<PageMetadata | null>(null);
 
-  private currentPage = 0;
-  private pageSize = 20;
+  // Filtros individuales
+  roleFilter = signal<string | null>(null);
+  groupFilter = signal<string | null>(null);
+
+  // Estado de Paginación
+  currentPage = signal(0);
+  pageSize = signal(20);
 
   // ── 3. Configuración estática (desde configs/users/) ──────────────────────
+  readonly roleOptions = ROLE_OPTIONS_CONFIG;
+  readonly groupOptions = GROUP_OPTIONS_CONFIG;
   columns: DataTableColumn<UserRow>[] = buildUsuariosColumns();
 
   rowActions: DataTableRowAction[] = buildUserRowActions({
@@ -41,14 +50,18 @@ export class UsuariosComponent implements OnInit {
   }
 
   // ── 5. Carga de datos ──────────────────────────────────────────────────────
-  loadUsers(page: number = this.currentPage, size: number = this.pageSize): void {
+  loadUsers(): void {
     this.loading.set(true);
-    this.service.getPagedUsers(page, size).subscribe({
+    
+    const filters = {
+      role: this.roleFilter(), //set en html
+      group: this.groupFilter() //set en html
+    };
+
+    this.service.getPagedUsers(this.currentPage(), this.pageSize(), filters).subscribe({
       next: (result) => {
         this.users.set(result.content);
         this.pageInfo.set(result.page);
-        this.currentPage = page;
-        this.pageSize = size;
         this.loading.set(false);
       },
       error: (err) => {
@@ -66,10 +79,26 @@ export class UsuariosComponent implements OnInit {
 
   // ── 7. Paginación ──────────────────────────────────────────────────────────
   onPageChange(page: number): void {
-    this.loadUsers(page, this.pageSize);
+    this.currentPage.set(page);
+    this.loadUsers();
   }
 
   onPageSizeChange(size: number): void {
-    this.loadUsers(0, size);
+    this.pageSize.set(size);
+    this.currentPage.set(0); // Al cambiar tamaño, volvemos a la página 0
+    this.loadUsers();
+  }
+
+  // ── 8. Filtros Especiales ──────────────────────────────────────────────────
+  onSearch(): void {
+    this.currentPage.set(0); // Al buscar, volvemos a la página 0
+    this.loadUsers();
+  }
+
+  onClear(): void {
+    this.roleFilter.set(null);
+    this.groupFilter.set(null);
+    this.currentPage.set(0); // Al limpiar, volvemos a la página 0
+    this.loadUsers();
   }
 }

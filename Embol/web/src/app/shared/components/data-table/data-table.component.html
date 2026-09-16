@@ -95,8 +95,9 @@
             
             <!-- ACTION MENU DROPDOWN -->
             @if (openActionMenu() === i) {
-            <div class="absolute left-10 w-48 bg-white rounded-md shadow-xl border border-gray-200 z-[100] py-1 text-left"
-                 [ngClass]="(i >= filteredData().length - 2 && filteredData().length > 3) ? 'bottom-4' : 'top-4'"
+            <div class="fixed w-48 bg-white rounded-md shadow-2xl border border-gray-200 z-[9999] py-1 text-left"
+                 [style.top.px]="menuPosition()?.top"
+                 [style.left.px]="menuPosition()?.left"
                  (click)="$event.stopPropagation()">
                @for (action of rowActions(); track action.tooltip) {
                   @if (isActionVisible(action, row)) {
