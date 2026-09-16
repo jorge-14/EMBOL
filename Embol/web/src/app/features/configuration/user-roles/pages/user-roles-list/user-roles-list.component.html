@@ -1,0 +1,47 @@
+<div class="max-w-full">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Usuarios y Roles</h1>
+      <p class="text-sm text-gray-500">Gestión de usuarios, roles y grupos del sistema</p>
+    </div>
+    <button
+      class="bg-[#D32F2F] text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-[#B71C1C] transition-colors shadow-sm">
+      <span class="text-lg leading-none">+</span> {{ addButtonLabel }}
+    </button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex flex-wrap gap-1 mb-4">
+    @for (tab of tabs(); track tab.id) {
+      <button (click)="onTabChange(tab)"
+        [class]="tab.active
+          ? 'px-4 py-2 text-sm font-medium rounded-lg bg-brand text-white shadow-sm hover:bg-brand-hover transition-all flex items-center gap-2'
+          : 'px-4 py-2 text-sm font-medium rounded-lg bg-white text-gray-500 hover:bg-gray-50 border border-gray-200 transition-all flex items-center gap-2'">
+        <span class="text-base flex items-center">
+          @if (tab.id === 'usuarios') { <i class="pi pi-users"></i> }
+          @else if (tab.id === 'roles') { <i class="pi pi-key"></i> }
+          @else if (tab.id === 'grupos') { <i class="pi pi-box"></i> }
+        </span>
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  <!-- Content — el padre invoca a los hijos por selector -->
+  <div class="mt-4">
+    @if (activeTabId() === 'usuarios') {
+      <app-usuarios />
+    }
+
+    @if (activeTabId() === 'roles') {
+      <app-roles />
+    }
+
+    @if (activeTabId() === 'grupos') {
+      <app-grupos />
+    }
+  </div>
+
+</div>

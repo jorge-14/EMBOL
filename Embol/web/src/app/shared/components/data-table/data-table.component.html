@@ -53,6 +53,11 @@
       <!-- THEAD -->
       <thead [ngClass]="headerBgClass()">
         <tr>
+          @if (rowActions().length > 0) {
+          <th scope="col" class="px-2 py-3 w-[50px] sticky left-0 z-20 first:rounded-tl-lg" [ngClass]="headerBgClass()">
+            <!-- Acciones -->
+          </th>
+          }
           @for (col of enrichedColumns(); track col.key) {
           <th scope="col"
             class="px-4 py-3 text-xs font-semibold uppercase tracking-wider whitespace-nowrap first:rounded-tl-lg last:rounded-tr-lg"
@@ -65,13 +70,6 @@
             {{ col.header }}
           </th>
           }
-          @if (rowActions().length > 0) {
-          <th scope="col"
-            class="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center last:rounded-tr-lg"
-            [ngClass]="headerTextClass()">
-            Acciones
-          </th>
-          }
         </tr>
       </thead>
 
@@ -82,6 +80,37 @@
           [class.bg-[#f2f2f2]]="isEvenRow && !dirtyCells().has(toStr(row[trackByKey()]))"
           [class.bg-white]="!isEvenRow && !dirtyCells().has(toStr(row[trackByKey()]))"
           [class.bg-yellow-50/30]="dirtyCells().has(toStr(row[trackByKey()]))">
+
+          <!-- ROW ACTIONS (FIRST COLUMN) -->
+          @if (rowActions().length > 0) {
+          <td class="px-2 py-2.5 whitespace-nowrap text-center sticky left-0 w-[50px] relative"
+              [ngClass]="openActionMenu() === i ? 'z-50' : 'z-20'"
+              [class.bg-[#f2f2f2]]="isEvenRow && !dirtyCells().has(toStr(row[trackByKey()]))"
+              [class.bg-white]="!isEvenRow && !dirtyCells().has(toStr(row[trackByKey()]))"
+              [class.bg-yellow-50/30]="dirtyCells().has(toStr(row[trackByKey()]))">
+            
+            <button (click)="toggleActionMenu(i, $event)" class="text-brand hover:text-brand-hover p-1.5 rounded-md hover:bg-brand/10 transition-colors flex items-center justify-center">
+              <i class="pi pi-bars text-lg"></i>
+            </button>
+            
+            <!-- ACTION MENU DROPDOWN -->
+            @if (openActionMenu() === i) {
+            <div class="absolute left-10 w-48 bg-white rounded-md shadow-xl border border-gray-200 z-[100] py-1 text-left"
+                 [ngClass]="(i >= filteredData().length - 2 && filteredData().length > 3) ? 'bottom-4' : 'top-4'"
+                 (click)="$event.stopPropagation()">
+               @for (action of rowActions(); track action.tooltip) {
+                  @if (isActionVisible(action, row)) {
+                    <button (click)="onRowAction(action, row, i); closeActionMenu()" 
+                            class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-brand/5 flex items-center gap-3 transition-colors">
+                       <i [class]="action.icon + ' text-brand text-base flex-shrink-0 w-5 text-center'"></i>
+                       <span class="font-medium whitespace-normal">{{ action.tooltip }}</span>
+                    </button>
+                  }
+               }
+            </div>
+            }
+          </td>
+          }
 
           @for (col of enrichedColumns(); track col.key) {
           <td class="px-4 py-2.5 whitespace-nowrap text-sm" [class.sticky]="col.sticky" [style.left]="col.leftOffset"
@@ -129,22 +158,7 @@
           </td>
           }
 
-          <!-- ROW ACTIONS -->
-          @if (rowActions().length > 0) {
-          <td class="px-4 py-2.5 whitespace-nowrap text-center">
-            <div class="flex items-center justify-center gap-1">
-              @for (action of rowActions(); track action.tooltip) {
-              @if (isActionVisible(action, row)) {
-              <button (click)="onRowAction(action, row, i)" [title]="action.tooltip"
-                class="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
-                [ngClass]="action.colorClass || 'text-gray-500 hover:text-gray-700'">
-                <span class="text-base">{{ action.icon }}</span>
-              </button>
-              }
-              }
-            </div>
-          </td>
-          }
+
         </tr>
         } @empty {
         <tr>
@@ -166,6 +180,9 @@
       @if (showTotalsRow()) {
       <tfoot>
         <tr [ngClass]="totalsBgClass()">
+          @if (rowActions().length > 0) {
+          <td class="px-2 py-3 w-[50px] sticky left-0 z-10 first:rounded-bl-lg" [ngClass]="totalsBgClass()"></td>
+          }
           <!-- Span the non-summable leading columns -->
           <td [attr.colspan]="nonSummableLeadColumns().length"
             class="px-4 py-3 text-sm font-bold uppercase tracking-wide first:rounded-bl-lg"
@@ -182,9 +199,6 @@
             {{ formatNumber(calculateTotal(col.key)) }}
             }
           </td>
-          }
-          @if (rowActions().length > 0) {
-          <td class="px-4 py-3 last:rounded-br-lg"></td>
           }
         </tr>
       </tfoot>

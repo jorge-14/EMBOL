@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { UserRolesMockComponent } from './pages/user-roles-mock/user-roles-mock.component';
+import { UserRolesListComponent } from './pages/user-roles-list/user-roles-list.component';
 
 export const userRolesRoutes: Routes = [
-  { path: '', component: UserRolesMockComponent }
+  { path: '', component: UserRolesListComponent }
 ];

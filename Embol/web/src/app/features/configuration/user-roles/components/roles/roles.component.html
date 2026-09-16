@@ -1,0 +1,19 @@
+@if (loading()) {
+  <div class="flex items-center justify-center py-12">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#6B6661]"></div>
+    <span class="ml-3 text-sm text-gray-500">Cargando roles...</span>
+  </div>
+} @else {
+  <app-data-table
+    [data]="roles()"
+    [columns]="columns"
+    [rowActions]="rowActions"
+    [trackByKey]="'id'"
+    [showFilter]="true"
+    [showPagination]="true"
+    [pageInfo]="pageInfo()"
+    (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
+  >
+  </app-data-table>
+}

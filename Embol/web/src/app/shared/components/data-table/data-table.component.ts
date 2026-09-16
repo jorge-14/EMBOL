@@ -1,4 +1,4 @@
-import { Component, input, output, signal, computed } from '@angular/core';
+import { Component, input, output, signal, computed, HostListener } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -70,6 +70,7 @@ export class DataTableComponent {
   editValue       = signal<string>('');
   dirtyCells      = signal<Map<string, Set<string>>>(new Map());
   filterText      = signal<string>('');
+  openActionMenu  = signal<number | null>(null);
 
   // ── Computed ──
   filteredData = computed(() => {
@@ -85,7 +86,7 @@ export class DataTableComponent {
   });
 
   enrichedColumns = computed(() => {
-    let offset = 0;
+    let offset = this.rowActions().length > 0 ? 50 : 0;
     return this.columns().map(c => {
       const leftOffset = c.sticky ? `${offset}px` : 'auto';
       if (c.sticky) {
@@ -264,6 +265,25 @@ export class DataTableComponent {
 
   isActionVisible(action: DataTableRowAction, row: any): boolean {
     return action.visible ? action.visible(row) : true;
+  }
+
+  // ── Action Menu ──
+  toggleActionMenu(index: number, event: Event): void {
+    event.stopPropagation();
+    if (this.openActionMenu() === index) {
+      this.openActionMenu.set(null);
+    } else {
+      this.openActionMenu.set(index);
+    }
+  }
+
+  closeActionMenu(): void {
+    this.openActionMenu.set(null);
+  }
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.closeActionMenu();
   }
 
   // ── Tracking ──
