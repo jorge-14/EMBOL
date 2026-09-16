@@ -1,4 +1,4 @@
-package backofficeapi.application.port.output;
+package backofficeapi.application.port.input;
 
 import backofficeapi.domain.model.TblRolModel;
 import java.util.List;
@@ -11,12 +11,10 @@ import java.util.List;
  *   Author Prog: Jorge Luis Choque Callizaya
  *----------------------------------------
  *   Fecha | Autor | Comentario
- *   11.09.2026 | Jorge Luis Choque Callizaya | Creación Inicial
+ *   16.09.2026 | Jorge Luis Choque Callizaya | Creación Inicial
  *----------------------------------------
  */
-public interface TblRolRepositoryPort {
+public interface ListRoleUseCase {
 
-    TblRolModel saveRole(TblRolModel tblRolModel);
-    List<TblRolModel> listRole();
-
+    List<TblRolModel> listRoleShort();
 }

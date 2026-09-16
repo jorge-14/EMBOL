@@ -4,9 +4,10 @@ import backofficeapi.application.port.output.TblRolRepositoryPort;
 import backofficeapi.domain.model.TblRolModel;
 import backofficeapi.infrastructure.adapter.ouput.jpa.entity.TblRol;
 import backofficeapi.infrastructure.adapter.ouput.jpa.mapper.TblRolMapper;
-import backofficeapi.infrastructure.adapter.ouput.jpa.repository.AuthRoleRepository;
+import backofficeapi.infrastructure.adapter.ouput.jpa.repository.TblRolRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
 /*
  *----------------------------------------
@@ -23,11 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class TblRolRepositoryAdapter implements TblRolRepositoryPort {
 
-    private final AuthRoleRepository authRoleRepository;
+    private final TblRolRepository tblRolRepository;
     private final TblRolMapper tblRolMapper;
 
-    public TblRolRepositoryAdapter(AuthRoleRepository authRoleRepository, TblRolMapper tblRolMapper) {
-        this.authRoleRepository = authRoleRepository;
+    public TblRolRepositoryAdapter(TblRolRepository tblRolRepository, TblRolMapper tblRolMapper) {
+        this.tblRolRepository = tblRolRepository;
         this.tblRolMapper = tblRolMapper;
     }
 
@@ -35,7 +36,13 @@ public class TblRolRepositoryAdapter implements TblRolRepositoryPort {
     @Transactional
     public TblRolModel saveRole(TblRolModel tblRolModel) {
         TblRol authRole = tblRolMapper.toEntity(tblRolModel);
-        TblRol authRoleSave = authRoleRepository.save(authRole);
+        TblRol authRoleSave = tblRolRepository.save(authRole);
         return tblRolMapper.toModel(authRoleSave);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TblRolModel> listRole() {
+        return tblRolRepository.listRole();
     }
 }

@@ -3,6 +3,7 @@ package backofficeapi.infrastructure.adapter.input.rest.mapper;
 import backofficeapi.domain.model.TblRolModel;
 import backofficeapi.infrastructure.adapter.input.rest.request.TblRolRequestDto;
 import backofficeapi.infrastructure.adapter.input.rest.response.AuthRoleResponseDto;
+import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.ListRoleShortResponse;
 import org.springframework.stereotype.Component;
 
 /*
@@ -38,6 +39,13 @@ public class TblRolRestMapper {
                 .description(tblRolModel.getSDescripcion())
                 .baseRole(tblRolModel.getSRolBase())
                 .roleStatus(tblRolModel.getSEstado())
+                .build();
+    }
+
+    public ListRoleShortResponse toListRoleShortResponse(TblRolModel model) {
+        return ListRoleShortResponse.builder()
+                .id(model.getIIdRol())
+                .name(model.getSNombre())
                 .build();
     }
 }
