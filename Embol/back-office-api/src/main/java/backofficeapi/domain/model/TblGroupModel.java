@@ -1,8 +1,6 @@
 package backofficeapi.domain.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 /*
  *----------------------------------------
@@ -19,11 +17,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
 public class TblGroupModel {
 
     private Long iIdGrupo;
     private String sNombre;
     private String sDescripcion;
+
+    private Boolean deleted;
 
     public TblGroupModel() {
     }
