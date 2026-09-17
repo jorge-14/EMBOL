@@ -68,10 +68,11 @@ public class CrudTblGroupUseCaseImpl implements CrudTblGroupUseCase {
     @Transactional
     public TblGroupModel updateGroup(Long id, TblGroupModel groupModel) {
 
-        TblGroupModel tblGroupModel = tblGroupRepositoryPort.getGroupById(id).orElseThrow(() -> {
+        TblGroupModel tblGroupModel = tblGroupRepositoryPort.getInformationById(id);
+        if (tblGroupModel == null) {
             log.error("Error de negocio: no existe el grupo con ID: {}", id);
-            return new BusinessApiException(HttpStatus.NOT_FOUND, "No se encontro el grupo");
-        });
+            throw new BusinessApiException(HttpStatus.NOT_FOUND, "No se encontro el grupo");
+        }
 
         if (groupModel.getSNombre() == null || groupModel.getSNombre().isEmpty()) {
             log.error("Error de validación: el nombre del grupo es requerido");
@@ -98,10 +99,11 @@ public class CrudTblGroupUseCaseImpl implements CrudTblGroupUseCase {
     @Override
     @Transactional
     public Boolean deleteGroup(Long id) {
-        TblGroupModel tblGroupModel = tblGroupRepositoryPort.getGroupById(id).orElseThrow(() -> {
+        TblGroupModel tblGroupModel = tblGroupRepositoryPort.getInformationById(id);
+        if (tblGroupModel == null) {
             log.error("Error de negocio: no existe el grupo con ID: {}", id);
-            return new BusinessApiException(HttpStatus.NOT_FOUND, "No se encontro el grupo");
-        });
+            throw new BusinessApiException(HttpStatus.NOT_FOUND, "No se encontro el grupo");
+        }
 
         tblGroupModel.markAsDeleted();
         TblGroupModel savedGroup = tblGroupRepositoryPort.saveGroup(tblGroupModel);
