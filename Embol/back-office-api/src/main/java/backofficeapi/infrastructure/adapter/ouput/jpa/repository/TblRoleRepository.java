@@ -6,9 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /*
  *----------------------------------------
@@ -41,4 +43,10 @@ public interface TblRoleRepository extends JpaRepository<TblRol, Long> {
             "FROM TblRol t " +
             "WHERE UPPER(TRIM(t.sNombre)) = UPPER(TRIM(:nombre)) AND t.deleted = false")
     boolean existsByName(String nombre);
+
+    @Query("SELECT r " +
+            "FROM TblRol r " +
+            "WHERE r.iIdRol = :id AND r.deleted = false")
+    Optional<TblRol> findActiveById(@Param("id") Long id);
+
 }

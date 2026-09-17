@@ -50,7 +50,7 @@ public class TblRoleRestMapper {
         return tblRolModel;
     }
 
-    public TblRoleResponseDto toAuthRoleResponseDto(TblRoleModel tblRolModel) {
+    public TblRoleResponseDto toResponseDto(TblRoleModel tblRolModel) {
         if (tblRolModel == null) {
             return null;
         }
@@ -61,6 +61,10 @@ public class TblRoleRestMapper {
                 .baseRole(tblRolModel.getSRolBase())
                 .roleStatus(tblRolModel.getSEstado())
                 .build();
+    }
+
+    public TblRoleResponseDto toAuthRoleResponseDto(TblRoleModel tblRolModel) {
+        return toResponseDto(tblRolModel);
     }
 
     public ListRoleShortResponse toListRoleShortResponse(TblRoleModel model) {

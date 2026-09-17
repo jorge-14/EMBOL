@@ -1,6 +1,7 @@
 package backofficeapi.infrastructure.adapter.input.rest;
 
 import backofficeapi.application.port.input.role.CrudTblRoleUseCase;
+import backofficeapi.application.port.input.role.GetRoleByIdUseCase;
 import backofficeapi.application.port.input.role.ListRoleUseCase;
 import backofficeapi.domain.model.TblRoleModel;
 import backofficeapi.infrastructure.adapter.input.rest.dto.ResponsePage;
@@ -44,12 +45,14 @@ public class TblRoleController {
     private final CrudTblRoleUseCase crudTblRoleUseCase;
     private final TblRoleRestMapper tblRoleRestMapper;
     private final ListRoleUseCase listRoleUseCase;
+    private final GetRoleByIdUseCase getRoleByIdUseCase;
 
     public TblRoleController(CrudTblRoleUseCase crudTblRoleUseCase, TblRoleRestMapper tblRoleRestMapper,
-            ListRoleUseCase listRoleUseCase) {
+            ListRoleUseCase listRoleUseCase, GetRoleByIdUseCase getRoleByIdUseCase) {
         this.crudTblRoleUseCase = crudTblRoleUseCase;
         this.tblRoleRestMapper = tblRoleRestMapper;
         this.listRoleUseCase = listRoleUseCase;
+        this.getRoleByIdUseCase = getRoleByIdUseCase;
     }
 
     @GetMapping("/list-role-short")
@@ -130,5 +133,22 @@ public class TblRoleController {
         Page<TblRoleModel> pageResult = crudTblRoleUseCase.pageListRol(pageable);
         ResponsePage<PageListRolResponseDto> response = ResponsePage.from(pageResult, tblRoleRestMapper::toPageResponse);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/get-role/{id}")
+    public ResponseEntity<TblRoleResponseDto> getRoleById(@PathVariable Long id,
+                                                          Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()
+                && authentication instanceof JwtAuthenticationToken jwtAuth) {
+            Jwt jwt = jwtAuth.getToken();
+            String username = jwt.getClaimAsString("preferred_username");
+            log.info("Usuario autenticado: {} | Consultando rol con ID: {}", username, id);
+        } else {
+            log.info("Consultando rol con ID: {}", id);
+        }
+
+        TblRoleModel roleModel = getRoleByIdUseCase.getRoleById(id);
+        TblRoleResponseDto responseDto = tblRoleRestMapper.toResponseDto(roleModel);
+        return ResponseEntity.ok(responseDto);
     }
 }
