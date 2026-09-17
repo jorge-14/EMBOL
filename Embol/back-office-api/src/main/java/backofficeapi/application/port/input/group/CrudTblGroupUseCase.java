@@ -20,4 +20,5 @@ public interface CrudTblGroupUseCase {
     TblGroupModel createGroup(TblGroupModel tblGroupModel);
     Page<TblGroupModel> pageListGroup(Pageable pageable);
     TblGroupModel updateGroup(Long id, TblGroupModel groupModel);
+    void deleteGroup(Long id);
 }

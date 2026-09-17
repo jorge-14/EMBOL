@@ -57,4 +57,9 @@ public class TblGroupRepositoryAdapter implements TblGroupRepositoryPort {
     public Optional<TblGroupModel> getGroupById(Long id) {
         return tblGroupRepository.findById(id).map(tblGroupMapper:: toModel);
     }
+
+    @Override
+    public void deleteGroupById(Long id) {
+
+    }
 }
