@@ -1,41 +1,24 @@
-import { Observable, map } from 'rxjs';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Page } from '../../shared/models/pagination.model';
+import { paginateArray } from '../../shared/utils/paginate.util';
 import { GrupoRow } from '../../features/configuration/user-roles/models/grupos/grupo.model';
+import { MOCK_GROUPS } from '../../features/configuration/user-roles/configs/mock-data.config';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
-class GroupService {
+export class GroupService {
   private http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiBaseUrl}api/v1/group`;
 
   getPagedGroups(page = 0, size = 20): Observable<Page<GrupoRow>> {
-    const params = new HttpParams()
+    let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
-      .set('sortBy', 'id')
+      .set('sortBy', 'modifiedDate') 
       .set('sortDir', 'DESC');
-
-    return this.http.get<Page<GrupoRow>>(`${this.baseUrl}/paginated-group`, { params }).pipe(
-      map(res => {
-        if (res.content) {
-          res.content = res.content.map(group => ({
-            ...group,
-            nombre: group.name,
-            descripcion: group.description,
-            estado: 'Activo' // El DTO del backend no parece traer estado, asignamos uno por defecto
-          }));
-        }
-        res.page = {
-          number: res.number,
-          size: res.size,
-          totalElements: res.totalElements,
-          totalPages: res.totalPages
-        };
-        return res;
-      })
-    );
 
     return this.http.get<Page<any>>(`${this.baseUrl}/paginated-group`, { params })
       .pipe(
@@ -54,45 +37,21 @@ class GroupService {
   }
 
   getGroupList(): Observable<GrupoRow[]> {
-    // Si no hay un endpoint de lista corta, usamos el paginado con un tamaño grande
-    const params = new HttpParams()
-      .set('page', '0')
-      .set('size', '1000')
-      .set('sortBy', 'name')
-      .set('sortDir', 'ASC');
-
-    return this.http.get<Page<GrupoRow>>(`${this.baseUrl}/paginated-group`, { params }).pipe(
-      map(res => (res.content || []).map(group => ({
-        ...group,
-        nombre: group.name,
-        descripcion: group.description,
-        estado: 'Activo'
-      })))
-    );
+    return new Observable(obs => {
+      obs.next(MOCK_GROUPS);
+      obs.complete();
+    });
   }
 
-  getGroupById(id: any): Observable<GrupoRow> {
-    return this.http.get<GrupoRow>(`${this.baseUrl}/get-group/${id}`).pipe(
-      map(group => ({
-        ...group,
-        nombre: group.name,
-        descripcion: group.description,
-        estado: 'Activo'
-      }))
-    );
+  getGroupById(id: any): Observable<GrupoRow | undefined> {
+    return this.http.get<GrupoRow>(`${this.baseUrl}/${id}`);
   }
 
-  createGroup(group: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/create-group`, group);
+  updateGroupById(data: GrupoRow): Observable<GrupoRow> {
+    return this.http.put<GrupoRow>(`${this.baseUrl}/update-group/${data.id}`, data);
   }
 
-  updateGroup(id: any, group: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/update-group/${id}`, group);
-  }
-
-  deleteGroup(id: any): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/delete-group/${id}`);
+  createGroup(data: GrupoRow): Observable<GrupoRow> {
+    return this.http.post<GrupoRow>(`${this.baseUrl}/create-group`, data);
   }
 }
-
-export default GroupService
