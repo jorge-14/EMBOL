@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 /*
  *----------------------------------------
  *   Código de Aplicación:
@@ -48,5 +50,11 @@ public class TblGroupRepositoryAdapter implements TblGroupRepositoryPort {
     public Page<TblGroupModel> getPageListGroup(Pageable pageable) {
         Page<TblGrupo> pageListGroup = tblGroupRepository.pageListGroup(pageable);
         return pageListGroup.map(tblGroupMapper::toModel);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<TblGroupModel> getGroupById(Long id) {
+        return tblGroupRepository.findById(id).map(tblGroupMapper:: toModel);
     }
 }

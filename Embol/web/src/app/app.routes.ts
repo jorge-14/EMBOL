@@ -13,11 +13,7 @@ export const routes: Routes = [
     component: MainLayoutComponent,
     canActivate: [MsalGuard],
     children: [
-      { path: '', redirectTo: 'estimator/salaries', pathMatch: 'full' },
-      {
-        path: 'configuration/users',
-        loadChildren: () => import('./features/configuration/users/users.routes').then(m => m.userRoutes),
-      },
+      { path: '', redirectTo: 'configuration/user-roles', pathMatch: 'full' },
       {
         path: 'configuration/user-roles',
         loadChildren: () => import('./features/configuration/user-roles/user-roles.routes').then(m => m.userRolesRoutes),
@@ -25,10 +21,6 @@ export const routes: Routes = [
       {
         path: 'configuration/accesses',
         loadChildren: () => import('./features/configuration/accesses/accesses.routes').then(m => m.accessRoutes),
-      },
-      {
-        path: 'estimator/salaries',
-        loadChildren: () => import('./features/estimator/salaries/planilla.routes').then(m => m.planillaRoutes),
       },
     ],
   },

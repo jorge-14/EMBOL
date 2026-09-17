@@ -33,7 +33,7 @@ export class SidebarComponent {
       label: 'PRESUPUESTADOR',
       icon: 'dollar',
       children: [
-        { id: 'sueldos',         label: 'Sueldos y Salarios',     route: '/estimator/salaries' },
+        // { id: 'sueldos',         label: 'Sueldos y Salarios',     route: '/estimator/salaries' },
         // { id: 'dotacion',        label: 'Dotación' },
         // { id: 'comisiones',      label: 'Comisiones' },
         // { id: 'horas-extra',     label: 'Horas Extraordinarias' },
@@ -60,7 +60,6 @@ export class SidebarComponent {
       label: 'CONFIGURACIÓN',
       icon: 'cog',
       children: [
-        { id: 'usuarios',    label: 'Usuarios',    route: '/configuration/users' },
         { id: 'user-roles',  label: 'Usuarios y Roles', route: '/configuration/user-roles' },
         { id: 'accesos',     label: 'Accesos',     route: '/configuration/accesses' },
       ],
