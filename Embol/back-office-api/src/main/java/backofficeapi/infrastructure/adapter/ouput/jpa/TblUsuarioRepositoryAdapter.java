@@ -8,11 +8,7 @@ import backofficeapi.infrastructure.adapter.ouput.jpa.entity.TblUsuario;
 import backofficeapi.infrastructure.adapter.ouput.jpa.entity.TblUsuarioGrupo;
 import backofficeapi.infrastructure.adapter.ouput.jpa.entity.TblUsuarioRol;
 import backofficeapi.infrastructure.adapter.ouput.jpa.mapper.TblUsuarioMapper;
-import backofficeapi.infrastructure.adapter.ouput.jpa.repository.TblGrupoRepository;
-import backofficeapi.infrastructure.adapter.ouput.jpa.repository.TblRolRepository;
-import backofficeapi.infrastructure.adapter.ouput.jpa.repository.TblUsuarioGrupoRepository;
-import backofficeapi.infrastructure.adapter.ouput.jpa.repository.TblUsuarioRepository;
-import backofficeapi.infrastructure.adapter.ouput.jpa.repository.TblUsuarioRolRepository;
+import backofficeapi.infrastructure.adapter.ouput.jpa.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +38,7 @@ public class TblUsuarioRepositoryAdapter implements TblUsuarioRepositoryPort {
 
     private final TblUsuarioRepository tblUsuarioRepository;
     private final TblRolRepository tblRolRepository;
-    private final TblGrupoRepository tblGrupoRepository;
+    private final TblGroupRepository tblGroupRepository;
     private final TblUsuarioRolRepository tblUsuarioRolRepository;
     private final TblUsuarioGrupoRepository tblUsuarioGrupoRepository;
     private final TblUsuarioMapper tblUsuarioMapper;
@@ -75,7 +71,7 @@ public class TblUsuarioRepositoryAdapter implements TblUsuarioRepositoryPort {
         if (tblUsuarioModel.getGroupIds() != null) {
             tblUsuarioGrupoRepository.deleteByUsuario_Id(savedTblUsuario.getId());
             if (!tblUsuarioModel.getGroupIds().isEmpty()) {
-                List<TblGrupo> grupos = tblGrupoRepository.findAllById(tblUsuarioModel.getGroupIds());
+                List<TblGrupo> grupos = tblGroupRepository.findAllById(tblUsuarioModel.getGroupIds());
                 List<TblUsuarioGrupo> usuarioGrupos = grupos.stream()
                         .<TblUsuarioGrupo>map(grupo -> TblUsuarioGrupo.builder()
                                 .usuario(savedTblUsuario)
