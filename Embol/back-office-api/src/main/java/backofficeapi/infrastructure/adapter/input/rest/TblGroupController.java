@@ -1,6 +1,7 @@
 package backofficeapi.infrastructure.adapter.input.rest;
 
 import backofficeapi.application.port.input.group.CrudTblGroupUseCase;
+import backofficeapi.application.port.input.group.GetTblGroupByIdUseCase;
 import backofficeapi.infrastructure.adapter.input.rest.dto.ResponseBody;
 import backofficeapi.domain.model.TblGroupModel;
 import backofficeapi.infrastructure.adapter.input.rest.dto.ResponsePage;
@@ -32,10 +33,14 @@ import org.springframework.web.bind.annotation.*;
 public class TblGroupController {
 
     private final CrudTblGroupUseCase crudTblGroupUseCase;
+    private final GetTblGroupByIdUseCase getTblGroupByIdUseCase;
     private final TblGroupRestMapper tblGroupRestMapper;
 
-    public TblGroupController(CrudTblGroupUseCase crudTblGroupUseCase, TblGroupRestMapper tblGroupRestMapper) {
+    public TblGroupController(CrudTblGroupUseCase crudTblGroupUseCase, 
+                              GetTblGroupByIdUseCase getTblGroupByIdUseCase,
+                              TblGroupRestMapper tblGroupRestMapper) {
         this.crudTblGroupUseCase = crudTblGroupUseCase;
+        this.getTblGroupByIdUseCase = getTblGroupByIdUseCase;
         this.tblGroupRestMapper = tblGroupRestMapper;
     }
 
@@ -57,6 +62,13 @@ public class TblGroupController {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDir, sortBy));
         Page<TblGroupModel> pageResult = crudTblGroupUseCase.pageListGroup(pageable);
         ResponsePage<TblGroupResponseDto> response = ResponsePage.from(pageResult, tblGroupRestMapper::toResponse);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TblGroupResponseDto> getGroupById(@PathVariable Long id) {
+        TblGroupModel model = getTblGroupByIdUseCase.getGroupById(id);
+        TblGroupResponseDto response = tblGroupRestMapper.toResponse(model);
         return ResponseEntity.ok(response);
     }
 

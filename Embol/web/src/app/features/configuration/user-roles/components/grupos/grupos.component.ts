@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { GRUPOS_IMPORTS } from '../../enums/user-roles-imports';
-import GroupService from '../../../../../core/services/group.service';
+import { GroupService } from '../../../../../core/services/group.service';
 import { GrupoRow } from '../../models/grupos/grupo.model';
 import { DataTableColumn, DataTableRowAction } from '../../../../../shared/components/data-table/models/data-table.model';
 import { buildGruposColumns } from '../../configs/grupos/grupos-columns.config';
@@ -62,34 +62,35 @@ export class GruposComponent implements OnInit {
 
   isGroupModalOpen = signal(false);
   groupModalConfig = signal<DynamicFormConfig | null>(null);
-  groupModalData = signal<any>(null);
+  groupModalData = signal<GrupoRow | null>(null);
 
   // ── 6. Acciones de fila ────────────────────────────────────────────────────
   onEdit(id: any): void {
-    this.service.getGroupById(id).subscribe(group => {
-      if (!group) return;
-
-      this.groupModalConfig.set(buildGrupoConfig(true));
-      this.groupModalData.set({
-        id: group.id,
-        name: group.name,
-        description: group.description,
-        estado: group.estado
-      });
-      this.isGroupModalOpen.set(true);
+    this.loading.set(true);
+    this.service.getGroupById(id).subscribe({
+      next: (group) => {
+        this.loading.set(false);
+        if (!group) return;
+        
+        this.groupModalConfig.set(buildGrupoConfig(true));
+        this.groupModalData.set({
+          id: group.id,
+          name: group.name,
+          description: group.description,
+          estado: group.estado
+        });
+        this.isGroupModalOpen.set(true);
+      },
+      error: (err) => {
+        console.error('Error obteniendo grupo por ID', err);
+        this.loading.set(false);
+      }
     });
   }
 
-  onDeactivate(id: any): void {
-    if (confirm('¿Está seguro de que desea eliminar este grupo?')) {
-      this.service.deleteGroup(id).subscribe({
-        next: () => this.loadGroups(),
-        error: (err) => console.error('Error al eliminar grupo', err)
-      });
-    }
-  }
+  onDeactivate(id: any): void { console.log('[Grupos] Desactivar →', id);  /* TODO: confirm */ }
   onDelete(id: any): void     { this.onDeactivate(id); }
-
+  
   onAdd(): void {
     this.groupModalConfig.set(buildGrupoConfig(false));
     this.groupModalData.set(null);
@@ -98,17 +99,38 @@ export class GruposComponent implements OnInit {
 
   onGroupSubmit(data: any): void {
     const isEdit = !!this.groupModalData();
-    const request = isEdit
-      ? this.service.updateGroup(this.groupModalData().id, data)
-      : this.service.createGroup(data);
+    if (isEdit) {
+      this.onUpdateSubmit(data);
+    } else {
+      this.onCreateSubmit(data);
+    }
+  }
 
-    request.subscribe({
+  private onUpdateSubmit(data: any): void {
+    this.loading.set(true);
+    const updatedGroup = { ...this.groupModalData(), ...data };
+    this.service.updateGroupById(updatedGroup).subscribe({
       next: () => {
         this.isGroupModalOpen.set(false);
         this.loadGroups();
       },
       error: (err) => {
-        console.error(`Error al ${isEdit ? 'actualizar' : 'crear'} grupo`, err);
+        console.error('Error actualizando grupo', err);
+        this.loading.set(false);
+      }
+    });
+  }
+
+  private onCreateSubmit(data: any): void {
+    this.loading.set(true);
+    this.service.createGroup(data).subscribe({
+      next: () => {
+        this.isGroupModalOpen.set(false);
+        this.loadGroups(); // recargar para ver el nuevo
+      },
+      error: (err) => {
+        console.error('Error creando grupo', err);
+        this.loading.set(false);
       }
     });
   }
