@@ -79,4 +79,18 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   getFieldClasses(field: DynamicFormField): string {
     return field.colSpan === 2 ? 'col-span-2' : 'col-span-1';
   }
+
+  onMultiSelectChange(key: string, value: any, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const control = this.form.get(key);
+    if (control) {
+      const current = control.value || [];
+      if (input.checked) {
+        control.setValue([...current, value]);
+      } else {
+        control.setValue(current.filter((v: any) => v !== value));
+      }
+      control.markAsDirty();
+    }
+  }
 }

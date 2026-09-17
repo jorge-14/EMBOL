@@ -5,7 +5,14 @@
     </label>
   }
   <div class="relative w-full min-w-[12rem]">
-    <button type="button" (click)="toggleOpen()" class="w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-1.5 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+    <button type="button" (click)="toggleOpen()" 
+      class="w-full bg-white border rounded-md shadow-sm pl-3 pr-10 py-1.5 text-left cursor-default focus:outline-none sm:text-sm"
+      [class.border-gray-300]="!isInvalid()"
+      [class.focus:ring-blue-500]="!isInvalid()"
+      [class.focus:border-blue-500]="!isInvalid()"
+      [class.border-red-500]="isInvalid()"
+      [class.focus:ring-red-500]="isInvalid()"
+      [class.focus:border-red-500]="isInvalid()">
       <span class="block truncate">
         @if (value() === null || value() === undefined || value() === '') {
           <span class="text-gray-500">{{ placeholder() }}</span>

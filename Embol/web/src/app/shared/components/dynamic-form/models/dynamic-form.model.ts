@@ -1,6 +1,6 @@
 import { SelectOption } from '../../horizontal-controls/models/select-option.model';
 
-export type FieldType = 'text' | 'number' | 'date' | 'select' | 'textarea' | 'email' | 'password' | 'checkbox' | 'datepicker';
+export type FieldType = 'text' | 'number' | 'date' | 'select' | 'multi-select' | 'slider' | 'toggle' | 'textarea' | 'email' | 'password' | 'checkbox' | 'datepicker';
 
 export interface DynamicFormField {
   key: string;
@@ -19,4 +19,5 @@ export interface DynamicFormConfig {
   fields: DynamicFormField[];
   submitLabel?: string;
   cancelLabel?: string;
+  position?: 'center' | 'right';
 }

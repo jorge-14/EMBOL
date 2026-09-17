@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { USER_ROLES_IMPORTS } from '../../enums/user-roles-imports';
+import { USUARIOS_IMPORTS } from '../../enums/user-roles-imports';
 import { UserRolesService } from '../../services/user-roles.service';
 import { UserRow } from '../../models/users/user.model';
 import { PageMetadata } from '../../../../../shared/models/pagination.model';
@@ -7,12 +7,14 @@ import { DataTableColumn, DataTableRowAction } from '../../../../../shared/compo
 import { buildUsuariosColumns } from '../../configs/users/usuarios-columns.config';
 import { buildUserRowActions } from '../../configs/users/usuarios-actions.config';
 import { ROLE_OPTIONS_CONFIG, GROUP_OPTIONS_CONFIG } from '../../configs/users/usuarios-filters.config';
-import { HorizontalSelectComponent } from '../../../../../shared/components/horizontal-controls/horizontal-select/horizontal-select.component';
+import { buildNuevoUsuarioConfig } from '../../configs/users/usuarios-form.config';
+import { DynamicFormConfig } from '../../../../../shared/components/dynamic-form/models/dynamic-form.model';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-usuarios',
   standalone: true,
-  imports: [...USER_ROLES_IMPORTS, HorizontalSelectComponent],
+  imports: [...USUARIOS_IMPORTS],
   templateUrl: './usuarios.component.html',
 })
 export class UsuariosComponent implements OnInit {
@@ -71,11 +73,33 @@ export class UsuariosComponent implements OnInit {
     });
   }
 
+  isNewUserModalOpen = signal(false);
+  newUserModalConfig = signal<DynamicFormConfig | null>(null);
+
   // ── 6. Acciones de fila ────────────────────────────────────────────────────
   onEdit(id: any): void       { console.log('[Usuarios] Editar →', id);      /* TODO: dialog */ }
   onDeactivate(id: any): void { console.log('[Usuarios] Desactivar →', id);  /* TODO: confirm */ }
   onActivate(id: any): void   { console.log('[Usuarios] Activar →', id);     /* TODO: confirm */ }
-  onAdd(): void               { console.log('[Usuarios] Nuevo usuario');      /* TODO: form    */ }
+  
+  onAdd(): void {
+    forkJoin({
+      roles: this.service.getRoleList(),
+      groups: this.service.getGroupList()
+    }).subscribe(({ roles, groups }) => {
+      this.newUserModalConfig.set(buildNuevoUsuarioConfig(roles, groups));
+      this.isNewUserModalOpen.set(true);
+    });
+  }
+
+  onNewUserSubmit(data: any): void {
+    console.log('[Usuarios] Guardar →', data);
+    this.isNewUserModalOpen.set(false);
+    this.loadUsers();
+  }
+
+  onNewUserCancel(): void {
+    this.isNewUserModalOpen.set(false);
+  }
 
   // ── 7. Paginación ──────────────────────────────────────────────────────────
   onPageChange(page: number): void {

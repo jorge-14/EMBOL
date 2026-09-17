@@ -23,3 +23,12 @@
   >
   </app-data-table>
 }
+
+@if (newGroupModalConfig()) {
+  <app-dynamic-form
+    [config]="newGroupModalConfig()!"
+    [isOpen]="isNewGroupModalOpen()"
+    (formSubmit)="onNewGroupSubmit($event)"
+    (close)="onNewGroupCancel()"
+  ></app-dynamic-form>
+}

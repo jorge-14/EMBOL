@@ -2,9 +2,24 @@
 
 import { CommonModule } from '@angular/common';
 import { DataTableComponent } from '../../../../shared/components/data-table/data-table.component';
+import { HorizontalSelectComponent } from '../../../../shared/components/horizontal-controls/horizontal-select/horizontal-select.component';
+import { DynamicFormComponent } from '../../../../shared/components/dynamic-form/dynamic-form.component';
 
-/** Imports compartidos para componentes del feature UserRoles */
-export const USER_ROLES_IMPORTS = [
+export const USUARIOS_IMPORTS = [
   CommonModule,
   DataTableComponent,
+  HorizontalSelectComponent,
+  DynamicFormComponent
+] as const;
+
+export const ROLES_IMPORTS = [
+  CommonModule,
+  DataTableComponent,
+  DynamicFormComponent
+] as const;
+
+export const GRUPOS_IMPORTS = [
+  CommonModule,
+  DataTableComponent,
+  DynamicFormComponent
 ] as const;

@@ -12,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 /*
  *----------------------------------------
  *   Código de Aplicación:
@@ -115,5 +113,11 @@ public class CrudTblGroupUseCaseImpl implements CrudTblGroupUseCase {
             throw new TechnicalApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al guardar el grupo: no se generó ID");
         }
         return savedGroup;
+    }
+
+    @Override
+    @Transactional
+    public void deleteGroup(Long id) {
+
     }
 }
