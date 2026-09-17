@@ -101,7 +101,7 @@ public class TblUserController {
                         .body(ResponseBody.error("404", "No se encontró el usuario: " + username)));
     }
 
-    @GetMapping("/paginated")
+    @GetMapping("/paginated-user")
     public ResponseEntity<ResponsePage<TblUserResponseDto>> listPage(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "20") int size,
