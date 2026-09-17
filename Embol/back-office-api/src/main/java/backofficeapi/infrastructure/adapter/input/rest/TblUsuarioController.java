@@ -3,10 +3,10 @@ package backofficeapi.infrastructure.adapter.input.rest;
 import backofficeapi.application.port.input.CrudTblUsuarioUseCase;
 import backofficeapi.domain.model.TblUsuarioModel;
 import backofficeapi.infrastructure.adapter.input.rest.dto.ResponseBody;
+import backofficeapi.infrastructure.adapter.input.rest.dto.ResponsePage;
 import backofficeapi.infrastructure.adapter.input.rest.mapper.TblUsuarioRestMapper;
 import backofficeapi.infrastructure.adapter.input.rest.request.TblUsuarioCreateRequestDto;
 import backofficeapi.infrastructure.adapter.input.rest.request.TblUsuarioUpdateRequestDto;
-import backofficeapi.infrastructure.adapter.input.rest.response.TblUsuarioPageResponseDto;
 import backofficeapi.infrastructure.adapter.input.rest.response.TblUsuarioResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -101,17 +101,18 @@ public class TblUsuarioController {
                         .body(ResponseBody.error("404", "No se encontró el usuario: " + username)));
     }
 
-    @GetMapping("/get-paginated-users")
-    public ResponseEntity<ResponseBody<TblUsuarioPageResponseDto>> listPageUsers(
+    @GetMapping("/paginated")
+    public ResponseEntity<ResponsePage<TblUsuarioResponseDto>> listPage(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "20") int size,
-            @RequestParam(value = "sortBy", defaultValue = "createdDate") String sortBy,
+            @RequestParam(value = "sortBy", defaultValue = "modifiedDate") String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "DESC") Sort.Direction sortDir) {
-        log.info("Consultando página de usuarios: page={}, size={}, sortBy={}, sortDir={}", page, size, sortBy, sortDir);
+        log.info("Consultando página de usuarios: page={}, size={}, sortBy={}, sortDir={}", page, size, sortBy,
+                sortDir);
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDir, sortBy));
         Page<TblUsuarioModel> pageResult = crudTblUsuarioUseCase.getListPageUsers(pageable);
-        TblUsuarioPageResponseDto response = mapper.toPageResponse(pageResult);
-        return ResponseEntity.ok(ResponseBody.success("Usuarios paginados exitosamente", response));
+        ResponsePage<TblUsuarioResponseDto> response = ResponsePage.from(pageResult, mapper::toResponse);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/delete-user/{id}")
@@ -132,6 +133,7 @@ public class TblUsuarioController {
     public ResponseEntity<ResponseBody<TblUsuarioResponseDto>> deactivateUser(@PathVariable Long id) {
         log.info("Desactivando usuario con ID: {}", id);
         TblUsuarioModel deactivated = crudTblUsuarioUseCase.deactivateUserById(id);
-        return ResponseEntity.ok(ResponseBody.success("Usuario desactivado exitosamente", mapper.toResponse(deactivated)));
+        return ResponseEntity
+                .ok(ResponseBody.success("Usuario desactivado exitosamente", mapper.toResponse(deactivated)));
     }
 }
