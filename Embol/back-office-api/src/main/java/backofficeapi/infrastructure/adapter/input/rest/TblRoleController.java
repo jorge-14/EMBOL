@@ -23,6 +23,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import backofficeapi.infrastructure.adapter.input.rest.dto.ResponseBody;
+
 import java.util.List;
 
 /*
@@ -136,7 +138,7 @@ public class TblRoleController {
     }
 
     @GetMapping("/get-role/{id}")
-    public ResponseEntity<TblRoleResponseDto> getRoleById(@PathVariable Long id,
+    public ResponseEntity<ResponseBody<TblRoleResponseDto>> getRoleById(@PathVariable Long id,
                                                           Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()
                 && authentication instanceof JwtAuthenticationToken jwtAuth) {
@@ -149,6 +151,6 @@ public class TblRoleController {
 
         TblRoleModel roleModel = getRoleByIdUseCase.getRoleById(id);
         TblRoleResponseDto responseDto = tblRoleRestMapper.toResponseDto(roleModel);
-        return ResponseEntity.ok(responseDto);
+        return ResponseEntity.ok(ResponseBody.success("La informacion del grupo fue armada exitosamente", responseDto));
     }
 }

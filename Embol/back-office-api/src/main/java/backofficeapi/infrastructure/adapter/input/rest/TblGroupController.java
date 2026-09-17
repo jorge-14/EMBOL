@@ -2,7 +2,6 @@ package backofficeapi.infrastructure.adapter.input.rest;
 
 import backofficeapi.application.port.input.group.CrudTblGroupUseCase;
 import backofficeapi.application.port.input.group.FindGroupByIdUseCase;
-import backofficeapi.application.port.input.group.FindGroupByIdUseCase;
 import backofficeapi.infrastructure.adapter.input.rest.dto.ResponseBody;
 import backofficeapi.domain.model.TblGroupModel;
 import backofficeapi.infrastructure.adapter.input.rest.dto.ResponsePage;
