@@ -10,5 +10,14 @@ export interface PageMetadata {
 
 export interface Page<T> {
   content: T[];
-  page: PageMetadata;
+  page: PageMetadata | null; // Mantener por compatibilidad si se usa en otros lados
+
+  // Spring Boot / ResponsePage fields
+  number: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+  first: boolean;
+  empty: boolean;
 }

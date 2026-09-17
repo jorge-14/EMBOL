@@ -67,7 +67,7 @@ export class RolesComponent implements OnInit {
   onEdit(id: any): void {
     this.service.getRoleById(id).subscribe(role => {
       if (!role) return;
-      
+
       this.roleModalConfig.set(buildRolConfig(true));
       this.roleModalData.set({
         id: role.id,
@@ -78,8 +78,15 @@ export class RolesComponent implements OnInit {
       this.isRoleModalOpen.set(true);
     });
   }
-  
-  onDeactivate(id: any): void { console.log('[Roles] Desactivar →', id);  /* TODO: confirm */ }
+
+  onDeactivate(id: any): void {
+    if (confirm('¿Está seguro de que desea eliminar este rol?')) {
+      this.service.deleteRole(id).subscribe({
+        next: () => this.loadRoles(),
+        error: (err) => console.error('Error al eliminar rol', err)
+      });
+    }
+  }
   onDelete(id: any): void     { this.onDeactivate(id); }
 
   onAdd(): void {
@@ -90,9 +97,19 @@ export class RolesComponent implements OnInit {
 
   onRoleSubmit(data: any): void {
     const isEdit = !!this.roleModalData();
-    console.log(`[Roles] ${isEdit ? 'Actualizar' : 'Guardar'} →`, data);
-    this.isRoleModalOpen.set(false);
-    this.loadRoles();
+    const request = isEdit
+      ? this.service.updateRole(this.roleModalData().id, data)
+      : this.service.createRole(data);
+
+    request.subscribe({
+      next: () => {
+        this.isRoleModalOpen.set(false);
+        this.loadRoles();
+      },
+      error: (err) => {
+        console.error(`Error al ${isEdit ? 'actualizar' : 'crear'} rol`, err);
+      }
+    });
   }
 
   onRoleCancel(): void {

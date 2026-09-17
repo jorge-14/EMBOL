@@ -20,18 +20,21 @@ import org.springframework.stereotype.Component;
 public class TblGroupMapper {
 
     public TblGrupo toEntity(TblGroupModel model) {
-        return TblGrupo.builder()
+        TblGrupo entity  = TblGrupo.builder()
                 .iIdGrupo(model.getIIdGrupo())
                 .sNombre(model.getSNombre() != null ? model.getSNombre().trim() : null)
                 .sDescripcion(model.getSDescripcion() != null ? model.getSDescripcion().trim() :  null)
                 .build();
+        entity.setDeleted(model.getDeleted() != null && model.getDeleted());
+        return entity;
     }
 
     public TblGroupModel toModel(TblGrupo entity) {
         return new TblGroupModel(
                 entity.getIIdGrupo(),
                 entity.getSNombre(),
-                entity.getSDescripcion()
+                entity.getSDescripcion(),
+                entity.isDeleted()
         );
     }
 }

@@ -2,7 +2,9 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { USUARIOS_IMPORTS } from '../../enums/user-roles-imports';
 import { UserService } from '../../../../../core/services/user.service';
 import { RoleService } from '../../../../../core/services/role.service';
-import { GroupService } from '../../../../../core/services/group.service';
+import GroupService from '../../../../../core/services/group.service';
+import { RolRow } from '../../models/roles/rol.model';
+import { GrupoRow } from '../../models/grupos/grupo.model';
 import { UserRow } from '../../models/users/user.model';
 import { PageMetadata } from '../../../../../shared/models/pagination.model';
 import { DataTableColumn, DataTableRowAction } from '../../../../../shared/components/data-table/models/data-table.model';
@@ -58,7 +60,7 @@ export class UsuariosComponent implements OnInit {
   // ── 5. Carga de datos ──────────────────────────────────────────────────────
   loadUsers(): void {
     this.loading.set(true);
-    
+
     const filters = {
       role: this.roleFilter(), //set en html
       group: this.groupFilter() //set en html
@@ -89,10 +91,12 @@ export class UsuariosComponent implements OnInit {
       groups: this.groupsService.getGroupList()
     }).subscribe(({ user, roles, groups }) => {
       if (!user) return;
-      
+
       this.userModalConfig.set(buildUsuarioConfig(roles, groups, true));
-      
+
       // Mapeamos los nombres de roles/grupos del usuario a sus IDs correspondientes
+      roles.filter((r: RolRow) => user.roles.includes(r.nombre)).map((r: RolRow) => r.id);
+      groups.filter((g: GrupoRow) => user.grupos.includes(g.name)).map((g: GrupoRow) => g.id);
       const userRolesIds = roles.filter(r => user.roles.includes(r.nombre)).map(r => r.id);
       const userGroupIds = groups.filter(g => user.grupos.includes(g.name)).map(g => g.id);
 
@@ -104,14 +108,14 @@ export class UsuariosComponent implements OnInit {
         roles: userRolesIds,
         grupos: userGroupIds
       });
-      
+
       this.isUserModalOpen.set(true);
     });
   }
-  
+
   onDeactivate(id: any): void { console.log('[Usuarios] Desactivar →', id);  /* TODO: confirm */ }
   onActivate(id: any): void   { console.log('[Usuarios] Activar →', id);     /* TODO: confirm */ }
-  
+
   onAdd(): void {
     forkJoin({
       roles: this.rolesService.getRoleList(),

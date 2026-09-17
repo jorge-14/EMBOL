@@ -27,16 +27,18 @@ public interface TblRoleRepository extends JpaRepository<TblRol, Long> {
 
     @Query("SELECT new backofficeapi.domain.model.TblRoleModel(t.iIdRol, t.sNombre) " +
             "FROM TblRol t " +
+            "WHERE t.deleted = false " +
             "ORDER BY t.sNombre ASC")
     List<TblRoleModel> listRole();
 
     @Query("SELECT tblr " +
             "FROM TblRol tblr " +
+            "WHERE tblr.deleted = false " +
             "ORDER BY tblr.sNombre ASC")
     Page<TblRol> pageListGroup(Pageable pageable);
 
     @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END " +
             "FROM TblRol t " +
-            "WHERE UPPER(TRIM(t.sNombre)) = UPPER(TRIM(:nombre))")
+            "WHERE UPPER(TRIM(t.sNombre)) = UPPER(TRIM(:nombre)) AND t.deleted = false")
     boolean existsByName(String nombre);
 }

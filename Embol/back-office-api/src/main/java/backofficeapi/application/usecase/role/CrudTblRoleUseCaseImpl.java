@@ -59,7 +59,7 @@ public class CrudTblRoleUseCaseImpl implements CrudTblRoleUseCase {
             throw new BusinessApiException(HttpStatus.BAD_REQUEST, "El estado del role es requerido");
         }
 
-        String normalizedNombre = tblRolModel.getSNombre().trim();
+        String normalizedNombre = tblRolModel.getSNombre().trim().replaceAll("\\s+", "_").toUpperCase();
         if (tblRoleRepositoryPort.existsRolByName(normalizedNombre)) {
             log.error("Error de negocio: ya existe un rol con el nombre: {}", normalizedNombre);
             throw new BusinessApiException(HttpStatus.BAD_REQUEST, "Ya existe un rol con el nombre: " + normalizedNombre);
@@ -96,7 +96,7 @@ public class CrudTblRoleUseCaseImpl implements CrudTblRoleUseCase {
                 });
 
         if (tblRolModel.getSNombre() != null && !tblRolModel.getSNombre().trim().isEmpty()) {
-            String newNombre = tblRolModel.getSNombre().trim();
+            String newNombre = tblRolModel.getSNombre().trim().replaceAll("\\s+", "_").toUpperCase();
             if (!newNombre.equalsIgnoreCase(existingRole.getSNombre())) {
                 if (tblRoleRepositoryPort.existsRolByName(newNombre)) {
                     log.error("Error de negocio: ya existe un rol con el nombre: {}", newNombre);
@@ -138,7 +138,7 @@ public class CrudTblRoleUseCaseImpl implements CrudTblRoleUseCase {
             return new BusinessApiException(HttpStatus.NOT_FOUND, "No se encontro el rol");
         });
 
-        existingRole.setSEstado(RoleStatus.DELETED);
+        existingRole.markAsDeleted();
 
         TblRoleModel deletedRole = tblRoleRepositoryPort.saveRole(existingRole);
 

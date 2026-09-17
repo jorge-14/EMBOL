@@ -43,19 +43,9 @@ public class CrudTblGroupUseCaseImpl implements CrudTblGroupUseCase {
             throw new BusinessApiException(HttpStatus.BAD_REQUEST, "El nombre del grupo es requerido");
         }
 
-        if (tblGroupModel.getSNombre().length() > 40) {
-            log.error("Error de validación: el nombre del grupo supera los 40 caracteres: {}", tblGroupModel.getSNombre());
-            throw new BusinessApiException(HttpStatus.BAD_REQUEST, "El nombre del grupo no puede superar los 40 caracteres");
-        }
-
         if (tblGroupModel.getSDescripcion() == null || tblGroupModel.getSDescripcion().isEmpty()) {
             log.error("Error de validación: la descripción del grupo es requerida");
             throw new BusinessApiException(HttpStatus.BAD_REQUEST, "La descripción del grupo es requerida");
-        }
-
-        if (tblGroupModel.getSDescripcion().length() > 255) {
-            log.error("Error de validación: la descripción del grupo supera los 255 caracteres");
-            throw new BusinessApiException(HttpStatus.BAD_REQUEST, "La descripción del grupo no puede superar los 255 caracteres");
         }
 
         TblGroupModel savedGroup = tblGroupRepositoryPort.saveGroup(tblGroupModel);
@@ -88,19 +78,9 @@ public class CrudTblGroupUseCaseImpl implements CrudTblGroupUseCase {
             throw new BusinessApiException(HttpStatus.BAD_REQUEST, "El nombre del grupo es requerido");
         }
 
-        if (groupModel.getSNombre().length() > 40) {
-            log.error("Error de validación: el nombre del grupo supera los 40 caracteres: {}", groupModel.getSNombre());
-            throw new BusinessApiException(HttpStatus.BAD_REQUEST, "El nombre del grupo no puede superar los 40 caracteres");
-        }
-
         if (groupModel.getSDescripcion() == null || groupModel.getSDescripcion().isEmpty()) {
             log.error("Error de validación: la descripción del grupo es requerida");
             throw new BusinessApiException(HttpStatus.BAD_REQUEST, "La descripción del grupo es requerida");
-        }
-
-        if (groupModel.getSDescripcion().length() > 255) {
-            log.error("Error de validación: la descripción del grupo supera los 255 caracteres");
-            throw new BusinessApiException(HttpStatus.BAD_REQUEST, "La descripción del grupo no puede superar los 255 caracteres");
         }
 
         tblGroupModel.setSNombre(groupModel.getSNombre() != null ? groupModel.getSNombre().trim() : null);
@@ -117,7 +97,19 @@ public class CrudTblGroupUseCaseImpl implements CrudTblGroupUseCase {
 
     @Override
     @Transactional
-    public void deleteGroup(Long id) {
+    public Boolean deleteGroup(Long id) {
+        TblGroupModel tblGroupModel = tblGroupRepositoryPort.getGroupById(id).orElseThrow(() -> {
+            log.error("Error de negocio: no existe el grupo con ID: {}", id);
+            return new BusinessApiException(HttpStatus.NOT_FOUND, "No se encontro el grupo");
+        });
 
+        tblGroupModel.markAsDeleted();
+        TblGroupModel savedGroup = tblGroupRepositoryPort.saveGroup(tblGroupModel);
+
+        if (savedGroup == null || savedGroup.getIIdGrupo() == null) {
+            log.error("Error crítico: el grupo no se guardó correctamente: {}", tblGroupModel.getSNombre());
+            throw new TechnicalApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al guardar el grupo: no se generó ID");
+        }
+        return true;
     }
 }

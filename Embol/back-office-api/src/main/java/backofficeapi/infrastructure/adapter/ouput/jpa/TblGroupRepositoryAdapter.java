@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Optional;
 
 /*
@@ -56,10 +55,5 @@ public class TblGroupRepositoryAdapter implements TblGroupRepositoryPort {
     @Transactional(readOnly = true)
     public Optional<TblGroupModel> getGroupById(Long id) {
         return tblGroupRepository.findById(id).map(tblGroupMapper:: toModel);
-    }
-
-    @Override
-    public void deleteGroupById(Long id) {
-
     }
 }

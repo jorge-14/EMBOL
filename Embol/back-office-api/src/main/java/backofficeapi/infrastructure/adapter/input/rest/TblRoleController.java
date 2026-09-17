@@ -61,9 +61,8 @@ public class TblRoleController {
     }
 
     @PostMapping("/create-role")
-    public ResponseEntity<TblRoleResponseDto> createRole(
-            @RequestBody TblRoleRequestDto tblRoleRequestDto,
-            Authentication authentication) {
+    public ResponseEntity<TblRoleResponseDto> createRole(@Valid @RequestBody TblRoleRequestDto tblRoleRequestDto,
+                                                         Authentication authentication) {
 
         if (authentication != null && authentication.isAuthenticated()
                 && authentication instanceof JwtAuthenticationToken jwtAuth) {

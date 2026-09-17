@@ -1,11 +1,13 @@
 package backofficeapi.infrastructure.adapter.input.rest;
 
 import backofficeapi.application.port.input.group.CrudTblGroupUseCase;
+import backofficeapi.infrastructure.adapter.input.rest.dto.ResponseBody;
 import backofficeapi.domain.model.TblGroupModel;
 import backofficeapi.infrastructure.adapter.input.rest.dto.ResponsePage;
 import backofficeapi.infrastructure.adapter.input.rest.mapper.TblGroupRestMapper;
 import backofficeapi.infrastructure.adapter.input.rest.request.tblGroup.TblGroupRequestDto;
 import backofficeapi.infrastructure.adapter.input.rest.response.tblGroup.TblGroupResponseDto;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,7 +40,7 @@ public class TblGroupController {
     }
 
     @PostMapping("/create-group")
-    public ResponseEntity<TblGroupResponseDto> create(@RequestBody TblGroupRequestDto tblGroupRequestDto) {
+    public ResponseEntity<TblGroupResponseDto> create(@Valid @RequestBody TblGroupRequestDto tblGroupRequestDto) {
 
         TblGroupModel model = tblGroupRestMapper.toModel(tblGroupRequestDto);
         TblGroupModel created = crudTblGroupUseCase.createGroup(model);
@@ -60,10 +62,16 @@ public class TblGroupController {
 
     @PutMapping("/update-group/{id}")
     public ResponseEntity<TblGroupResponseDto> updateGroup(@PathVariable Long id,
-                                                           @RequestBody TblGroupRequestDto tblGroupRequestDto) {
+                                                           @Valid @RequestBody TblGroupRequestDto tblGroupRequestDto) {
         TblGroupModel model = tblGroupRestMapper.toModel(tblGroupRequestDto);
         TblGroupModel update = crudTblGroupUseCase.updateGroup(id, model);
         TblGroupResponseDto response  = tblGroupRestMapper.toResponse(update);
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/delete-group/{id}")
+    public ResponseEntity<ResponseBody<Boolean>> deleteGroup(@PathVariable Long id) {
+        Boolean delete = crudTblGroupUseCase.deleteGroup(id);
+        return ResponseEntity.ok(ResponseBody.success("El grupo fue eliminado exitosamente", delete));
     }
 }

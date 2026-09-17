@@ -27,7 +27,6 @@ public class TblRoleUpdateRequestDto {
 
     @Size(max = 40, message = "El nombre no debe exceder los 40 caracteres.")
     private String name;
-
     @Size(max = 255, message = "La descripción no debe exceder los 255 caracteres.")
     private String description;
     private RoleStatus roleStatus;
