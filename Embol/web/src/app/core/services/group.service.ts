@@ -44,7 +44,9 @@ export class GroupService {
   }
 
   getGroupById(id: any): Observable<GrupoRow | undefined> {
-    return this.http.get<GrupoRow>(`${this.baseUrl}/${id}`);
+    return this.http.get<any>(`${this.baseUrl}/information-group-by-id/${id}`).pipe(
+      map(res => res.data)
+    );
   }
 
   updateGroupById(data: GrupoRow): Observable<GrupoRow> {

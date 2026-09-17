@@ -5,7 +5,7 @@ import { GrupoRow } from '../../models/grupos/grupo.model';
 import { DataTableColumn, DataTableRowAction } from '../../../../../shared/components/data-table/models/data-table.model';
 import { buildGruposColumns } from '../../configs/grupos/grupos-columns.config';
 import { buildGrupoRowActions } from '../../configs/grupos/grupos-actions.config';
-import { buildGrupoConfig } from '../../configs/grupos/grupos-form.config';
+import { buildCreateGroupConfig, buildUpdateGroupConfig } from '../../configs/grupos/grupos-form.config';
 import { DynamicFormConfig } from '../../../../../shared/components/dynamic-form/models/dynamic-form.model';
 import { PageMetadata } from '../../../../../shared/models/pagination.model';
 
@@ -72,7 +72,7 @@ export class GruposComponent implements OnInit {
         this.loading.set(false);
         if (!group) return;
         
-        this.groupModalConfig.set(buildGrupoConfig(true));
+        this.groupModalConfig.set(buildUpdateGroupConfig());
         this.groupModalData.set({
           id: group.id,
           name: group.name,
@@ -92,7 +92,7 @@ export class GruposComponent implements OnInit {
   onDelete(id: any): void     { this.onDeactivate(id); }
   
   onAdd(): void {
-    this.groupModalConfig.set(buildGrupoConfig(false));
+    this.groupModalConfig.set(buildCreateGroupConfig());
     this.groupModalData.set(null);
     this.isGroupModalOpen.set(true);
   }
