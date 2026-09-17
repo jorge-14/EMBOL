@@ -5,6 +5,8 @@ import backofficeapi.domain.model.TblGroupModel;
 import backofficeapi.infrastructure.adapter.ouput.jpa.entity.TblGrupo;
 import backofficeapi.infrastructure.adapter.ouput.jpa.mapper.TblGroupMapper;
 import backofficeapi.infrastructure.adapter.ouput.jpa.repository.TblGroupRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,5 +41,12 @@ public class TblGroupRepositoryAdapter implements TblGroupRepositoryPort {
         TblGrupo saved = tblGroupRepository.save(tblGrupo);
 
         return tblGroupMapper.toModel(saved);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<TblGroupModel> getPageListGroup(Pageable pageable) {
+        Page<TblGrupo> pageListGroup = tblGroupRepository.pageListGroup(pageable);
+        return pageListGroup.map(tblGroupMapper::toModel);
     }
 }

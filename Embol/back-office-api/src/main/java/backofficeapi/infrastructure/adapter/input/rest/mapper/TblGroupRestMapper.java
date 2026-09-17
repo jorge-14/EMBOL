@@ -3,6 +3,7 @@ package backofficeapi.infrastructure.adapter.input.rest.mapper;
 import backofficeapi.domain.model.TblGroupModel;
 import backofficeapi.infrastructure.adapter.input.rest.request.tblGroup.TblGroupRequestDto;
 import backofficeapi.infrastructure.adapter.input.rest.response.tblGroup.TblGroupResponseDto;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 /*
@@ -33,5 +34,9 @@ public class TblGroupRestMapper {
                 .name(tblGroupModel.getSNombre())
                 .description(tblGroupModel.getSDescripcion())
                 .build();
+    }
+
+    public Page<TblGroupResponseDto> toResponsePage(Page<TblGroupModel> page) {
+        return page.map(this::toResponse);
     }
 }

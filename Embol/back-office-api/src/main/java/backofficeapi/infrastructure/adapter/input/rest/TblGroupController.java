@@ -2,14 +2,16 @@ package backofficeapi.infrastructure.adapter.input.rest;
 
 import backofficeapi.application.port.input.group.CrudTblGroupUseCase;
 import backofficeapi.domain.model.TblGroupModel;
+import backofficeapi.infrastructure.adapter.input.rest.dto.ResponsePage;
 import backofficeapi.infrastructure.adapter.input.rest.mapper.TblGroupRestMapper;
 import backofficeapi.infrastructure.adapter.input.rest.request.tblGroup.TblGroupRequestDto;
 import backofficeapi.infrastructure.adapter.input.rest.response.tblGroup.TblGroupResponseDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /*
  *----------------------------------------
@@ -43,4 +45,17 @@ public class TblGroupController {
         TblGroupResponseDto response  = tblGroupRestMapper.toResponse(created);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/paginated")
+    public ResponseEntity<ResponsePage<TblGroupResponseDto>> listPage(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "20") int size,
+            @RequestParam(value = "sortBy", defaultValue = "modifiedDate") String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "DESC") Sort.Direction sortDir) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDir, sortBy));
+        Page<TblGroupModel> pageResult = crudTblGroupUseCase.pageListGroup(pageable);
+        ResponsePage<TblGroupResponseDto> response = ResponsePage.from(pageResult, tblGroupRestMapper::toResponse);
+        return ResponseEntity.ok(response);
+    }
+
 }

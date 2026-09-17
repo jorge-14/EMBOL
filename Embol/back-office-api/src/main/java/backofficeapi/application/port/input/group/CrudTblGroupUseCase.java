@@ -1,6 +1,8 @@
 package backofficeapi.application.port.input.group;
 
 import backofficeapi.domain.model.TblGroupModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /*
  *----------------------------------------
@@ -16,4 +18,5 @@ import backofficeapi.domain.model.TblGroupModel;
 public interface CrudTblGroupUseCase {
 
     TblGroupModel createGroup(TblGroupModel tblGroupModel);
+    Page<TblGroupModel> pageListGroup(Pageable pageable);
 }
