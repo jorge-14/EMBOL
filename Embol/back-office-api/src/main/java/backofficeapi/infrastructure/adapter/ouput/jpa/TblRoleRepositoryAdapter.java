@@ -53,7 +53,7 @@ public class TblRoleRepositoryAdapter implements TblRoleRepositoryPort {
     @Override
     @Transactional(readOnly = true)
     public Optional<TblRoleModel> findById(Long id) {
-        return tblRoleRepository.findById(id).map(tblRoleMapper::toModel);
+        return tblRoleRepository.findActiveById(id).map(tblRoleMapper::toModel);
     }
 
     @Override
