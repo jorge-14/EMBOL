@@ -1,0 +1,46 @@
+
+@import "primeicons/primeicons.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+@layer base {
+  :root {
+    /* RGB format for Tailwind compatibility (allows opacity modifiers like bg-brand/50) */
+    --color-brand: 226 30 22; /* #e21e16 */
+    --color-brand-hover: 185 28 28; /* Red 700 */
+    --color-table-accent: 162 167 169; /* #a2a7a9 */
+    /* azul oscuro es : 30 58 138 */
+  }
+   /* 2. TEMA OSCURO (Se activa SOLO si el dispositivo del usuario está en modo oscuro) */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-brand: 30 58 138; /* Azul oscuro */
+      --color-brand-hover: 23 37 84; /* Un azul un poco más oscuro para el hover */
+    }
+  }
+
+  /*
+   * ESCALA GLOBAL DE LA APLICACIÓN
+   * Tailwind usa 'rem' para márgenes, paddings, fuentes y tamaños.
+   * Cambiando el font-size de html, escalamos TODA la app proporcionalmente.
+   * 16px es el 100%. Usar 80%-85% simula un "zoom out" para mostrar más datos.
+   */
+  html {
+    font-size: 85%; /* Ajusta este valor (ej. 80%, 90%) para más o menos zoom */
+  }
+}
+
+@layer components {
+  .btn-primary {
+    /* @apply te deja usar clases de Tailwind como si fuera CSS normal */
+    @apply text-white font-semibold py-2 px-4 rounded transition-colors duration-200;
+    background-color: rgb(var(--color-brand));
+  }
+  .btn-primary:hover {
+    background-color: rgb(var(--color-brand-hover));
+  }
+}

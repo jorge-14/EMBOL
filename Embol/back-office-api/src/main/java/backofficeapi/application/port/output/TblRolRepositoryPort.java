@@ -1,6 +1,7 @@
 package backofficeapi.application.port.output;
 
 import backofficeapi.domain.model.TblRolModel;
+import java.util.List;
 
 /*
  *----------------------------------------
@@ -16,5 +17,6 @@ import backofficeapi.domain.model.TblRolModel;
 public interface TblRolRepositoryPort {
 
     TblRolModel saveRole(TblRolModel tblRolModel);
+    List<TblRolModel> listRole();
 
 }

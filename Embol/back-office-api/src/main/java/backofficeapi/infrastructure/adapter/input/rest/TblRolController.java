@@ -1,19 +1,19 @@
 package backofficeapi.infrastructure.adapter.input.rest;
 
 import backofficeapi.application.port.input.CrudTblRolUseCase;
+import backofficeapi.application.port.input.ListRoleUseCase;
 import backofficeapi.domain.model.TblRolModel;
 import backofficeapi.infrastructure.adapter.input.rest.mapper.TblRolRestMapper;
 import backofficeapi.infrastructure.adapter.input.rest.request.TblRolRequestDto;
 import backofficeapi.infrastructure.adapter.input.rest.response.AuthRoleResponseDto;
+import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.ListRoleShortResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 /*
  *----------------------------------------
@@ -30,15 +30,25 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/auth-role")
-public class AuthRoleController {
+@RequestMapping("/api/v1/tbl-role")
+public class TblRolController {
 
     private final CrudTblRolUseCase crudTblRolUseCase;
     private final TblRolRestMapper tblRolRestMapper;
+    private final ListRoleUseCase listRoleUseCase;
 
-    public AuthRoleController(CrudTblRolUseCase crudTblRolUseCase, TblRolRestMapper tblRolRestMapper) {
+    public TblRolController(CrudTblRolUseCase crudTblRolUseCase, TblRolRestMapper tblRolRestMapper, ListRoleUseCase listRoleUseCase) {
         this.crudTblRolUseCase = crudTblRolUseCase;
         this.tblRolRestMapper = tblRolRestMapper;
+        this.listRoleUseCase = listRoleUseCase;
+    }
+
+    @GetMapping("/list-role-short")
+    public ResponseEntity<List<ListRoleShortResponse>> listRoleShort() {
+        List<ListRoleShortResponse> response = listRoleUseCase.listRoleShort().stream()
+                .map(tblRolRestMapper::toListRoleShortResponse)
+                .toList();
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/create-role")
@@ -50,7 +60,7 @@ public class AuthRoleController {
                 && authentication instanceof JwtAuthenticationToken jwtAuth) {
 
             Jwt jwt = jwtAuth.getToken();
-            String username = jwt.getClaimAsString("preferred_username"); // o "sub", "name", según tu IdP
+            String username = jwt.getClaimAsString("preferred_username");
             log.info("Usuario autenticado: {} | Autenticado: {}", username, authentication.isAuthenticated());
         } else {
             log.warn("Petición sin autenticación válida");

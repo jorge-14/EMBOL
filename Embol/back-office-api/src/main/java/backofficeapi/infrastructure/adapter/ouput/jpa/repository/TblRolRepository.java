@@ -1,8 +1,11 @@
 package backofficeapi.infrastructure.adapter.ouput.jpa.repository;
 
+import backofficeapi.domain.model.TblRolModel;
 import backofficeapi.infrastructure.adapter.ouput.jpa.entity.TblRol;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import java.util.List;
 
 /*
  *----------------------------------------
@@ -18,4 +21,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TblRolRepository extends JpaRepository<TblRol, Long> {
+
+    @Query("SELECT new backofficeapi.domain.model.TblRolModel(t.iIdRol, t.sNombre) " +
+            "FROM TblRol t " +
+            "ORDER BY t.sNombre ASC")
+    List<TblRolModel> listRole();
 }

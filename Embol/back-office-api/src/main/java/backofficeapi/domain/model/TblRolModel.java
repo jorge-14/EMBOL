@@ -39,4 +39,9 @@ public class TblRolModel {
         this.sRolBase = sRolBase;
         this.sEstado = sEstado;
     }
+
+    public TblRolModel(Long iIdRol, String sNombre) {
+        this.iIdRol = iIdRol;
+        this.sNombre = sNombre;
+    }
 }

@@ -22,7 +22,7 @@ import lombok.experimental.SuperBuilder;
  *   Código de Aplicación: EMBOL
  *   Código de Objeto: TblUsuarioRol
  *   Descripción: Entidad JPA para la tabla intermedia TBL_USUARIO_ROL (Oracle)
- *   Author Prog: Camila Ledezma
+ *   Author Prog: Camila Ledezma / Douglas Javieri
  *----------------------------------------
  *   Fecha | Autor | Comentario
  *   16.09.2026 | Camila Ledezma | Creación Inicial como entidad independiente
