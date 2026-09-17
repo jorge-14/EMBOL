@@ -60,10 +60,6 @@ public abstract class AuditableEntity implements Serializable, Cloneable {
     @Column(name = "SUSUARIOM", length = 150)
     protected String modifiedBy;
 
-    @Version
-    @Column(name = "VERSION")
-    protected Long version;
-
     @lombok.Builder.Default
     @Column(name = "DELETED", nullable = false)
     protected boolean deleted = false;

@@ -17,7 +17,7 @@ import java.util.List;
  *----------------------------------------
  *   Fecha | Autor | Comentario
  *   11.09.2026 | Douglas Javieri | Creación Inicial
- *   16.09.2026 | Camila Ledezma | Mapeo con entidades 
+ *   16.09.2026 | Camila Ledezma | Mapeo con entidades
  *----------------------------------------
  */
 
@@ -36,7 +36,6 @@ public class TblUserMapper {
                 .email(model.getEmail())
                 .userStatus(model.getUserStatus())
                 .deleted(model.getDeleted() != null && model.getDeleted())
-                .version(model.getVersion())
                 .createdDate(model.getCreatedDate())
                 .createdBy(model.getCreatedBy())
                 .modifiedDate(model.getModifiedDate())
@@ -94,7 +93,6 @@ public class TblUserMapper {
                 .groupIds(groupIds)
                 .groupNames(groupNames)
                 .deleted(entity.isDeleted())
-                .version(entity.getVersion())
                 .createdDate(entity.getCreatedDate())
                 .createdBy(entity.getCreatedBy())
                 .modifiedDate(entity.getModifiedDate())
