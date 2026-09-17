@@ -32,8 +32,15 @@ public class TblRoleModel {
     private Boolean sRolBase;
     private RoleStatus sEstado;
 
+    private Boolean deleted;
+
     public TblRoleModel(Long iIdRol, String sNombre) {
         this.iIdRol = iIdRol;
         this.sNombre = sNombre;
+    }
+
+    public void markAsDeleted() {
+        this.sEstado = RoleStatus.DELETED;
+        this.deleted = true;
     }
 }

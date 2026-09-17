@@ -1,10 +1,7 @@
 package backofficeapi.infrastructure.adapter.ouput.jpa.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.Column;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Version;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -60,8 +57,8 @@ public abstract class AuditableEntity implements Serializable, Cloneable {
     @Column(name = "SUSUARIOM", length = 150)
     protected String modifiedBy;
 
-    @lombok.Builder.Default
-    @Column(name = "DELETED", nullable = false)
+    @Convert(converter = org.hibernate.type.NumericBooleanConverter.class)
+    @Column(name = "DELETED", nullable = false, columnDefinition = "NUMBER(1) DEFAULT 0")
     protected boolean deleted = false;
 
     @Override

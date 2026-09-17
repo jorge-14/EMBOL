@@ -23,24 +23,28 @@ public class TblRoleMapper {
         if (model == null) {
             return null;
         }
-        return TblRol.builder()
+        TblRol entity = TblRol.builder()
                 .iIdRol(model.getIIdRol())
                 .sNombre(model.getSNombre())
                 .sDescripcion(model.getSDescripcion())
                 .sRolBase(model.getSRolBase())
                 .sEstado(model.getSEstado())
                 .build();
+        entity.setDeleted(model.getDeleted() != null && model.getDeleted());
+        return entity;
     }
 
     public TblRoleModel toModel(TblRol entity) {
         if (entity == null) {
             return null;
         }
-        return new TblRoleModel(
-                entity.getIIdRol(),
-                entity.getSNombre(),
-                entity.getSDescripcion(),
-                entity.getSRolBase(),
-                entity.getSEstado());
+        return TblRoleModel.builder()
+                .iIdRol(entity.getIIdRol())
+                .sNombre(entity.getSNombre())
+                .sDescripcion(entity.getSDescripcion())
+                .sRolBase(entity.getSRolBase())
+                .sEstado(entity.getSEstado())
+                .deleted(entity.isDeleted())
+                .build();
     }
 }
