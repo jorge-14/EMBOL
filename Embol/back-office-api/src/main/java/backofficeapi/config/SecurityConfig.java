@@ -25,7 +25,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/", "/error", "/oauth2/**", "/login/**", "/api/public/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .requestMatchers("/", "/error", "/oauth2/**", "/login/**", "/api/public/**", "/swagger-ui/**", "/v3/api-docs/**", "/api/v1/**").permitAll()
                 .anyRequest().authenticated()
             )
             // Habilita el login en el navegador (Redirige a Microsoft automáticamente)
