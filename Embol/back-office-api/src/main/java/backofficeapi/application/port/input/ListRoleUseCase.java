@@ -1,13 +1,14 @@
 package backofficeapi.application.port.input;
 
-import backofficeapi.domain.model.TblRolModel;
+import backofficeapi.domain.model.TblRoleModel;
+
 import java.util.List;
 
 /*
  *----------------------------------------
- *   Código de Aplicación:
- *   Código de Objeto:
- *   Descripción:
+ *   Código de Aplicación: EMBOL
+ *   Código de Objeto: ListRoleUseCase
+ *   Descripción: Puerto de entrada para listar roles de forma simplificada
  *   Author Prog: Jorge Luis Choque Callizaya
  *----------------------------------------
  *   Fecha | Autor | Comentario
@@ -16,5 +17,5 @@ import java.util.List;
  */
 public interface ListRoleUseCase {
 
-    List<TblRolModel> listRoleShort();
+    List<TblRoleModel> listRoleShort();
 }

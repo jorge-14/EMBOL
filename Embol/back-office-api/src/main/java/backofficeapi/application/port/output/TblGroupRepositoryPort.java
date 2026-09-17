@@ -4,6 +4,8 @@ import backofficeapi.domain.model.TblGroupModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Optional;
+
 /*
  *----------------------------------------
  *   Código de Aplicación:
@@ -18,4 +20,6 @@ import org.springframework.data.domain.Pageable;
 public interface TblGroupRepositoryPort {
     TblGroupModel saveGroup(TblGroupModel tblGroupModel);
     Page<TblGroupModel> getPageListGroup(Pageable pageable);
+    Optional<TblGroupModel> getGroupById(Long id);
+    void deleteGroupById(Long id);
 }

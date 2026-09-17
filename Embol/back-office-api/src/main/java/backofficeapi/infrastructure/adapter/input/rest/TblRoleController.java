@@ -1,10 +1,10 @@
 package backofficeapi.infrastructure.adapter.input.rest;
 
-import backofficeapi.application.port.input.CrudTblRolUseCase;
+import backofficeapi.application.port.input.CrudTblRoleUseCase;
 import backofficeapi.application.port.input.ListRoleUseCase;
-import backofficeapi.domain.model.TblRolModel;
-import backofficeapi.infrastructure.adapter.input.rest.mapper.TblRolRestMapper;
-import backofficeapi.infrastructure.adapter.input.rest.request.TblRolRequestDto;
+import backofficeapi.domain.model.TblRoleModel;
+import backofficeapi.infrastructure.adapter.input.rest.mapper.TblRoleRestMapper;
+import backofficeapi.infrastructure.adapter.input.rest.request.TblRoleRequestDto;
 import backofficeapi.infrastructure.adapter.input.rest.response.AuthRoleResponseDto;
 import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.ListRoleShortResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -13,13 +13,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 /*
  *----------------------------------------
- *   Código de Aplicación:
- *   Código de Objeto:
- *   Descripción:
+ *   Código de Aplicación: EMBOL
+ *   Código de Objeto: TblRoleController
+ *   Descripción: Controlador REST para operaciones CRUD de Role
  *   Author Prog: Jorge Luis Choque Callizaya
  *----------------------------------------
  *   Fecha | Autor | Comentario
@@ -27,33 +28,33 @@ import java.util.List;
  *----------------------------------------
  */
 
-
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/tbl-role")
-public class TblRolController {
+public class TblRoleController {
 
-    private final CrudTblRolUseCase crudTblRolUseCase;
-    private final TblRolRestMapper tblRolRestMapper;
+    private final CrudTblRoleUseCase crudTblRoleUseCase;
+    private final TblRoleRestMapper tblRoleRestMapper;
     private final ListRoleUseCase listRoleUseCase;
 
-    public TblRolController(CrudTblRolUseCase crudTblRolUseCase, TblRolRestMapper tblRolRestMapper, ListRoleUseCase listRoleUseCase) {
-        this.crudTblRolUseCase = crudTblRolUseCase;
-        this.tblRolRestMapper = tblRolRestMapper;
+    public TblRoleController(CrudTblRoleUseCase crudTblRoleUseCase, TblRoleRestMapper tblRoleRestMapper,
+            ListRoleUseCase listRoleUseCase) {
+        this.crudTblRoleUseCase = crudTblRoleUseCase;
+        this.tblRoleRestMapper = tblRoleRestMapper;
         this.listRoleUseCase = listRoleUseCase;
     }
 
     @GetMapping("/list-role-short")
     public ResponseEntity<List<ListRoleShortResponse>> listRoleShort() {
         List<ListRoleShortResponse> response = listRoleUseCase.listRoleShort().stream()
-                .map(tblRolRestMapper::toListRoleShortResponse)
+                .map(tblRoleRestMapper::toListRoleShortResponse)
                 .toList();
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/create-role")
     public ResponseEntity<AuthRoleResponseDto> createRole(
-            @RequestBody TblRolRequestDto tblRolRequestDto,
+            @RequestBody TblRoleRequestDto tblRoleRequestDto,
             Authentication authentication) {
 
         if (authentication != null && authentication.isAuthenticated()
@@ -66,9 +67,9 @@ public class TblRolController {
             log.warn("Petición sin autenticación válida");
         }
 
-        TblRolModel tblRolModel = tblRolRestMapper.toModel(tblRolRequestDto);
-        TblRolModel tblRolModelCreate = crudTblRolUseCase.createRole(tblRolModel);
-        AuthRoleResponseDto authRoleResponseDto = tblRolRestMapper.toAuthRoleResponseDto(tblRolModelCreate);
+        TblRoleModel tblRoleModel = tblRoleRestMapper.toModel(tblRoleRequestDto);
+        TblRoleModel tblRoleModelCreate = crudTblRoleUseCase.createRole(tblRoleModel);
+        AuthRoleResponseDto authRoleResponseDto = tblRoleRestMapper.toAuthRoleResponseDto(tblRoleModelCreate);
         return ResponseEntity.ok(authRoleResponseDto);
     }
 }

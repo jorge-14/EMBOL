@@ -12,7 +12,7 @@ import java.util.Optional;
 /*
  *----------------------------------------
  *   Código de Aplicación: EMBOL
- *   Código de Objeto: TblUsuarioRepository
+ *   Código de Objeto: TblUserRepository
  *   Descripción: Repositorio JPA para operaciones en la tabla TBL_USUARIO (Oracle)
  *   Author Prog: Douglas Javieri / Camila Ledezma
  *----------------------------------------
@@ -23,7 +23,7 @@ import java.util.Optional;
  */
 
 @Repository
-public interface TblUsuarioRepository extends JpaRepository<TblUsuario, Long> {
+public interface TblUserRepository extends JpaRepository<TblUsuario, Long> {
 
     Optional<TblUsuario> findByUsernameIgnoreCase(String username);
 

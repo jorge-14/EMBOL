@@ -11,7 +11,7 @@ import java.util.List;
 /*
  *----------------------------------------
  *   Código de Aplicación: EMBOL
- *   Código de Objeto: TblUsuarioGrupoRepository
+ *   Código de Objeto: TblUserGroupRepository
  *   Descripción: Repositorio JPA para la entidad intermedia TblUsuarioGrupo
  *   Author Prog: Camila Ledezma
  *----------------------------------------
@@ -21,7 +21,7 @@ import java.util.List;
  */
 
 @Repository
-public interface TblUsuarioGrupoRepository extends JpaRepository<TblUsuarioGrupo, Long> {
+public interface TblUserGroupRepository extends JpaRepository<TblUsuarioGrupo, Long> {
 
     List<TblUsuarioGrupo> findByUsuario(TblUsuario usuario);
 

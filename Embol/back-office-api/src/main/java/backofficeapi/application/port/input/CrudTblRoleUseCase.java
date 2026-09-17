@@ -1,12 +1,12 @@
 package backofficeapi.application.port.input;
 
-import backofficeapi.domain.model.TblRolModel;
+import backofficeapi.domain.model.TblRoleModel;
 
 /*
  *----------------------------------------
- *   Código de Aplicación:
- *   Código de Objeto:
- *   Descripción:
+ *   Código de Aplicación: EMBOL
+ *   Código de Objeto: CrudTblRoleUseCase
+ *   Descripción: Puerto de entrada para casos de uso CRUD de Role
  *   Author Prog: Jorge Luis Choque Callizaya
  *----------------------------------------
  *   Fecha | Autor | Comentario
@@ -14,7 +14,7 @@ import backofficeapi.domain.model.TblRolModel;
  *----------------------------------------
  */
 
-public interface CrudTblRolUseCase {
+public interface CrudTblRoleUseCase {
 
-    TblRolModel createRole(TblRolModel tblRolModel);
+    TblRoleModel createRole(TblRoleModel tblRoleModel);
 }

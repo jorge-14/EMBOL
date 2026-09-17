@@ -1,13 +1,13 @@
 package backofficeapi.infrastructure.adapter.input.rest;
 
-import backofficeapi.application.port.input.CrudTblUsuarioUseCase;
-import backofficeapi.domain.model.TblUsuarioModel;
+import backofficeapi.application.port.input.CrudTblUserUseCase;
+import backofficeapi.domain.model.TblUserModel;
 import backofficeapi.infrastructure.adapter.input.rest.dto.ResponseBody;
 import backofficeapi.infrastructure.adapter.input.rest.dto.ResponsePage;
-import backofficeapi.infrastructure.adapter.input.rest.mapper.TblUsuarioRestMapper;
-import backofficeapi.infrastructure.adapter.input.rest.request.TblUsuarioCreateRequestDto;
-import backofficeapi.infrastructure.adapter.input.rest.request.TblUsuarioUpdateRequestDto;
-import backofficeapi.infrastructure.adapter.input.rest.response.TblUsuarioResponseDto;
+import backofficeapi.infrastructure.adapter.input.rest.mapper.TblUserRestMapper;
+import backofficeapi.infrastructure.adapter.input.rest.request.TblUserCreateRequestDto;
+import backofficeapi.infrastructure.adapter.input.rest.request.TblUserUpdateRequestDto;
+import backofficeapi.infrastructure.adapter.input.rest.response.TblUserResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +31,8 @@ import java.util.List;
 /*
  *----------------------------------------
  *   Código de Aplicación: EMBOL
- *   Código de Objeto: TblUsuarioController
- *   Descripción: Controlador REST para operaciones CRUD de TblUsuario (TBL_USUARIO)
+ *   Código de Objeto: TblUserController
+ *   Descripción: Controlador REST para operaciones CRUD de TblUser (TBL_USUARIO)
  *   Author Prog: Douglas Javieri / Camila Ledezma
  *----------------------------------------
  *   Fecha | Autor | Comentario
@@ -45,46 +45,46 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/tbl-usuario")
 @RequiredArgsConstructor
-public class TblUsuarioController {
+public class TblUserController {
 
-    private final CrudTblUsuarioUseCase crudTblUsuarioUseCase;
-    private final TblUsuarioRestMapper mapper;
+    private final CrudTblUserUseCase crudTblUserUseCase;
+    private final TblUserRestMapper mapper;
 
     @PostMapping("/create-user")
-    public ResponseEntity<ResponseBody<TblUsuarioResponseDto>> createUser(
-            @Valid @RequestBody TblUsuarioCreateRequestDto request) {
+    public ResponseEntity<ResponseBody<TblUserResponseDto>> createUser(
+            @Valid @RequestBody TblUserCreateRequestDto request) {
         log.info("Iniciando creación de usuario con username: {}", request.getUsername());
-        TblUsuarioModel model = mapper.toModelCreate(request);
-        TblUsuarioModel created = crudTblUsuarioUseCase.createUser(model);
-        TblUsuarioResponseDto response = mapper.toResponse(created);
+        TblUserModel model = mapper.toModelCreate(request);
+        TblUserModel created = crudTblUserUseCase.createUser(model);
+        TblUserResponseDto response = mapper.toResponse(created);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ResponseBody.success("Usuario creado exitosamente", response));
     }
 
     @PutMapping("/update-user/{id}")
-    public ResponseEntity<ResponseBody<TblUsuarioResponseDto>> updateUser(
+    public ResponseEntity<ResponseBody<TblUserResponseDto>> updateUser(
             @PathVariable Long id,
-            @Valid @RequestBody TblUsuarioUpdateRequestDto request) {
+            @Valid @RequestBody TblUserUpdateRequestDto request) {
         log.info("Actualizando usuario con ID: {}", id);
-        TblUsuarioModel model = mapper.toModelUpdate(request);
-        TblUsuarioModel updated = crudTblUsuarioUseCase.updateUser(id, model);
-        TblUsuarioResponseDto response = mapper.toResponse(updated);
+        TblUserModel model = mapper.toModelUpdate(request);
+        TblUserModel updated = crudTblUserUseCase.updateUser(id, model);
+        TblUserResponseDto response = mapper.toResponse(updated);
 
         return ResponseEntity.ok(ResponseBody.success("Usuario actualizado exitosamente", response));
     }
 
     @GetMapping("/get-all-users")
-    public ResponseEntity<ResponseBody<List<TblUsuarioResponseDto>>> listAllUsers() {
+    public ResponseEntity<ResponseBody<List<TblUserResponseDto>>> listAllUsers() {
         log.info("Consultando listado general de usuarios");
-        List<TblUsuarioResponseDto> response = mapper.toResponseList(crudTblUsuarioUseCase.listAllUsers());
+        List<TblUserResponseDto> response = mapper.toResponseList(crudTblUserUseCase.listAllUsers());
         return ResponseEntity.ok(ResponseBody.success("Usuarios listados exitosamente", response));
     }
 
     @GetMapping("/get-user/{id}")
-    public ResponseEntity<ResponseBody<TblUsuarioResponseDto>> getUserById(@PathVariable Long id) {
+    public ResponseEntity<ResponseBody<TblUserResponseDto>> getUserById(@PathVariable Long id) {
         log.info("Consultando usuario con ID: {}", id);
-        return crudTblUsuarioUseCase.getUserById(id)
+        return crudTblUserUseCase.getUserById(id)
                 .map(mapper::toResponse)
                 .map(res -> ResponseEntity.ok(ResponseBody.success("Usuario encontrado exitosamente", res)))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -92,9 +92,9 @@ public class TblUsuarioController {
     }
 
     @GetMapping("/get-user-by-username/{username}")
-    public ResponseEntity<ResponseBody<TblUsuarioResponseDto>> getUserByUsername(@PathVariable String username) {
+    public ResponseEntity<ResponseBody<TblUserResponseDto>> getUserByUsername(@PathVariable String username) {
         log.info("Consultando usuario por username: {}", username);
-        return crudTblUsuarioUseCase.getUserByUsername(username)
+        return crudTblUserUseCase.getUserByUsername(username)
                 .map(mapper::toResponse)
                 .map(res -> ResponseEntity.ok(ResponseBody.success("Usuario encontrado exitosamente", res)))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -102,7 +102,7 @@ public class TblUsuarioController {
     }
 
     @GetMapping("/paginated")
-    public ResponseEntity<ResponsePage<TblUsuarioResponseDto>> listPage(
+    public ResponseEntity<ResponsePage<TblUserResponseDto>> listPage(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "20") int size,
             @RequestParam(value = "sortBy", defaultValue = "modifiedDate") String sortBy,
@@ -110,29 +110,29 @@ public class TblUsuarioController {
         log.info("Consultando página de usuarios: page={}, size={}, sortBy={}, sortDir={}", page, size, sortBy,
                 sortDir);
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDir, sortBy));
-        Page<TblUsuarioModel> pageResult = crudTblUsuarioUseCase.getListPageUsers(pageable);
-        ResponsePage<TblUsuarioResponseDto> response = ResponsePage.from(pageResult, mapper::toResponse);
+        Page<TblUserModel> pageResult = crudTblUserUseCase.getListPageUsers(pageable);
+        ResponsePage<TblUserResponseDto> response = ResponsePage.from(pageResult, mapper::toResponse);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/delete-user/{id}")
     public ResponseEntity<ResponseBody<Void>> deleteUser(@PathVariable Long id) {
         log.info("Eliminando lógicamente usuario con ID: {}", id);
-        crudTblUsuarioUseCase.deleteUserById(id);
+        crudTblUserUseCase.deleteUserById(id);
         return ResponseEntity.ok(ResponseBody.success("Usuario eliminado exitosamente", null));
     }
 
     @PutMapping("/activate-user/{id}")
-    public ResponseEntity<ResponseBody<TblUsuarioResponseDto>> activateUser(@PathVariable Long id) {
+    public ResponseEntity<ResponseBody<TblUserResponseDto>> activateUser(@PathVariable Long id) {
         log.info("Activando usuario con ID: {}", id);
-        TblUsuarioModel activated = crudTblUsuarioUseCase.activateUserById(id);
+        TblUserModel activated = crudTblUserUseCase.activateUserById(id);
         return ResponseEntity.ok(ResponseBody.success("Usuario activado exitosamente", mapper.toResponse(activated)));
     }
 
     @PutMapping("/deactivate-user/{id}")
-    public ResponseEntity<ResponseBody<TblUsuarioResponseDto>> deactivateUser(@PathVariable Long id) {
+    public ResponseEntity<ResponseBody<TblUserResponseDto>> deactivateUser(@PathVariable Long id) {
         log.info("Desactivando usuario con ID: {}", id);
-        TblUsuarioModel deactivated = crudTblUsuarioUseCase.deactivateUserById(id);
+        TblUserModel deactivated = crudTblUserUseCase.deactivateUserById(id);
         return ResponseEntity
                 .ok(ResponseBody.success("Usuario desactivado exitosamente", mapper.toResponse(deactivated)));
     }

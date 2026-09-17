@@ -46,7 +46,7 @@ public class TblGroupController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/paginated")
+    @GetMapping("/paginated-group")
     public ResponseEntity<ResponsePage<TblGroupResponseDto>> listPage(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "20") int size,
@@ -58,4 +58,12 @@ public class TblGroupController {
         return ResponseEntity.ok(response);
     }
 
+    @PutMapping("/update-group/{id}")
+    public ResponseEntity<TblGroupResponseDto> updateGroup(@PathVariable Long id,
+                                                           @RequestBody TblGroupRequestDto tblGroupRequestDto) {
+        TblGroupModel model = tblGroupRestMapper.toModel(tblGroupRequestDto);
+        TblGroupModel update = crudTblGroupUseCase.updateGroup(id, model);
+        TblGroupResponseDto response  = tblGroupRestMapper.toResponse(update);
+        return ResponseEntity.ok(response);
+    }
 }

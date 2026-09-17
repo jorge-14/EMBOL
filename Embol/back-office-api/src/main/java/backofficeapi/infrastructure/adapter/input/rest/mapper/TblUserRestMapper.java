@@ -1,12 +1,10 @@
 package backofficeapi.infrastructure.adapter.input.rest.mapper;
 
 import backofficeapi.domain.enums.UserStatus;
-import backofficeapi.domain.model.TblUsuarioModel;
-import backofficeapi.infrastructure.adapter.input.rest.request.TblUsuarioCreateRequestDto;
-import backofficeapi.infrastructure.adapter.input.rest.request.TblUsuarioUpdateRequestDto;
-import backofficeapi.infrastructure.adapter.input.rest.response.TblUsuarioPageResponseDto;
-import backofficeapi.infrastructure.adapter.input.rest.response.TblUsuarioResponseDto;
-import org.springframework.data.domain.Page;
+import backofficeapi.domain.model.TblUserModel;
+import backofficeapi.infrastructure.adapter.input.rest.request.TblUserCreateRequestDto;
+import backofficeapi.infrastructure.adapter.input.rest.request.TblUserUpdateRequestDto;
+import backofficeapi.infrastructure.adapter.input.rest.response.TblUserResponseDto;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,8 +12,8 @@ import java.util.List;
 /*
  *----------------------------------------
  *   Código de Aplicación: EMBOL
- *   Código de Objeto: TblUsuarioRestMapper
- *   Descripción: Mapper REST entre DTOs y TblUsuarioModel con soporte para roles y grupos
+ *   Código de Objeto: TblUserRestMapper
+ *   Descripción: Mapper REST entre DTOs y TblUserModel con soporte para roles y grupos
  *   Author Prog: Douglas Javieri / Camila Ledezma
  *----------------------------------------
  *   Fecha | Autor | Comentario
@@ -25,13 +23,13 @@ import java.util.List;
  */
 
 @Component
-public class TblUsuarioRestMapper {
+public class TblUserRestMapper {
 
-    public TblUsuarioModel toModelCreate(TblUsuarioCreateRequestDto request) {
+    public TblUserModel toModelCreate(TblUserCreateRequestDto request) {
         if (request == null) {
             return null;
         }
-        return TblUsuarioModel.builder()
+        return TblUserModel.builder()
                 .username(request.getUsername())
                 .name(request.getName())
                 .lastname(request.getLastname())
@@ -42,11 +40,11 @@ public class TblUsuarioRestMapper {
                 .build();
     }
 
-    public TblUsuarioModel toModelUpdate(TblUsuarioUpdateRequestDto request) {
+    public TblUserModel toModelUpdate(TblUserUpdateRequestDto request) {
         if (request == null) {
             return null;
         }
-        return TblUsuarioModel.builder()
+        return TblUserModel.builder()
                 .name(request.getName())
                 .lastname(request.getLastname())
                 .email(request.getEmail())
@@ -56,11 +54,11 @@ public class TblUsuarioRestMapper {
                 .build();
     }
 
-    public TblUsuarioResponseDto toResponse(TblUsuarioModel model) {
+    public TblUserResponseDto toResponse(TblUserModel model) {
         if (model == null) {
             return null;
         }
-        return TblUsuarioResponseDto.builder()
+        return TblUserResponseDto.builder()
                 .id(model.getId())
                 .username(model.getUsername())
                 .name(model.getName())
@@ -80,25 +78,12 @@ public class TblUsuarioRestMapper {
                 .build();
     }
 
-    public List<TblUsuarioResponseDto> toResponseList(List<TblUsuarioModel> list) {
+    public List<TblUserResponseDto> toResponseList(List<TblUserModel> list) {
         if (list == null) {
             return List.of();
         }
         return list.stream()
                 .map(this::toResponse)
                 .toList();
-    }
-
-    public TblUsuarioPageResponseDto toPageResponse(Page<TblUsuarioModel> page) {
-        if (page == null) {
-            return null;
-        }
-        return TblUsuarioPageResponseDto.builder()
-                .content(toResponseList(page.getContent()))
-                .currentPage(page.getNumber())
-                .pageSize(page.getSize())
-                .totalElements(page.getTotalElements())
-                .totalPages(page.getTotalPages())
-                .build();
     }
 }

@@ -1,6 +1,6 @@
 package backofficeapi.infrastructure.adapter.ouput.jpa.entity;
 
-import backofficeapi.domain.enums.SEstadoRol;
+import backofficeapi.domain.enums.RoleStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -61,5 +61,5 @@ public class TblRol extends AuditableEntity {
 
     @Column(name = "SESTADOROL", nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
-    private SEstadoRol sEstado;
+    private RoleStatus sEstado;
 }
