@@ -1,4 +1,4 @@
-package backofficeapi.application.port.input;
+package backofficeapi.application.port.input.user;
 
 import backofficeapi.domain.model.TblUserModel;
 import org.springframework.data.domain.Page;
@@ -11,12 +11,12 @@ import java.util.Optional;
  *----------------------------------------
  *   Código de Aplicación: EMBOL
  *   Código de Objeto: CrudTblUserUseCase
- *   Descripción: Puerto de entrada para casos de uso de gestión de TblUser (TBL_USUARIO)
+ *   Descripción: Puerto de entrada para casos de uso CRUD de TblUser (TBL_USUARIO)
  *   Author Prog: Douglas Javieri / Camila Ledezma
  *----------------------------------------
  *   Fecha | Autor | Comentario
  *   11.09.2026 | Douglas Javieri | Creación Inicial
- *   16.09.2026 | Camila Ledezma | Métodos activate/deactivate y roles/grupos
+ *   16.09.2026 | Camila Ledezma | Integración de roles y grupos
  *----------------------------------------
  */
 
@@ -35,8 +35,4 @@ public interface CrudTblUserUseCase {
     Page<TblUserModel> getListPageUsers(Pageable pageable);
 
     void deleteUserById(Long id);
-
-    TblUserModel activateUserById(Long id);
-
-    TblUserModel deactivateUserById(Long id);
 }

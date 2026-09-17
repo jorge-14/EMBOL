@@ -2,9 +2,9 @@ package backofficeapi.infrastructure.adapter.input.rest.mapper;
 
 import backofficeapi.domain.enums.UserStatus;
 import backofficeapi.domain.model.TblUserModel;
-import backofficeapi.infrastructure.adapter.input.rest.request.TblUserCreateRequestDto;
-import backofficeapi.infrastructure.adapter.input.rest.request.TblUserUpdateRequestDto;
-import backofficeapi.infrastructure.adapter.input.rest.response.TblUserResponseDto;
+import backofficeapi.infrastructure.adapter.input.rest.request.tblUser.TblUserCreateRequestDto;
+import backofficeapi.infrastructure.adapter.input.rest.request.tblUser.TblUserUpdateRequestDto;
+import backofficeapi.infrastructure.adapter.input.rest.response.tblUser.TblUserResponseDto;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

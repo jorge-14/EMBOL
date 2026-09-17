@@ -1,4 +1,4 @@
-package backofficeapi.infrastructure.adapter.input.rest.response;
+package backofficeapi.infrastructure.adapter.input.rest.response.tblUser;
 
 import backofficeapi.domain.enums.UserStatus;
 import lombok.AllArgsConstructor;
