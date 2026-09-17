@@ -10,7 +10,8 @@ module.exports = {
           DEFAULT: 'rgb(var(--color-brand) / <alpha-value>)',
           hover: 'rgb(var(--color-brand-hover) / <alpha-value>)'
         },
-        'table-accent': 'rgb(var(--color-table-accent) / <alpha-value>)'
+        'table-header-accent': 'rgb(var(--color-table-header-accent) / <alpha-value>)',
+        'table-footer-accent': 'rgb(var(--color-table-footer-accent) / <alpha-value>)'
       }
     },
   },

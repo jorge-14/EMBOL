@@ -11,7 +11,8 @@
     /* RGB format for Tailwind compatibility (allows opacity modifiers like bg-brand/50) */
     --color-brand: 226 30 22; /* #e21e16 */
     --color-brand-hover: 185 28 28; /* Red 700 */
-    --color-table-accent: 162 167 169; /* #a2a7a9 */
+    --color-table-header-accent: 162 167 169; /* #a2a7a9 */
+    --color-table-footer-accent: 162 167 169; /* #a2a7a9 */
     /* azul oscuro es : 30 58 138 */
   }
 
@@ -20,6 +21,8 @@
     :root {
       --color-brand: 30 58 138; /* Azul oscuro */
       --color-brand-hover: 23 37 84; /* Un azul un poco más oscuro para el hover */
+      --color-table-header-accent: 75 85 99; /* Tailwind gray-600 */
+      --color-table-footer-accent: 75 85 99; /* Tailwind gray-600 */
     }
   }
 

@@ -1,26 +1,44 @@
 @if (isOpen()) {
   <div class="fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
     <!-- Backdrop -->
-    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" (click)="onCancel()"></div>
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
+         [class.backdrop-blur-sm]="config().position !== 'right'"
+         (click)="onCancel()"></div>
 
-    <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-      <div class="relative transform rounded-xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg animate-in fade-in zoom-in duration-200">
-
-        <!-- Header -->
-        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-          <h3 class="text-lg font-bold text-gray-900" id="modal-title">
-            {{ config().title }}
-          </h3>
-          <button (click)="onCancel()" class="text-gray-400 hover:text-gray-500 transition-colors">
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+    @if (config().position === 'right') {
+      <div class="flex min-h-full justify-end items-stretch pl-10">
+        <div class="w-screen max-w-md transform transition-all animate-in slide-in-from-right duration-300 relative bg-white shadow-2xl flex flex-col">
+          <ng-container *ngTemplateOutlet="formContent"></ng-container>
         </div>
+      </div>
+    } @else {
+      <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+        <div class="relative transform rounded-xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg animate-in fade-in zoom-in duration-200 flex flex-col">
+          <ng-container *ngTemplateOutlet="formContent"></ng-container>
+        </div>
+      </div>
+    }
+  </div>
+}
 
-        <!-- Form Body -->
-        <form [formGroup]="form" (ngSubmit)="onSubmit()">
-          <div class="bg-white px-6 py-5 overflow-visible">
+<ng-template #formContent>
+        <!-- Form Wrapper -->
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col flex-1">
+          <!-- Header -->
+          <div class="sticky top-0 z-30 bg-gray-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between"
+               [class.rounded-t-xl]="config().position !== 'right'">
+            <h3 class="text-lg font-bold text-brand" id="modal-title">
+              {{ config().title }}
+            </h3>
+            <button type="button" (click)="onCancel()" class="text-gray-400 hover:text-gray-500 transition-colors">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Form Body -->
+          <div class="bg-white px-6 py-5 flex-1">
             <div class="grid grid-cols-2 gap-x-4 gap-y-4">
               @for (field of config().fields; track field.key) {
                 <div [ngClass]="getFieldClasses(field)">
@@ -71,6 +89,7 @@
                       [placeholder]="field.placeholder || 'Seleccione...'"
                       [formControlName]="field.key"
                       [id]="field.key"
+                      [isInvalid]="(form.get(field.key)?.touched && form.get(field.key)?.invalid) || false"
                     ></app-horizontal-select>
                   }
 
@@ -89,6 +108,36 @@
                     </div>
                   }
 
+                  <!-- Multi-Select (Pills) -->
+                  @else if (field.type === 'multi-select') {
+                    <div class="flex flex-wrap gap-2 mt-1">
+                      @for (opt of field.options; track opt.value) {
+                        <label class="flex-[0_0_31%] border rounded-md py-2 px-1 text-center text-sm cursor-pointer transition-colors"
+                               [class.bg-brand]="form.value[field.key]?.includes(opt.value)"
+                               [class.text-white]="form.value[field.key]?.includes(opt.value)"
+                               [class.border-brand]="form.value[field.key]?.includes(opt.value)"
+                               [class.text-gray-700]="!form.value[field.key]?.includes(opt.value)">
+                          <input type="checkbox" class="hidden" [value]="opt.value" (change)="onMultiSelectChange(field.key, opt.value, $event)">
+                          {{ opt.label }}
+                        </label>
+                      }
+                    </div>
+                  }
+
+                  <!-- Toggle -->
+                  @else if (field.type === 'toggle') {
+                    <label class="relative inline-flex items-center cursor-pointer mt-1">
+                      <input type="checkbox" [formControlName]="field.key" class="sr-only peer">
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
+                      <span class="ml-3 text-sm font-medium text-gray-700">{{ field.placeholder || 'Activo' }}</span>
+                    </label>
+                  }
+
+                  <!-- Slider -->
+                  @else if (field.type === 'slider') {
+                    <input type="range" [formControlName]="field.key" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand mt-2">
+                  }
+
                   <!-- Error message -->
                   @if (form.get(field.key)?.touched && form.get(field.key)?.invalid) {
                     <p class="mt-1 text-xs text-red-600">
@@ -102,10 +151,17 @@
           </div>
 
           <!-- Footer Actions -->
-          <div class="bg-gray-50 px-6 py-4 flex flex-row-reverse gap-3 border-t border-gray-200">
+          <div class="sticky bottom-0 z-30 bg-gray-50 px-6 py-4 flex flex-row-reverse gap-3 border-t border-gray-200 mt-auto"
+               [class.rounded-b-xl]="config().position !== 'right'">
             <button
               type="submit"
-              class="inline-flex w-full justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 transition-all sm:w-auto"
+              [disabled]="form.invalid"
+              class="inline-flex w-full justify-center rounded-md px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all sm:w-auto"
+              [class.bg-brand]="!form.invalid"
+              [class.hover:bg-brand-hover]="!form.invalid"
+              [class.bg-gray-400]="form.invalid"
+              [class.cursor-not-allowed]="form.invalid"
+              [class.opacity-50]="form.invalid"
             >
               {{ config().submitLabel || 'Guardar' }}
             </button>
@@ -118,7 +174,4 @@
             </button>
           </div>
         </form>
-      </div>
-    </div>
-  </div>
-}
+</ng-template>

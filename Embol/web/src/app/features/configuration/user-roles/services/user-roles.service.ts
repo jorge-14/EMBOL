@@ -42,4 +42,19 @@ export class UserRolesService {
   getPagedGroups(page = 0, size = 20): Observable<Page<GrupoRow>> {
     return paginateArray(MOCK_GROUPS, page, size);
   }
+
+  // ── Listas Completas (Sin Paginación) ───────────────────────────────────────
+  getRoleList(): Observable<RolRow[]> {
+    return new Observable(obs => {
+      obs.next(MOCK_ROLES);
+      obs.complete();
+    });
+  }
+
+  getGroupList(): Observable<GrupoRow[]> {
+    return new Observable(obs => {
+      obs.next(MOCK_GROUPS);
+      obs.complete();
+    });
+  }
 }

@@ -49,3 +49,12 @@
   >
   </app-data-table>
 }
+
+@if (newUserModalConfig()) {
+  <app-dynamic-form
+    [config]="newUserModalConfig()!"
+    [isOpen]="isNewUserModalOpen()"
+    (formSubmit)="onNewUserSubmit($event)"
+    (close)="onNewUserCancel()"
+  ></app-dynamic-form>
+}

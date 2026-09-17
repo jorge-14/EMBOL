@@ -1,16 +1,18 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { USER_ROLES_IMPORTS } from '../../enums/user-roles-imports';
+import { ROLES_IMPORTS } from '../../enums/user-roles-imports';
 import { UserRolesService } from '../../services/user-roles.service';
 import { RolRow } from '../../models/roles/rol.model';
-import { PageMetadata } from '../../../../../shared/models/pagination.model';
 import { DataTableColumn, DataTableRowAction } from '../../../../../shared/components/data-table/models/data-table.model';
 import { buildRolesColumns } from '../../configs/roles/roles-columns.config';
 import { buildRolRowActions } from '../../configs/roles/roles-actions.config';
+import { buildNuevoRolConfig } from '../../configs/roles/roles-form.config';
+import { DynamicFormConfig } from '../../../../../shared/components/dynamic-form/models/dynamic-form.model';
+import { PageMetadata } from '../../../../../shared/models/pagination.model';
 
 @Component({
   selector: 'app-roles',
   standalone: true,
-  imports: [...USER_ROLES_IMPORTS],
+  imports: [...ROLES_IMPORTS],
   templateUrl: './roles.component.html',
 })
 export class RolesComponent implements OnInit {
@@ -57,10 +59,28 @@ export class RolesComponent implements OnInit {
     });
   }
 
+  isNewRoleModalOpen = signal(false);
+  newRoleModalConfig = signal<DynamicFormConfig | null>(null);
+
   // ── 6. Acciones de fila ────────────────────────────────────────────────────
-  onEdit(id: any): void   { console.log('[Roles] Editar →', id);   /* TODO: popup centrado */ }
-  onDelete(id: any): void { console.log('[Roles] Eliminar →', id); /* TODO: confirm centrado */ }
-  onAdd(): void           { console.log('[Roles] Nuevo rol');       /* TODO: popup centrado  */ }
+  onEdit(id: any): void       { console.log('[Roles] Editar →', id);      /* TODO: form */ }
+  onDeactivate(id: any): void { console.log('[Roles] Desactivar →', id);  /* TODO: confirm */ }
+  onDelete(id: any): void     { this.onDeactivate(id); }
+
+  onAdd(): void {
+    this.newRoleModalConfig.set(buildNuevoRolConfig());
+    this.isNewRoleModalOpen.set(true);
+  }
+
+  onNewRoleSubmit(data: any): void {
+    console.log('[Roles] Guardar →', data);
+    this.isNewRoleModalOpen.set(false);
+    this.loadRoles();
+  }
+
+  onNewRoleCancel(): void {
+    this.isNewRoleModalOpen.set(false);
+  }
 
   // ── 7. Paginación ──────────────────────────────────────────────────────────
   onPageChange(page: number): void {

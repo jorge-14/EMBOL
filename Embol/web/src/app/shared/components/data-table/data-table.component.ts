@@ -49,10 +49,10 @@ export class DataTableComponent {
 
   showFilter      = input<boolean>(false);
   showCustomFilters = input<boolean>(false);
-  headerBgClass   = input<string>('bg-table-accent');
+  headerBgClass   = input<string>('bg-table-header-accent');
   headerTextClass = input<string>('text-gray-900');
 
-  totalsBgClass   = input<string>('bg-table-accent');
+  totalsBgClass   = input<string>('bg-table-footer-accent');
   totalsTextClass = input<string>('text-gray-900');
 
   footerBgClass   = input<string>('bg-gray-100');

@@ -1,16 +1,18 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { USER_ROLES_IMPORTS } from '../../enums/user-roles-imports';
+import { GRUPOS_IMPORTS } from '../../enums/user-roles-imports';
 import { UserRolesService } from '../../services/user-roles.service';
 import { GrupoRow } from '../../models/grupos/grupo.model';
-import { PageMetadata } from '../../../../../shared/models/pagination.model';
 import { DataTableColumn, DataTableRowAction } from '../../../../../shared/components/data-table/models/data-table.model';
 import { buildGruposColumns } from '../../configs/grupos/grupos-columns.config';
 import { buildGrupoRowActions } from '../../configs/grupos/grupos-actions.config';
+import { buildNuevoGrupoConfig } from '../../configs/grupos/grupos-form.config';
+import { DynamicFormConfig } from '../../../../../shared/components/dynamic-form/models/dynamic-form.model';
+import { PageMetadata } from '../../../../../shared/models/pagination.model';
 
 @Component({
   selector: 'app-grupos',
   standalone: true,
-  imports: [...USER_ROLES_IMPORTS],
+  imports: [...GRUPOS_IMPORTS],
   templateUrl: './grupos.component.html',
 })
 export class GruposComponent implements OnInit {
@@ -57,10 +59,28 @@ export class GruposComponent implements OnInit {
     });
   }
 
+  isNewGroupModalOpen = signal(false);
+  newGroupModalConfig = signal<DynamicFormConfig | null>(null);
+
   // ── 6. Acciones de fila ────────────────────────────────────────────────────
-  onEdit(id: any): void   { console.log('[Grupos] Editar →', id);   /* TODO: popup centrado */ }
-  onDelete(id: any): void { console.log('[Grupos] Eliminar →', id); /* TODO: confirm centrado */ }
-  onAdd(): void           { console.log('[Grupos] Nuevo grupo');     /* TODO: popup centrado  */ }
+  onEdit(id: any): void       { console.log('[Grupos] Editar →', id);      /* TODO: form */ }
+  onDeactivate(id: any): void { console.log('[Grupos] Desactivar →', id);  /* TODO: confirm */ }
+  onDelete(id: any): void     { this.onDeactivate(id); }
+  
+  onAdd(): void {
+    this.newGroupModalConfig.set(buildNuevoGrupoConfig());
+    this.isNewGroupModalOpen.set(true);
+  }
+
+  onNewGroupSubmit(data: any): void {
+    console.log('[Grupos] Guardar →', data);
+    this.isNewGroupModalOpen.set(false);
+    this.loadGroups();
+  }
+
+  onNewGroupCancel(): void {
+    this.isNewGroupModalOpen.set(false);
+  }
 
   // ── 7. Paginación ──────────────────────────────────────────────────────────
   onPageChange(page: number): void {
