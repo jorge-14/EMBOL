@@ -1,4 +1,4 @@
-package backofficeapi.application.port.input;
+package backofficeapi.application.port.input.role;
 
 import backofficeapi.domain.model.TblRoleModel;
 

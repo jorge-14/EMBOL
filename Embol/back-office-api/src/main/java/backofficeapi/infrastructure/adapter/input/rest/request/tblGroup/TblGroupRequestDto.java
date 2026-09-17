@@ -1,5 +1,6 @@
 package backofficeapi.infrastructure.adapter.input.rest.request.tblGroup;
 
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 /*
@@ -22,6 +23,9 @@ import lombok.*;
 @AllArgsConstructor
 public class TblGroupRequestDto {
 
+    @Size(max = 40, message = "El nombre del grupo no debe exceder los 40 caracteres.")
     private String name;
+
+    @Size(max = 255, message = "La descripción del grupo no debe exceder los 40 caracteres.")
     private String description;
 }

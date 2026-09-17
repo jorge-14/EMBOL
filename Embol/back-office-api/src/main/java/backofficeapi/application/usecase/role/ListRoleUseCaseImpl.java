@@ -1,6 +1,6 @@
-package backofficeapi.application.usecase;
+package backofficeapi.application.usecase.role;
 
-import backofficeapi.application.port.input.ListRoleUseCase;
+import backofficeapi.application.port.input.role.ListRoleUseCase;
 import backofficeapi.application.port.output.TblRoleRepositoryPort;
 import backofficeapi.domain.model.TblRoleModel;
 import lombok.extern.slf4j.Slf4j;

@@ -9,11 +9,11 @@ export type { UserRow, RolRow, GrupoRow };
 
 // ── Usuarios ──────────────────────────────────────────────────────────────────
 export const MOCK_USERS: UserRow[] = [
-  { id: 1, initials: 'JP', color: 'bg-red-600',    usuario: 'jperez',  nombreCompleto: 'Juan Pérez',   correo: 'jperez@embol.bo',  planta: '', cargo: '', rol: 'Jefe de Planta',  grupo: 'IT - Infraestructura', estado: 'Activo'   },
-  { id: 2, initials: 'ML', color: 'bg-gray-600',   usuario: 'mlopez',  nombreCompleto: 'María López',  correo: 'mlopez@embol.bo',  planta: '', cargo: '', rol: 'Oficina Central', grupo: 'Finanzas',             estado: 'Activo'   },
-  { id: 3, initials: 'CV', color: 'bg-purple-600', usuario: 'cvera',   nombreCompleto: 'Carlos Vera',  correo: 'cvera@embol.bo',   planta: '', cargo: '', rol: 'Rol Privado',     grupo: 'IT - Soporte',         estado: 'Activo'   },
-  { id: 4, initials: 'AR', color: 'bg-green-600',  usuario: 'arios',   nombreCompleto: 'Ana Ríos',     correo: 'arios@embol.bo',   planta: '', cargo: '', rol: 'Finanzas',        grupo: 'Marketing Digital',    estado: 'Activo'   },
-  { id: 5, initials: 'PS', color: 'bg-blue-900',   usuario: 'psuarez', nombreCompleto: 'Pedro Suárez', correo: 'psuarez@embol.bo', planta: '', cargo: '', rol: 'Consultor',       grupo: '',                     estado: 'Inactivo' },
+  { id: 1, initials: 'JP', color: 'bg-red-600',    usuario: 'jperez',  nombreCompleto: 'Juan Pérez',   correo: 'jperez@embol.bo',  planta: '', cargo: '', roles: ['Jefe de Planta', 'Administrador'],  grupos: ['IT - Infraestructura', 'Finanzas'], estado: 'Activo'   },
+  { id: 2, initials: 'ML', color: 'bg-gray-600',   usuario: 'mlopez',  nombreCompleto: 'María López',  correo: 'mlopez@embol.bo',  planta: '', cargo: '', roles: ['Oficina Central'], grupos: ['Finanzas'],             estado: 'Activo'   },
+  { id: 3, initials: 'CV', color: 'bg-purple-600', usuario: 'cvera',   nombreCompleto: 'Carlos Vera',  correo: 'cvera@embol.bo',   planta: '', cargo: '', roles: ['Rol Privado'],     grupos: ['IT - Soporte'],         estado: 'Activo'   },
+  { id: 4, initials: 'AR', color: 'bg-green-600',  usuario: 'arios',   nombreCompleto: 'Ana Ríos',     correo: 'arios@embol.bo',   planta: '', cargo: '', roles: ['Finanzas', 'Oficina Central'],        grupos: ['Marketing Digital'],    estado: 'Activo'   },
+  { id: 5, initials: 'PS', color: 'bg-blue-900',   usuario: 'psuarez', nombreCompleto: 'Pedro Suárez', correo: 'psuarez@embol.bo', planta: '', cargo: '', roles: ['Consultor'],       grupos: [],                     estado: 'Inactivo' },
 ];
 
 // ── Roles ─────────────────────────────────────────────────────────────────────
@@ -28,8 +28,8 @@ export const MOCK_ROLES: RolRow[] = [
 
 // ── Grupos ────────────────────────────────────────────────────────────────────
 export const MOCK_GROUPS: GrupoRow[] = [
-  { id: 1, nombre: 'IT - Infraestructura', descripcion: 'Equipo de infraestructura tecnológica', estado: 'Activo' },
-  { id: 2, nombre: 'IT - Soporte',         descripcion: 'Soporte técnico al usuario final',       estado: 'Activo' },
-  { id: 3, nombre: 'Marketing Digital',    descripcion: 'Equipo de marketing y comunicación',      estado: 'Activo' },
-  { id: 4, nombre: 'Finanzas',             descripcion: 'Área financiera y contabilidad',          estado: 'Activo' },
+  { id: 1, name: 'IT - Infraestructura', description: 'Equipo de infraestructura tecnológica', estado: 'Activo' },
+  { id: 2, name: 'IT - Soporte',         description: 'Soporte técnico al usuario final',       estado: 'Activo' },
+  { id: 3, name: 'Marketing Digital',    description: 'Gestión de redes y campañas',            estado: 'Activo' },
+  { id: 4, name: 'Finanzas',             description: 'Contabilidad y tesorería',               estado: 'Activo' },
 ];
