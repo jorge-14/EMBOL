@@ -1,16 +1,17 @@
 package backofficeapi.infrastructure.adapter.ouput.jpa.repository;
 
-import backofficeapi.domain.model.TblRolModel;
+import backofficeapi.domain.model.TblRoleModel;
 import backofficeapi.infrastructure.adapter.ouput.jpa.entity.TblRol;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 /*
  *----------------------------------------
  *   Código de Aplicación: EMBOL
- *   Código de Objeto: TblRolRepository
+ *   Código de Objeto: TblRoleRepository
  *   Descripción: Repositorio JPA para operaciones en tabla TBL_ROL
  *   Author Prog: Camila Ledezma
  *----------------------------------------
@@ -20,10 +21,10 @@ import java.util.List;
  */
 
 @Repository
-public interface TblRolRepository extends JpaRepository<TblRol, Long> {
+public interface TblRoleRepository extends JpaRepository<TblRol, Long> {
 
-    @Query("SELECT new backofficeapi.domain.model.TblRolModel(t.iIdRol, t.sNombre) " +
+    @Query("SELECT new backofficeapi.domain.model.TblRoleModel(t.iIdRol, t.sNombre) " +
             "FROM TblRol t " +
             "ORDER BY t.sNombre ASC")
-    List<TblRolModel> listRole();
+    List<TblRoleModel> listRole();
 }

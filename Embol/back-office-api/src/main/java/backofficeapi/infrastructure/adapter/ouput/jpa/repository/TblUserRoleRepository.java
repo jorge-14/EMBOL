@@ -10,7 +10,7 @@ import java.util.List;
 /*
  *----------------------------------------
  *   Código de Aplicación: EMBOL
- *   Código de Objeto: TblUsuarioRolRepository
+ *   Código de Objeto: TblUserRoleRepository
  *   Descripción: Repositorio JPA para la entidad intermedia TblUsuarioRol
  *   Author Prog: Camila Ledezma
  *----------------------------------------
@@ -20,7 +20,7 @@ import java.util.List;
  */
 
 @Repository
-public interface TblUsuarioRolRepository extends JpaRepository<TblUsuarioRol, Long> {
+public interface TblUserRoleRepository extends JpaRepository<TblUsuarioRol, Long> {
 
     List<TblUsuarioRol> findByUsuario(TblUsuario usuario);
 

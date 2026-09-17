@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 /*
  *----------------------------------------
  *   Código de Aplicación: EMBOL
- *   Código de Objeto: TblUsuarioNotFoundException
+ *   Código de Objeto: TblUserNotFoundException
  *   Descripción: Excepción de negocio cuando no se encuentra un usuario
  *   Author Prog: Douglas Javieri / Camila Ledezma
  *----------------------------------------
@@ -15,13 +15,13 @@ import org.springframework.http.HttpStatus;
  *----------------------------------------
  */
 
-public class TblUsuarioNotFoundException extends BusinessApiException {
+public class TblUserNotFoundException extends BusinessApiException {
 
-    public TblUsuarioNotFoundException(Long id) {
+    public TblUserNotFoundException(Long id) {
         super(HttpStatus.NOT_FOUND, "Usuario no encontrado con ID: " + id);
     }
 
-    public TblUsuarioNotFoundException(String username) {
+    public TblUserNotFoundException(String username) {
         super(HttpStatus.NOT_FOUND, "Usuario no encontrado con el nombre de usuario: " + username);
     }
 }

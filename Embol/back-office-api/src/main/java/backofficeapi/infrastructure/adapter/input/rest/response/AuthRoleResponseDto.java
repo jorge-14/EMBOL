@@ -1,6 +1,6 @@
 package backofficeapi.infrastructure.adapter.input.rest.response;
 
-import backofficeapi.domain.enums.SEstadoRol;
+import backofficeapi.domain.enums.RoleStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,5 +26,5 @@ public class AuthRoleResponseDto {
     private String name;
     private String description;
     private boolean baseRole;
-    private SEstadoRol roleStatus;
+    private RoleStatus roleStatus;
 }

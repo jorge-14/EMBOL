@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 /*
  *----------------------------------------
  *   Código de Aplicación: EMBOL
- *   Código de Objeto: TblUsuarioAlreadyExistsException
+ *   Código de Objeto: TblUserAlreadyExistsException
  *   Descripción: Excepción de negocio cuando un usuario ya existe
  *   Author Prog: Douglas Javieri / Camila Ledezma
  *----------------------------------------
@@ -15,9 +15,9 @@ import org.springframework.http.HttpStatus;
  *----------------------------------------
  */
 
-public class TblUsuarioAlreadyExistsException extends BusinessApiException {
+public class TblUserAlreadyExistsException extends BusinessApiException {
 
-    public TblUsuarioAlreadyExistsException(String identifier) {
+    public TblUserAlreadyExistsException(String identifier) {
         super(HttpStatus.CONFLICT, "Ya existe un usuario con el identificador: " + identifier);
     }
 }

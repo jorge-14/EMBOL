@@ -13,8 +13,8 @@ import java.util.List;
 /*
  *----------------------------------------
  *   Código de Aplicación: EMBOL
- *   Código de Objeto: TblUsuarioCreateRequestDto
- *   Descripción: DTO de solicitud para creación de TblUsuario (TBL_USUARIO) con roles y grupos
+ *   Código de Objeto: TblUserCreateRequestDto
+ *   Descripción: DTO de solicitud para creación de TblUser (TBL_USUARIO) con roles y grupos
  *   Author Prog: Douglas Javieri / Camila Ledezma
  *----------------------------------------
  *   Fecha | Autor | Comentario
@@ -27,7 +27,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TblUsuarioCreateRequestDto {
+public class TblUserCreateRequestDto {
 
     @NotBlank(message = "El nombre de usuario es obligatorio")
     @Size(max = 50, message = "El nombre de usuario no debe exceder los 50 caracteres")

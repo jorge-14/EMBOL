@@ -14,8 +14,8 @@ import java.util.List;
 /*
  *----------------------------------------
  *   Código de Aplicación: EMBOL
- *   Código de Objeto: TblUsuarioUpdateRequestDto
- *   Descripción: DTO de solicitud para actualización de TblUsuario (TBL_USUARIO) con roles y grupos
+ *   Código de Objeto: TblUserUpdateRequestDto
+ *   Descripción: DTO de solicitud para actualización de TblUser (TBL_USUARIO) con roles y grupos
  *   Author Prog: Douglas Javieri / Camila Ledezma
  *----------------------------------------
  *   Fecha | Autor | Comentario
@@ -28,7 +28,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TblUsuarioUpdateRequestDto {
+public class TblUserUpdateRequestDto {
 
     @NotBlank(message = "El nombre es obligatorio")
     @Size(max = 100, message = "El nombre no debe exceder los 100 caracteres")

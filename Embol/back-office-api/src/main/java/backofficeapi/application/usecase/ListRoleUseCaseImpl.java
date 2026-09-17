@@ -1,11 +1,12 @@
 package backofficeapi.application.usecase;
 
 import backofficeapi.application.port.input.ListRoleUseCase;
-import backofficeapi.application.port.output.TblRolRepositoryPort;
-import backofficeapi.domain.model.TblRolModel;
+import backofficeapi.application.port.output.TblRoleRepositoryPort;
+import backofficeapi.domain.model.TblRoleModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 /*
@@ -24,15 +25,15 @@ import java.util.List;
 @Service
 public class ListRoleUseCaseImpl implements ListRoleUseCase {
 
-    private final TblRolRepositoryPort tblRolRepositoryPort;
+    private final TblRoleRepositoryPort tblRoleRepositoryPort;
 
-    public ListRoleUseCaseImpl(TblRolRepositoryPort tblRolRepositoryPort){
-        this.tblRolRepositoryPort = tblRolRepositoryPort;
+    public ListRoleUseCaseImpl(TblRoleRepositoryPort tblRoleRepositoryPort) {
+        this.tblRoleRepositoryPort = tblRoleRepositoryPort;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<TblRolModel> listRoleShort() {
-        return tblRolRepositoryPort.listRole();
+    public List<TblRoleModel> listRoleShort() {
+        return tblRoleRepositoryPort.listRole();
     }
 }
