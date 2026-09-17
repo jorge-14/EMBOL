@@ -1,6 +1,7 @@
 package backofficeapi.infrastructure.adapter.input.rest;
 
 import backofficeapi.application.port.input.group.CrudTblGroupUseCase;
+import backofficeapi.application.port.input.group.FindGroupByIdUseCase;
 import backofficeapi.infrastructure.adapter.input.rest.dto.ResponseBody;
 import backofficeapi.domain.model.TblGroupModel;
 import backofficeapi.infrastructure.adapter.input.rest.dto.ResponsePage;
@@ -31,12 +32,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/group")
 public class TblGroupController {
 
-    private final CrudTblGroupUseCase crudTblGroupUseCase;
     private final TblGroupRestMapper tblGroupRestMapper;
+    private final CrudTblGroupUseCase crudTblGroupUseCase;
+    private final FindGroupByIdUseCase findGroupByIdUseCase;
 
-    public TblGroupController(CrudTblGroupUseCase crudTblGroupUseCase, TblGroupRestMapper tblGroupRestMapper) {
+    public TblGroupController(CrudTblGroupUseCase crudTblGroupUseCase, TblGroupRestMapper tblGroupRestMapper,
+                              FindGroupByIdUseCase findGroupByIdUseCase) {
         this.crudTblGroupUseCase = crudTblGroupUseCase;
         this.tblGroupRestMapper = tblGroupRestMapper;
+        this.findGroupByIdUseCase = findGroupByIdUseCase;
     }
 
     @PostMapping("/create-group")
@@ -73,5 +77,12 @@ public class TblGroupController {
     public ResponseEntity<ResponseBody<Boolean>> deleteGroup(@PathVariable Long id) {
         Boolean delete = crudTblGroupUseCase.deleteGroup(id);
         return ResponseEntity.ok(ResponseBody.success("El grupo fue eliminado exitosamente", delete));
+    }
+
+    @GetMapping("/information-group-by-id/{id}")
+    public ResponseEntity<ResponseBody<TblGroupResponseDto>> informationGroupById(@PathVariable Long id) {
+        TblGroupModel information =  findGroupByIdUseCase.getInformationGroupById(id);
+        TblGroupResponseDto response  = tblGroupRestMapper.toResponse(information);
+        return ResponseEntity.ok(ResponseBody.success("La informacion del grupo fue armada exitosamente", response));
     }
 }

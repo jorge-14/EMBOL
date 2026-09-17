@@ -20,4 +20,5 @@ public interface TblGroupRepositoryPort {
     TblGroupModel saveGroup(TblGroupModel tblGroupModel);
     Page<TblGroupModel> getPageListGroup(Pageable pageable);
     Optional<TblGroupModel> getGroupById(Long id);
+    TblGroupModel getInformationById(Long id);
 }
