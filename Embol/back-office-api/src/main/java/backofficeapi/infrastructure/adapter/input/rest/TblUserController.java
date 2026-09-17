@@ -1,13 +1,14 @@
 package backofficeapi.infrastructure.adapter.input.rest;
 
-import backofficeapi.application.port.input.CrudTblUserUseCase;
+import backofficeapi.application.port.input.user.ChangeStatusUserUseCase;
+import backofficeapi.application.port.input.user.CrudTblUserUseCase;
 import backofficeapi.domain.model.TblUserModel;
 import backofficeapi.infrastructure.adapter.input.rest.dto.ResponseBody;
 import backofficeapi.infrastructure.adapter.input.rest.dto.ResponsePage;
 import backofficeapi.infrastructure.adapter.input.rest.mapper.TblUserRestMapper;
-import backofficeapi.infrastructure.adapter.input.rest.request.TblUserCreateRequestDto;
-import backofficeapi.infrastructure.adapter.input.rest.request.TblUserUpdateRequestDto;
-import backofficeapi.infrastructure.adapter.input.rest.response.TblUserResponseDto;
+import backofficeapi.infrastructure.adapter.input.rest.request.tblUser.TblUserCreateRequestDto;
+import backofficeapi.infrastructure.adapter.input.rest.request.tblUser.TblUserUpdateRequestDto;
+import backofficeapi.infrastructure.adapter.input.rest.response.tblUser.TblUserResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +49,7 @@ import java.util.List;
 public class TblUserController {
 
     private final CrudTblUserUseCase crudTblUserUseCase;
+    private final ChangeStatusUserUseCase changeStatusUserUseCase;
     private final TblUserRestMapper mapper;
 
     @PostMapping("/create-user")
@@ -125,14 +127,14 @@ public class TblUserController {
     @PutMapping("/activate-user/{id}")
     public ResponseEntity<ResponseBody<TblUserResponseDto>> activateUser(@PathVariable Long id) {
         log.info("Activando usuario con ID: {}", id);
-        TblUserModel activated = crudTblUserUseCase.activateUserById(id);
+        TblUserModel activated = changeStatusUserUseCase.activateUserById(id);
         return ResponseEntity.ok(ResponseBody.success("Usuario activado exitosamente", mapper.toResponse(activated)));
     }
 
     @PutMapping("/deactivate-user/{id}")
     public ResponseEntity<ResponseBody<TblUserResponseDto>> deactivateUser(@PathVariable Long id) {
         log.info("Desactivando usuario con ID: {}", id);
-        TblUserModel deactivated = crudTblUserUseCase.deactivateUserById(id);
+        TblUserModel deactivated = changeStatusUserUseCase.deactivateUserById(id);
         return ResponseEntity
                 .ok(ResponseBody.success("Usuario desactivado exitosamente", mapper.toResponse(deactivated)));
     }
