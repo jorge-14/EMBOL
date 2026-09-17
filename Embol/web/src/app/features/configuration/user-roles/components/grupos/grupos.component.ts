@@ -1,11 +1,11 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { GRUPOS_IMPORTS } from '../../enums/user-roles-imports';
-import { UserRolesService } from '../../services/user-roles.service';
+import { GroupService } from '../../../../../core/services/group.service';
 import { GrupoRow } from '../../models/grupos/grupo.model';
 import { DataTableColumn, DataTableRowAction } from '../../../../../shared/components/data-table/models/data-table.model';
 import { buildGruposColumns } from '../../configs/grupos/grupos-columns.config';
 import { buildGrupoRowActions } from '../../configs/grupos/grupos-actions.config';
-import { buildNuevoGrupoConfig } from '../../configs/grupos/grupos-form.config';
+import { buildGrupoConfig } from '../../configs/grupos/grupos-form.config';
 import { DynamicFormConfig } from '../../../../../shared/components/dynamic-form/models/dynamic-form.model';
 import { PageMetadata } from '../../../../../shared/models/pagination.model';
 
@@ -18,7 +18,7 @@ import { PageMetadata } from '../../../../../shared/models/pagination.model';
 export class GruposComponent implements OnInit {
 
   // ── 1. Dependencias ────────────────────────────────────────────────────────
-  private service = inject(UserRolesService);
+  private service = inject(GroupService);
 
   // ── 2. Estado del servidor ─────────────────────────────────────────────────
   loading = signal(true);
@@ -59,27 +59,44 @@ export class GruposComponent implements OnInit {
     });
   }
 
-  isNewGroupModalOpen = signal(false);
-  newGroupModalConfig = signal<DynamicFormConfig | null>(null);
+  isGroupModalOpen = signal(false);
+  groupModalConfig = signal<DynamicFormConfig | null>(null);
+  groupModalData = signal<any>(null);
 
   // ── 6. Acciones de fila ────────────────────────────────────────────────────
-  onEdit(id: any): void       { console.log('[Grupos] Editar →', id);      /* TODO: form */ }
+  onEdit(id: any): void {
+    this.service.getGroupById(id).subscribe(group => {
+      if (!group) return;
+      
+      this.groupModalConfig.set(buildGrupoConfig(true));
+      this.groupModalData.set({
+        id: group.id,
+        nombre: group.nombre,
+        descripcion: group.descripcion,
+        estado: group.estado
+      });
+      this.isGroupModalOpen.set(true);
+    });
+  }
+
   onDeactivate(id: any): void { console.log('[Grupos] Desactivar →', id);  /* TODO: confirm */ }
   onDelete(id: any): void     { this.onDeactivate(id); }
   
   onAdd(): void {
-    this.newGroupModalConfig.set(buildNuevoGrupoConfig());
-    this.isNewGroupModalOpen.set(true);
+    this.groupModalConfig.set(buildGrupoConfig(false));
+    this.groupModalData.set(null);
+    this.isGroupModalOpen.set(true);
   }
 
-  onNewGroupSubmit(data: any): void {
-    console.log('[Grupos] Guardar →', data);
-    this.isNewGroupModalOpen.set(false);
+  onGroupSubmit(data: any): void {
+    const isEdit = !!this.groupModalData();
+    console.log(`[Grupos] ${isEdit ? 'Actualizar' : 'Guardar'} →`, data);
+    this.isGroupModalOpen.set(false);
     this.loadGroups();
   }
 
-  onNewGroupCancel(): void {
-    this.isNewGroupModalOpen.set(false);
+  onGroupCancel(): void {
+    this.isGroupModalOpen.set(false);
   }
 
   // ── 7. Paginación ──────────────────────────────────────────────────────────

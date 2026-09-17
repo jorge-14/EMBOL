@@ -24,11 +24,12 @@
   </app-data-table>
 }
 
-@if (newRoleModalConfig()) {
+@if (roleModalConfig()) {
   <app-dynamic-form
-    [config]="newRoleModalConfig()!"
-    [isOpen]="isNewRoleModalOpen()"
-    (formSubmit)="onNewRoleSubmit($event)"
-    (close)="onNewRoleCancel()"
+    [config]="roleModalConfig()!"
+    [isOpen]="isRoleModalOpen()"
+    [initialData]="roleModalData()"
+    (formSubmit)="onRoleSubmit($event)"
+    (close)="onRoleCancel()"
   ></app-dynamic-form>
 }

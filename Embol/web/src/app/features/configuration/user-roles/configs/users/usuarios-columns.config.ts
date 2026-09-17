@@ -43,8 +43,8 @@ export function buildUsuariosColumns(): DataTableColumn<UserRow>[] {
       formatter: (val) => val || '—',
     },
     {
-      key: 'rol',
-      header: 'Rol',
+      key: 'roles',
+      header: 'Roles',
       type: 'badge',
       width: '150px',
       badgeColorMap: {
@@ -58,8 +58,8 @@ export function buildUsuariosColumns(): DataTableColumn<UserRow>[] {
       formatter: (val) => val || '—',
     },
     {
-      key: 'grupo',
-      header: 'Grupo',
+      key: 'grupos',
+      header: 'Grupos',
       type: 'badge',
       width: '170px',
       badgeColorMap: {

@@ -10,7 +10,7 @@ export interface UserRow {
   correo: string;
   planta: string;
   cargo: string;
-  rol: string;
-  grupo: string;
+  roles: string[];
+  grupos: string[];
   estado: string;
 }

@@ -309,4 +309,9 @@ export class DataTableComponent {
   trackByFn(index: number, item: any): any {
     return item[this.trackByKey()] ?? index;
   }
+
+  // ── Helpers ──
+  isArray(val: any): boolean {
+    return Array.isArray(val);
+  }
 }

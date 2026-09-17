@@ -1,13 +1,15 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { USUARIOS_IMPORTS } from '../../enums/user-roles-imports';
-import { UserRolesService } from '../../services/user-roles.service';
+import { UserService } from '../../../../../core/services/user.service';
+import { RoleService } from '../../../../../core/services/role.service';
+import { GroupService } from '../../../../../core/services/group.service';
 import { UserRow } from '../../models/users/user.model';
 import { PageMetadata } from '../../../../../shared/models/pagination.model';
 import { DataTableColumn, DataTableRowAction } from '../../../../../shared/components/data-table/models/data-table.model';
 import { buildUsuariosColumns } from '../../configs/users/usuarios-columns.config';
 import { buildUserRowActions } from '../../configs/users/usuarios-actions.config';
 import { ROLE_OPTIONS_CONFIG, GROUP_OPTIONS_CONFIG } from '../../configs/users/usuarios-filters.config';
-import { buildNuevoUsuarioConfig } from '../../configs/users/usuarios-form.config';
+import { buildUsuarioConfig } from '../../configs/users/usuarios-form.config';
 import { DynamicFormConfig } from '../../../../../shared/components/dynamic-form/models/dynamic-form.model';
 import { forkJoin } from 'rxjs';
 
@@ -20,7 +22,9 @@ import { forkJoin } from 'rxjs';
 export class UsuariosComponent implements OnInit {
 
   // ── 1. Dependencias ────────────────────────────────────────────────────────
-  private service = inject(UserRolesService);
+  private usersService = inject(UserService);
+  private rolesService = inject(RoleService);
+  private groupsService = inject(GroupService);
 
   // ── 2. Estado del servidor ─────────────────────────────────────────────────
   loading = signal(true);
@@ -60,7 +64,7 @@ export class UsuariosComponent implements OnInit {
       group: this.groupFilter() //set en html
     };
 
-    this.service.getPagedUsers(this.currentPage(), this.pageSize(), filters).subscribe({
+    this.usersService.getPagedUsers(this.currentPage(), this.pageSize(), filters).subscribe({
       next: (result) => {
         this.users.set(result.content);
         this.pageInfo.set(result.page);
@@ -73,32 +77,61 @@ export class UsuariosComponent implements OnInit {
     });
   }
 
-  isNewUserModalOpen = signal(false);
-  newUserModalConfig = signal<DynamicFormConfig | null>(null);
+  isUserModalOpen = signal(false);
+  userModalConfig = signal<DynamicFormConfig | null>(null);
+  userModalData = signal<any>(null);
 
   // ── 6. Acciones de fila ────────────────────────────────────────────────────
-  onEdit(id: any): void       { console.log('[Usuarios] Editar →', id);      /* TODO: dialog */ }
+  onEdit(id: any): void {
+    forkJoin({
+      user: this.usersService.getUserById(id),
+      roles: this.rolesService.getRoleList(),
+      groups: this.groupsService.getGroupList()
+    }).subscribe(({ user, roles, groups }) => {
+      if (!user) return;
+      
+      this.userModalConfig.set(buildUsuarioConfig(roles, groups, true));
+      
+      // Mapeamos los nombres de roles/grupos del usuario a sus IDs correspondientes
+      const userRolesIds = roles.filter(r => user.roles.includes(r.nombre)).map(r => r.id);
+      const userGroupIds = groups.filter(g => user.grupos.includes(g.nombre)).map(g => g.id);
+
+      this.userModalData.set({
+        id: user.id,
+        nombre: user.nombreCompleto,
+        email: user.correo,
+        estado: user.estado,
+        roles: userRolesIds,
+        grupos: userGroupIds
+      });
+      
+      this.isUserModalOpen.set(true);
+    });
+  }
+  
   onDeactivate(id: any): void { console.log('[Usuarios] Desactivar →', id);  /* TODO: confirm */ }
   onActivate(id: any): void   { console.log('[Usuarios] Activar →', id);     /* TODO: confirm */ }
   
   onAdd(): void {
     forkJoin({
-      roles: this.service.getRoleList(),
-      groups: this.service.getGroupList()
+      roles: this.rolesService.getRoleList(),
+      groups: this.groupsService.getGroupList()
     }).subscribe(({ roles, groups }) => {
-      this.newUserModalConfig.set(buildNuevoUsuarioConfig(roles, groups));
-      this.isNewUserModalOpen.set(true);
+      this.userModalConfig.set(buildUsuarioConfig(roles, groups, false));
+      this.userModalData.set(null);
+      this.isUserModalOpen.set(true);
     });
   }
 
-  onNewUserSubmit(data: any): void {
-    console.log('[Usuarios] Guardar →', data);
-    this.isNewUserModalOpen.set(false);
+  onUserFormSubmit(data: any): void {
+    const isEdit = !!this.userModalData();
+    console.log(`[Usuarios] ${isEdit ? 'Actualizar' : 'Guardar'} →`, data);
+    this.isUserModalOpen.set(false);
     this.loadUsers();
   }
 
-  onNewUserCancel(): void {
-    this.isNewUserModalOpen.set(false);
+  onUserFormCancel(): void {
+    this.isUserModalOpen.set(false);
   }
 
   // ── 7. Paginación ──────────────────────────────────────────────────────────

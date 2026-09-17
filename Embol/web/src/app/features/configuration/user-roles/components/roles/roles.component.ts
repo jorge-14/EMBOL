@@ -1,11 +1,11 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ROLES_IMPORTS } from '../../enums/user-roles-imports';
-import { UserRolesService } from '../../services/user-roles.service';
+import { RoleService } from '../../../../../core/services/role.service';
 import { RolRow } from '../../models/roles/rol.model';
 import { DataTableColumn, DataTableRowAction } from '../../../../../shared/components/data-table/models/data-table.model';
 import { buildRolesColumns } from '../../configs/roles/roles-columns.config';
 import { buildRolRowActions } from '../../configs/roles/roles-actions.config';
-import { buildNuevoRolConfig } from '../../configs/roles/roles-form.config';
+import { buildRolConfig } from '../../configs/roles/roles-form.config';
 import { DynamicFormConfig } from '../../../../../shared/components/dynamic-form/models/dynamic-form.model';
 import { PageMetadata } from '../../../../../shared/models/pagination.model';
 
@@ -18,7 +18,7 @@ import { PageMetadata } from '../../../../../shared/models/pagination.model';
 export class RolesComponent implements OnInit {
 
   // ── 1. Dependencias ────────────────────────────────────────────────────────
-  private service = inject(UserRolesService);
+  private service = inject(RoleService);
 
   // ── 2. Estado del servidor ─────────────────────────────────────────────────
   loading = signal(true);
@@ -59,27 +59,44 @@ export class RolesComponent implements OnInit {
     });
   }
 
-  isNewRoleModalOpen = signal(false);
-  newRoleModalConfig = signal<DynamicFormConfig | null>(null);
+  isRoleModalOpen = signal(false);
+  roleModalConfig = signal<DynamicFormConfig | null>(null);
+  roleModalData = signal<any>(null);
 
   // ── 6. Acciones de fila ────────────────────────────────────────────────────
-  onEdit(id: any): void       { console.log('[Roles] Editar →', id);      /* TODO: form */ }
+  onEdit(id: any): void {
+    this.service.getRoleById(id).subscribe(role => {
+      if (!role) return;
+      
+      this.roleModalConfig.set(buildRolConfig(true));
+      this.roleModalData.set({
+        id: role.id,
+        nombre: role.nombre,
+        descripcion: role.descripcion,
+        estado: role.estado
+      });
+      this.isRoleModalOpen.set(true);
+    });
+  }
+  
   onDeactivate(id: any): void { console.log('[Roles] Desactivar →', id);  /* TODO: confirm */ }
   onDelete(id: any): void     { this.onDeactivate(id); }
 
   onAdd(): void {
-    this.newRoleModalConfig.set(buildNuevoRolConfig());
-    this.isNewRoleModalOpen.set(true);
+    this.roleModalConfig.set(buildRolConfig(false));
+    this.roleModalData.set(null);
+    this.isRoleModalOpen.set(true);
   }
 
-  onNewRoleSubmit(data: any): void {
-    console.log('[Roles] Guardar →', data);
-    this.isNewRoleModalOpen.set(false);
+  onRoleSubmit(data: any): void {
+    const isEdit = !!this.roleModalData();
+    console.log(`[Roles] ${isEdit ? 'Actualizar' : 'Guardar'} →`, data);
+    this.isRoleModalOpen.set(false);
     this.loadRoles();
   }
 
-  onNewRoleCancel(): void {
-    this.isNewRoleModalOpen.set(false);
+  onRoleCancel(): void {
+    this.isRoleModalOpen.set(false);
   }
 
   // ── 7. Paginación ──────────────────────────────────────────────────────────
