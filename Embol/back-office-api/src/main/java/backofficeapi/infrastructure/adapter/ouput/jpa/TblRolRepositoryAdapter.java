@@ -5,9 +5,12 @@ import backofficeapi.domain.model.TblRolModel;
 import backofficeapi.infrastructure.adapter.ouput.jpa.entity.TblRol;
 import backofficeapi.infrastructure.adapter.ouput.jpa.mapper.TblRolMapper;
 import backofficeapi.infrastructure.adapter.ouput.jpa.repository.TblRolRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 /*
  *----------------------------------------
@@ -44,5 +47,26 @@ public class TblRolRepositoryAdapter implements TblRolRepositoryPort {
     @Transactional(readOnly = true)
     public List<TblRolModel> listRole() {
         return tblRolRepository.listRole();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<TblRolModel> findById(Long id) {
+        return tblRolRepository.findById(id).map(tblRolMapper::toModel);
+    }
+
+    @Override
+    public Page<TblRolModel> getPageListRol(Pageable pageable) {
+        Page<TblRol> pageRole = tblRolRepository.pageListGroup(pageable);
+        return pageRole.map(tblRolMapper::toModel);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsRolByName(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            return false;
+        }
+        return tblRolRepository.existsByName(nombre.trim());
     }
 }

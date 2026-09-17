@@ -1,12 +1,14 @@
 package backofficeapi.infrastructure.adapter.input.rest;
 
-import backofficeapi.application.port.input.CrudTblRolUseCase;
-import backofficeapi.application.port.input.ListRoleUseCase;
+import backofficeapi.application.port.input.rol.CrudTblRolUseCase;
+import backofficeapi.application.port.input.rol.ListRoleUseCase;
 import backofficeapi.domain.model.TblRolModel;
 import backofficeapi.infrastructure.adapter.input.rest.mapper.TblRolRestMapper;
-import backofficeapi.infrastructure.adapter.input.rest.request.TblRolRequestDto;
-import backofficeapi.infrastructure.adapter.input.rest.response.AuthRoleResponseDto;
+import backofficeapi.infrastructure.adapter.input.rest.request.tblRol.TblRolRequestDto;
+import backofficeapi.infrastructure.adapter.input.rest.request.tblRol.TblRolUpdateRequestDto;
+import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.TblRolResponseDto;
 import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.ListRoleShortResponse;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,6 +26,8 @@ import java.util.List;
  *----------------------------------------
  *   Fecha | Autor | Comentario
  *   11.09.2026 | Jorge Luis Choque Callizaya | Creación Inicial
+ *   16.09.2026 | Jorge Luis Choque Callizaya | Endpoint para actualizar rol
+ *   16.09.2026 | Jorge Luis Choque Callizaya | Endpoint para eliminar rol
  *----------------------------------------
  */
 
@@ -52,9 +56,8 @@ public class TblRolController {
     }
 
     @PostMapping("/create-role")
-    public ResponseEntity<AuthRoleResponseDto> createRole(
-            @RequestBody TblRolRequestDto tblRolRequestDto,
-            Authentication authentication) {
+    public ResponseEntity<TblRolResponseDto> createRole(@Valid @RequestBody TblRolRequestDto tblRolRequestDto,
+                                                        Authentication authentication) {
 
         if (authentication != null && authentication.isAuthenticated()
                 && authentication instanceof JwtAuthenticationToken jwtAuth) {
@@ -68,7 +71,46 @@ public class TblRolController {
 
         TblRolModel tblRolModel = tblRolRestMapper.toModel(tblRolRequestDto);
         TblRolModel tblRolModelCreate = crudTblRolUseCase.createRole(tblRolModel);
-        AuthRoleResponseDto authRoleResponseDto = tblRolRestMapper.toAuthRoleResponseDto(tblRolModelCreate);
-        return ResponseEntity.ok(authRoleResponseDto);
+        TblRolResponseDto tblRolResponseDto = tblRolRestMapper.toAuthRoleResponseDto(tblRolModelCreate);
+        return ResponseEntity.ok(tblRolResponseDto);
+    }
+
+    @PutMapping("/update-role/{id}")
+    public ResponseEntity<TblRolResponseDto> updateRole(@PathVariable Long id, @Valid @RequestBody TblRolUpdateRequestDto tblRolUpdateRequestDto,
+                                                        Authentication authentication) {
+
+        if (authentication != null && authentication.isAuthenticated()
+                && authentication instanceof JwtAuthenticationToken jwtAuth) {
+
+            Jwt jwt = jwtAuth.getToken();
+            String username = jwt.getClaimAsString("preferred_username");
+            log.info("Usuario autenticado: {} | Actualizando rol con ID: {}", username, id);
+        } else {
+            log.info("Actualizando rol con ID: {}", id);
+        }
+
+        TblRolModel tblRolModel = tblRolRestMapper.toModelUpdate(tblRolUpdateRequestDto);
+        TblRolModel updatedModel = crudTblRolUseCase.updateRole(id, tblRolModel);
+        TblRolResponseDto tblRolResponseDto = tblRolRestMapper.toAuthRoleResponseDto(updatedModel);
+        return ResponseEntity.ok(tblRolResponseDto);
+    }
+
+    @DeleteMapping("/delete-role/{id}")
+    public ResponseEntity<TblRolResponseDto> deleteRole(@PathVariable Long id,
+                                                        Authentication authentication) {
+
+        if (authentication != null && authentication.isAuthenticated()
+                && authentication instanceof JwtAuthenticationToken jwtAuth) {
+
+            Jwt jwt = jwtAuth.getToken();
+            String username = jwt.getClaimAsString("preferred_username");
+            log.info("Usuario autenticado: {} | Eliminando rol con ID: {}", username, id);
+        } else {
+            log.info("Eliminando rol con ID: {}", id);
+        }
+
+        TblRolModel deletedModel = crudTblRolUseCase.deleteRole(id);
+        TblRolResponseDto tblRolResponseDto = tblRolRestMapper.toAuthRoleResponseDto(deletedModel);
+        return ResponseEntity.ok(tblRolResponseDto);
     }
 }

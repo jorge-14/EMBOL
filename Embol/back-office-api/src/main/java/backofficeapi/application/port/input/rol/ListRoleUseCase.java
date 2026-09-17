@@ -1,4 +1,4 @@
-package backofficeapi.application.port.input;
+package backofficeapi.application.port.input.rol;
 
 import backofficeapi.domain.model.TblRolModel;
 import java.util.List;

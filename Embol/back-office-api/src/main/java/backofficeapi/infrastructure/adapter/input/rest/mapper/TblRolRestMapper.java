@@ -1,8 +1,9 @@
 package backofficeapi.infrastructure.adapter.input.rest.mapper;
 
 import backofficeapi.domain.model.TblRolModel;
-import backofficeapi.infrastructure.adapter.input.rest.request.TblRolRequestDto;
-import backofficeapi.infrastructure.adapter.input.rest.response.AuthRoleResponseDto;
+import backofficeapi.infrastructure.adapter.input.rest.request.tblRol.TblRolRequestDto;
+import backofficeapi.infrastructure.adapter.input.rest.request.tblRol.TblRolUpdateRequestDto;
+import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.TblRolResponseDto;
 import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.ListRoleShortResponse;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
  *----------------------------------------
  *   Fecha | Autor | Comentario
  *   11.09.2026 | Jorge Luis Choque Callizaya | Creación Inicial
+ *   16.09.2026 | Jorge Luis Choque Callizaya | Mapeo para actualización de roles
  *----------------------------------------
  */
 
@@ -22,6 +24,9 @@ import org.springframework.stereotype.Component;
 public class TblRolRestMapper {
 
     public TblRolModel toModel(TblRolRequestDto tblRolRequestDto) {
+        if (tblRolRequestDto == null) {
+            return null;
+        }
         TblRolModel tblRolModel = new TblRolModel();
 
         tblRolModel.setSNombre(tblRolRequestDto.getName() != null ? tblRolRequestDto.getName().trim() : null);
@@ -32,8 +37,24 @@ public class TblRolRestMapper {
         return tblRolModel;
     }
 
-    public AuthRoleResponseDto toAuthRoleResponseDto(TblRolModel tblRolModel) {
-        return AuthRoleResponseDto.builder()
+    public TblRolModel toModelUpdate(TblRolUpdateRequestDto request) {
+        if (request == null) {
+            return null;
+        }
+        TblRolModel tblRolModel = new TblRolModel();
+
+        tblRolModel.setSNombre(request.getName() != null ? request.getName().trim() : null);
+        tblRolModel.setSDescripcion(request.getDescription() != null ? request.getDescription().trim() : null);
+        tblRolModel.setSEstado(request.getRoleStatus());
+
+        return tblRolModel;
+    }
+
+    public TblRolResponseDto toAuthRoleResponseDto(TblRolModel tblRolModel) {
+        if (tblRolModel == null) {
+            return null;
+        }
+        return TblRolResponseDto.builder()
                 .id(tblRolModel.getIIdRol())
                 .name(tblRolModel.getSNombre())
                 .description(tblRolModel.getSDescripcion())
@@ -43,6 +64,9 @@ public class TblRolRestMapper {
     }
 
     public ListRoleShortResponse toListRoleShortResponse(TblRolModel model) {
+        if (model == null) {
+            return null;
+        }
         return ListRoleShortResponse.builder()
                 .id(model.getIIdRol())
                 .name(model.getSNombre())

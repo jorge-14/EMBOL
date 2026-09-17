@@ -1,4 +1,4 @@
-package backofficeapi.infrastructure.adapter.input.rest.request;
+package backofficeapi.infrastructure.adapter.input.rest.response.tblRole;
 
 import backofficeapi.domain.enums.SEstadoRol;
 import lombok.Builder;
@@ -17,12 +17,12 @@ import lombok.Setter;
  *----------------------------------------
  */
 
-
 @Getter
 @Setter
 @Builder
-public class TblRolRequestDto {
+public class TblRolResponseDto {
 
+    private Long id;
     private String name;
     private String description;
     private boolean baseRole;
