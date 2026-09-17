@@ -69,7 +69,7 @@ public class TblGroupController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/delete-group/{id}")
+    @DeleteMapping("/delete-group/{id}")
     public ResponseEntity<ResponseBody<Boolean>> deleteGroup(@PathVariable Long id) {
         Boolean delete = crudTblGroupUseCase.deleteGroup(id);
         return ResponseEntity.ok(ResponseBody.success("El grupo fue eliminado exitosamente", delete));

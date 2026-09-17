@@ -96,13 +96,14 @@ public class CrudTblGroupUseCaseImpl implements CrudTblGroupUseCase {
     }
 
     @Override
+    @Transactional
     public Boolean deleteGroup(Long id) {
         TblGroupModel tblGroupModel = tblGroupRepositoryPort.getGroupById(id).orElseThrow(() -> {
             log.error("Error de negocio: no existe el grupo con ID: {}", id);
             return new BusinessApiException(HttpStatus.NOT_FOUND, "No se encontro el grupo");
         });
 
-        tblGroupModel.setDeleted(true);
+        tblGroupModel.markAsDeleted();
         TblGroupModel savedGroup = tblGroupRepositoryPort.saveGroup(tblGroupModel);
 
         if (savedGroup == null || savedGroup.getIIdGrupo() == null) {

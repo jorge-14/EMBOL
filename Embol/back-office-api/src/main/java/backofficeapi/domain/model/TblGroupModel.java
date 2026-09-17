@@ -34,4 +34,8 @@ public class TblGroupModel {
         this.sNombre = name;
         this.sDescripcion = description;
     }
+
+    public void markAsDeleted() {
+        this.deleted = true;
+    }
 }
