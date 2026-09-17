@@ -13,8 +13,6 @@ import org.springframework.data.domain.Pageable;
  *----------------------------------------
  *   Fecha | Autor | Comentario
  *   11.09.2026 | Jorge Luis Choque Callizaya | Creación Inicial
- *   16.09.2026 | Jorge Luis Choque Callizaya | Método updateRole
- *   16.09.2026 | Jorge Luis Choque Callizaya | Método deleteRole
  *----------------------------------------
  */
 

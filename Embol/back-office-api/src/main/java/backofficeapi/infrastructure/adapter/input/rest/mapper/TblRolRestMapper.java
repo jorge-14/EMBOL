@@ -3,6 +3,7 @@ package backofficeapi.infrastructure.adapter.input.rest.mapper;
 import backofficeapi.domain.model.TblRolModel;
 import backofficeapi.infrastructure.adapter.input.rest.request.tblRol.TblRolRequestDto;
 import backofficeapi.infrastructure.adapter.input.rest.request.tblRol.TblRolUpdateRequestDto;
+import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.PageListRolResponseDto;
 import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.TblRolResponseDto;
 import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.ListRoleShortResponse;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Component;
  *----------------------------------------
  *   Fecha | Autor | Comentario
  *   11.09.2026 | Jorge Luis Choque Callizaya | Creación Inicial
- *   16.09.2026 | Jorge Luis Choque Callizaya | Mapeo para actualización de roles
  *----------------------------------------
  */
 
@@ -70,6 +70,19 @@ public class TblRolRestMapper {
         return ListRoleShortResponse.builder()
                 .id(model.getIIdRol())
                 .name(model.getSNombre())
+                .build();
+    }
+
+    public PageListRolResponseDto toPageResponse(TblRolModel tblRolModel) {
+        if (tblRolModel == null) {
+            return null;
+        }
+        return PageListRolResponseDto.builder()
+                .id(tblRolModel.getIIdRol())
+                .name(tblRolModel.getSNombre())
+                .description(tblRolModel.getSDescripcion())
+                .baseRole(tblRolModel.getSRolBase())
+                .roleStatus(tblRolModel.getSEstado())
                 .build();
     }
 }

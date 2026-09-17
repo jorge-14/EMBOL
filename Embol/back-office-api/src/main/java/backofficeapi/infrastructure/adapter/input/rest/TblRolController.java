@@ -3,13 +3,19 @@ package backofficeapi.infrastructure.adapter.input.rest;
 import backofficeapi.application.port.input.rol.CrudTblRolUseCase;
 import backofficeapi.application.port.input.rol.ListRoleUseCase;
 import backofficeapi.domain.model.TblRolModel;
+import backofficeapi.infrastructure.adapter.input.rest.dto.ResponsePage;
 import backofficeapi.infrastructure.adapter.input.rest.mapper.TblRolRestMapper;
 import backofficeapi.infrastructure.adapter.input.rest.request.tblRol.TblRolRequestDto;
 import backofficeapi.infrastructure.adapter.input.rest.request.tblRol.TblRolUpdateRequestDto;
+import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.PageListRolResponseDto;
 import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.TblRolResponseDto;
 import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.ListRoleShortResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -26,8 +32,6 @@ import java.util.List;
  *----------------------------------------
  *   Fecha | Autor | Comentario
  *   11.09.2026 | Jorge Luis Choque Callizaya | Creación Inicial
- *   16.09.2026 | Jorge Luis Choque Callizaya | Endpoint para actualizar rol
- *   16.09.2026 | Jorge Luis Choque Callizaya | Endpoint para eliminar rol
  *----------------------------------------
  */
 
@@ -112,5 +116,18 @@ public class TblRolController {
         TblRolModel deletedModel = crudTblRolUseCase.deleteRole(id);
         TblRolResponseDto tblRolResponseDto = tblRolRestMapper.toAuthRoleResponseDto(deletedModel);
         return ResponseEntity.ok(tblRolResponseDto);
+    }
+
+    @GetMapping("page-rol")
+    public ResponseEntity<ResponsePage<PageListRolResponseDto>> listPage(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "20") int size,
+            @RequestParam(value = "sortBy", defaultValue = "modifiedDate") String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "DESC") Sort.Direction sortDir
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDir, sortBy));
+        Page<TblRolModel> pageResult = crudTblRolUseCase.pageListRol(pageable);
+        ResponsePage<PageListRolResponseDto> response = ResponsePage.from(pageResult, tblRolRestMapper::toPageResponse);
+        return ResponseEntity.ok(response);
     }
 }

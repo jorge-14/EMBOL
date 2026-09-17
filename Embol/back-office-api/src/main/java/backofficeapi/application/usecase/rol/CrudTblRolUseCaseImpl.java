@@ -4,7 +4,6 @@ import backofficeapi.application.port.input.rol.CrudTblRolUseCase;
 import backofficeapi.application.port.output.TblRolRepositoryPort;
 import backofficeapi.domain.enums.SEstadoRol;
 import backofficeapi.domain.exception.BusinessApiException;
-import backofficeapi.domain.exception.TblRolAlreadyExistsException;
 import backofficeapi.domain.exception.TblRolNotFoundException;
 import backofficeapi.domain.exception.TechnicalApiException;
 import backofficeapi.domain.model.TblRolModel;
