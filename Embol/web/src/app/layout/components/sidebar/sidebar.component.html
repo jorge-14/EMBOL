@@ -1,0 +1,135 @@
+<!-- ═══════════════════════════════════════
+     SIDEBAR — Tema Blanco (matching UI ref)
+     ═══════════════════════════════════════ -->
+
+<aside class="bg-white border-r border-gray-200 min-h-screen flex flex-col flex-shrink-0 transition-all duration-300 overflow-hidden"
+       [class.w-64]="!collapsed()"
+       [class.w-20]="collapsed()">
+
+  <!-- ── Logo Area ── -->
+  <div class="px-5 py-4 flex items-center" [class.justify-between]="!collapsed()" [class.justify-center]="collapsed()">
+    @if (!collapsed()) {
+      <div>
+        <h1 class="text-brand font-bold text-xl tracking-tight leading-tight">EMBOL</h1>
+        <p class="text-brand text-[10px] uppercase tracking-[0.2em] font-medium">CMO System 2026</p>
+      </div>
+    }
+    <button
+      (click)="toggleCollapse()"
+      class="w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors flex-shrink-0"
+    >
+      <svg class="w-4 h-4 transition-transform duration-300" [class.rotate-180]="collapsed()" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- ── Scenario Badge ── -->
+  @if (!collapsed()) {
+    <div class="px-4 py-2">
+      <div class="bg-brand rounded-xl px-4 py-3">
+        <p class="text-white/70 text-[10px] uppercase tracking-wider font-medium">Escenario Activo</p>
+        <p class="text-white font-bold text-sm mt-0.5">BP2026 — Oficial</p>
+      </div>
+    </div>
+  }
+
+  <!-- ── Navigation Menu ── -->
+  <nav class="flex-1 overflow-y-auto px-3 py-3 overflow-x-hidden">
+    @for (item of menuItems(); track item.id) {
+
+      <!-- ── Item SIN hijos — link directo ── -->
+      @if (!item.children || item.children.length === 0) {
+        @if (item.route) {
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="!bg-brand !text-white"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors cursor-pointer mt-1"
+            [title]="collapsed() ? item.label : ''"
+            [class.justify-center]="collapsed()"
+          >
+            <svg class="w-5 h-5 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                 stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path [attr.d]="getIconPath(item.icon)" />
+            </svg>
+            @if (!collapsed()) {
+              <span class="uppercase text-xs tracking-wider whitespace-nowrap">{{ item.label }}</span>
+            }
+          </a>
+        } @else {
+          <div class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-400 cursor-default mt-1"
+               [title]="collapsed() ? item.label : ''"
+               [class.justify-center]="collapsed()">
+            <svg class="w-5 h-5 flex-shrink-0 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                 stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path [attr.d]="getIconPath(item.icon)" />
+            </svg>
+            @if (!collapsed()) {
+              <span class="uppercase text-xs tracking-wider whitespace-nowrap">{{ item.label }}</span>
+            }
+          </div>
+        }
+      }
+
+      <!-- ── Item CON hijos — sección colapsable ── -->
+      @if (item.children && item.children.length > 0) {
+        <div class="mt-1">
+          <!-- Section header (toggle) -->
+          <button
+            (click)="!collapsed() ? toggleSection(item.id) : null"
+            class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-semibold uppercase tracking-wider text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+            [class.text-gray-900]="isChildActive(item)"
+            [class.justify-center]="collapsed()"
+            [title]="collapsed() ? item.label : ''"
+          >
+            <span class="flex items-center gap-3">
+              <svg class="w-5 h-5 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                   stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path [attr.d]="getIconPath(item.icon)" />
+              </svg>
+              @if (!collapsed()) {
+                <span class="whitespace-nowrap">{{ item.label }}</span>
+              }
+            </span>
+            @if (!collapsed()) {
+              <svg
+                class="w-4 h-4 text-gray-400 transition-transform duration-200 flex-shrink-0"
+                [class.rotate-180]="isSectionExpanded(item.id)"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            }
+          </button>
+
+          <!-- Children list -->
+          @if (isSectionExpanded(item.id) && !collapsed()) {
+            <div class="ml-6 mt-0.5 space-y-0.5">
+              @for (child of item.children; track child.id) {
+                @if (child.route) {
+                  <a
+                    [routerLink]="child.route"
+                    routerLinkActive="!bg-brand !text-white !font-bold"
+                    class="block pl-4 pr-3 py-2 text-sm text-gray-500 hover:text-gray-800 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
+                  >
+                    {{ child.label }}
+                  </a>
+                } @else {
+                  <span class="block pl-4 pr-3 py-2 text-sm text-gray-400 cursor-default">
+                    {{ child.label }}
+                  </span>
+                }
+              }
+            </div>
+          }
+        </div>
+      }
+    }
+  </nav>
+
+  <!-- ── Footer ── -->
+  @if (!collapsed()) {
+    <div class="px-5 py-3 border-t border-gray-100 flex-shrink-0">
+      <p class="text-[10px] text-gray-400 text-center">v2.4.0 · Angular 22</p>
+    </div>
+  }
+</aside>
