@@ -23,10 +23,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
-                // Permitimos acceso a endpoints publicos si los hubiera
-                .requestMatchers("/api/public/**").permitAll()
-                // Cualquier otra peticion requiere autenticacion
+                .requestMatchers("/", "/error", "/oauth2/**", "/login/**", "/api/public/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
             )
             // Habilita el login en el navegador (Redirige a Microsoft automáticamente)
