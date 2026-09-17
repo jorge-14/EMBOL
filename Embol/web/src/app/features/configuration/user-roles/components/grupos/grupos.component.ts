@@ -46,6 +46,7 @@ export class GruposComponent implements OnInit {
     this.loading.set(true);
     this.service.getPagedGroups(page, size).subscribe({
       next: (result) => {
+        console.log("Resultado es ", result);
         this.groups.set(result.content);
         this.pageInfo.set(result.page);
         this.currentPage = page;
@@ -71,8 +72,8 @@ export class GruposComponent implements OnInit {
       this.groupModalConfig.set(buildGrupoConfig(true));
       this.groupModalData.set({
         id: group.id,
-        nombre: group.nombre,
-        descripcion: group.descripcion,
+        name: group.name,
+        description: group.description,
         estado: group.estado
       });
       this.isGroupModalOpen.set(true);

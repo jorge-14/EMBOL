@@ -28,8 +28,8 @@ export const MOCK_ROLES: RolRow[] = [
 
 // ── Grupos ────────────────────────────────────────────────────────────────────
 export const MOCK_GROUPS: GrupoRow[] = [
-  { id: 1, nombre: 'IT - Infraestructura', descripcion: 'Equipo de infraestructura tecnológica', estado: 'Activo' },
-  { id: 2, nombre: 'IT - Soporte',         descripcion: 'Soporte técnico al usuario final',       estado: 'Activo' },
-  { id: 3, nombre: 'Marketing Digital',    descripcion: 'Equipo de marketing y comunicación',      estado: 'Activo' },
-  { id: 4, nombre: 'Finanzas',             descripcion: 'Área financiera y contabilidad',          estado: 'Activo' },
+  { id: 1, name: 'IT - Infraestructura', description: 'Equipo de infraestructura tecnológica', estado: 'Activo' },
+  { id: 2, name: 'IT - Soporte',         description: 'Soporte técnico al usuario final',       estado: 'Activo' },
+  { id: 3, name: 'Marketing Digital',    description: 'Gestión de redes y campañas',            estado: 'Activo' },
+  { id: 4, name: 'Finanzas',             description: 'Contabilidad y tesorería',               estado: 'Activo' },
 ];

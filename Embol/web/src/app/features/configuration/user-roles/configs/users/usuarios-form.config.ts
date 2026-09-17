@@ -9,7 +9,7 @@ export const buildUsuarioConfig = (roles: RolRow[], groups: GrupoRow[], isEdit: 
     { key: 'email', label: 'EMAIL', type: 'email', placeholder: 'm.condori@embol.bo', required: true, colSpan: 2 },
     { key: 'estado', label: 'ESTADO', type: 'select', options: [{label: 'Activo', value: 'Activo'}, {label: 'Inactivo', value: 'Inactivo'}], required: true, colSpan: 2 },
     { key: 'roles', label: 'ROLES ASIGNADOS', type: 'multi-select', options: roles.map(r => ({label: r.nombre, value: r.id})), colSpan: 2 },
-    { key: 'grupos', label: 'GRUPOS ASIGNADOS', type: 'multi-select', options: groups.map(g => ({label: g.nombre, value: g.id})), colSpan: 2 },
+    { key: 'grupos', label: 'GRUPOS ASIGNADOS', type: 'multi-select', options: groups.map(g => ({label: g.name, value: g.id})), colSpan: 2 },
   ],
   submitLabel: isEdit ? 'Guardar Cambios' : 'Guardar',
   cancelLabel: 'Cancelar'

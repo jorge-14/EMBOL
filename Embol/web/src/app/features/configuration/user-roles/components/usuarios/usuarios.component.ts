@@ -94,7 +94,7 @@ export class UsuariosComponent implements OnInit {
       
       // Mapeamos los nombres de roles/grupos del usuario a sus IDs correspondientes
       const userRolesIds = roles.filter(r => user.roles.includes(r.nombre)).map(r => r.id);
-      const userGroupIds = groups.filter(g => user.grupos.includes(g.nombre)).map(g => g.id);
+      const userGroupIds = groups.filter(g => user.grupos.includes(g.name)).map(g => g.id);
 
       this.userModalData.set({
         id: user.id,
