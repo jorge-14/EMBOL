@@ -1,9 +1,9 @@
 package backofficeapi.infrastructure.adapter.ouput.jpa.mapper;
 
 import backofficeapi.domain.model.TblUsuarioModel;
-import backofficeapi.infrastructure.adapter.ouput.jpa.entity.TblGrupo;
-import backofficeapi.infrastructure.adapter.ouput.jpa.entity.TblRol;
 import backofficeapi.infrastructure.adapter.ouput.jpa.entity.TblUsuario;
+import backofficeapi.infrastructure.adapter.ouput.jpa.entity.TblUsuarioGrupo;
+import backofficeapi.infrastructure.adapter.ouput.jpa.entity.TblUsuarioRol;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
  *----------------------------------------
  *   Fecha | Autor | Comentario
  *   11.09.2026 | Douglas Javieri | Creación Inicial
- *   16.09.2026 | Camila Ledezma | Mapeo de colecciones de roles y grupos
+ *   16.09.2026 | Camila Ledezma | Mapeo con entidades intermedias desacopladas TblUsuarioRol y TblUsuarioGrupo
  *----------------------------------------
  */
 
@@ -45,24 +45,40 @@ public class TblUsuarioMapper {
     }
 
     public TblUsuarioModel toModel(TblUsuario entity) {
+        return toModel(entity, List.of(), List.of());
+    }
+
+    public TblUsuarioModel toModel(TblUsuario entity, List<TblUsuarioRol> usuarioRoles, List<TblUsuarioGrupo> usuarioGrupos) {
         if (entity == null) {
             return null;
         }
 
-        List<Long> roleIds = entity.getRoles() != null
-                ? entity.getRoles().stream().map(TblRol::getIIdRol).toList()
+        List<Long> roleIds = usuarioRoles != null
+                ? usuarioRoles.stream()
+                .filter(ur -> ur.getRol() != null)
+                .map(ur -> ur.getRol().getIIdRol())
+                .toList()
                 : List.of();
 
-        List<String> roleNames = entity.getRoles() != null
-                ? entity.getRoles().stream().map(TblRol::getSNombre).toList()
+        List<String> roleNames = usuarioRoles != null
+                ? usuarioRoles.stream()
+                .filter(ur -> ur.getRol() != null)
+                .map(ur -> ur.getRol().getSNombre())
+                .toList()
                 : List.of();
 
-        List<Long> groupIds = entity.getGrupos() != null
-                ? entity.getGrupos().stream().map(TblGrupo::getIIdGrupo).toList()
+        List<Long> groupIds = usuarioGrupos != null
+                ? usuarioGrupos.stream()
+                .filter(ug -> ug.getGrupo() != null)
+                .map(ug -> ug.getGrupo().getIIdGrupo())
+                .toList()
                 : List.of();
 
-        List<String> groupNames = entity.getGrupos() != null
-                ? entity.getGrupos().stream().map(TblGrupo::getSNombre).toList()
+        List<String> groupNames = usuarioGrupos != null
+                ? usuarioGrupos.stream()
+                .filter(ug -> ug.getGrupo() != null)
+                .map(ug -> ug.getGrupo().getSNombre())
+                .toList()
                 : List.of();
 
         return TblUsuarioModel.builder()

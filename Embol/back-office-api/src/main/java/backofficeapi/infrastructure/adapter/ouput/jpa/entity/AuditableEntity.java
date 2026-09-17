@@ -64,6 +64,7 @@ public abstract class AuditableEntity implements Serializable, Cloneable {
     @Column(name = "VERSION")
     protected Long version;
 
+    @lombok.Builder.Default
     @Column(name = "DELETED", nullable = false)
     protected boolean deleted = false;
 

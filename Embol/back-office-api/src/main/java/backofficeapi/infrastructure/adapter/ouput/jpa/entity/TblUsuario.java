@@ -6,25 +6,17 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /*
  *----------------------------------------
@@ -35,7 +27,7 @@ import java.util.Set;
  *----------------------------------------
  *   Fecha | Autor | Comentario
  *   11.09.2026 | Douglas Javieri | Creación Inicial
- *   16.09.2026 | Camila Ledezma | Relaciones ManyToMany TBL_USUARIO_ROL y TBL_USUARIO_GRUPO
+ *   16.09.2026 | Camila Ledezma | Entidad independiente 
  *----------------------------------------
  */
 
@@ -44,7 +36,7 @@ import java.util.Set;
 @SuperBuilder
 @Getter
 @Setter
-@ToString(callSuper = true, exclude = { "roles", "grupos" })
+@ToString(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class TblUsuario extends AuditableEntity {
@@ -74,14 +66,4 @@ public class TblUsuario extends AuditableEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "SESTADO", nullable = false, length = 20)
     private UserStatus userStatus;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "TBL_USUARIO_ROL", joinColumns = @JoinColumn(name = "IIDUSUARIO", referencedColumnName = "IIDUSUARIO"), inverseJoinColumns = @JoinColumn(name = "IIDROL", referencedColumnName = "IIDROL"))
-    @Builder.Default
-    private Set<TblRol> roles = new HashSet<>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "TBL_USUARIO_GRUPO", joinColumns = @JoinColumn(name = "IIDUSUARIO", referencedColumnName = "IIDUSUARIO"), inverseJoinColumns = @JoinColumn(name = "IIDGRUPO", referencedColumnName = "IIDGRUPO"))
-    @Builder.Default
-    private Set<TblGrupo> grupos = new HashSet<>();
 }
