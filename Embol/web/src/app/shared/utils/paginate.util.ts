@@ -36,5 +36,17 @@ export function paginateArray<T>(
     totalPages: Math.ceil(source.length / size),
   };
 
-  return of({ content, page: pageMetadata }).pipe(delay(latency));
+  const response: Page<T> = {
+    content,
+    page: pageMetadata,
+    number: page,
+    size: size,
+    totalElements: source.length,
+    totalPages: Math.ceil(source.length / size),
+    last: (page + 1) >= Math.ceil(source.length / size),
+    first: page === 0,
+    empty: source.length === 0
+  };
+
+  return of(response).pipe(delay(latency));
 }

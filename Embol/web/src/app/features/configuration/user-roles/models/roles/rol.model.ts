@@ -5,4 +5,7 @@ export interface RolRow {
   nombre: string;
   descripcion: string;
   estado: string;
+  name?: string;
+  description?: string;
+  roleStatus?: string;
 }

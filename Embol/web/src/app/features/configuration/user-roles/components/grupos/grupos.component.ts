@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { GRUPOS_IMPORTS } from '../../enums/user-roles-imports';
-import { GroupService } from '../../../../../core/services/group.service';
+import GroupService from '../../../../../core/services/group.service';
 import { GrupoRow } from '../../models/grupos/grupo.model';
 import { DataTableColumn, DataTableRowAction } from '../../../../../shared/components/data-table/models/data-table.model';
 import { buildGruposColumns } from '../../configs/grupos/grupos-columns.config';
@@ -68,7 +68,7 @@ export class GruposComponent implements OnInit {
   onEdit(id: any): void {
     this.service.getGroupById(id).subscribe(group => {
       if (!group) return;
-      
+
       this.groupModalConfig.set(buildGrupoConfig(true));
       this.groupModalData.set({
         id: group.id,
@@ -80,9 +80,16 @@ export class GruposComponent implements OnInit {
     });
   }
 
-  onDeactivate(id: any): void { console.log('[Grupos] Desactivar →', id);  /* TODO: confirm */ }
+  onDeactivate(id: any): void {
+    if (confirm('¿Está seguro de que desea eliminar este grupo?')) {
+      this.service.deleteGroup(id).subscribe({
+        next: () => this.loadGroups(),
+        error: (err) => console.error('Error al eliminar grupo', err)
+      });
+    }
+  }
   onDelete(id: any): void     { this.onDeactivate(id); }
-  
+
   onAdd(): void {
     this.groupModalConfig.set(buildGrupoConfig(false));
     this.groupModalData.set(null);
@@ -91,9 +98,19 @@ export class GruposComponent implements OnInit {
 
   onGroupSubmit(data: any): void {
     const isEdit = !!this.groupModalData();
-    console.log(`[Grupos] ${isEdit ? 'Actualizar' : 'Guardar'} →`, data);
-    this.isGroupModalOpen.set(false);
-    this.loadGroups();
+    const request = isEdit
+      ? this.service.updateGroup(this.groupModalData().id, data)
+      : this.service.createGroup(data);
+
+    request.subscribe({
+      next: () => {
+        this.isGroupModalOpen.set(false);
+        this.loadGroups();
+      },
+      error: (err) => {
+        console.error(`Error al ${isEdit ? 'actualizar' : 'crear'} grupo`, err);
+      }
+    });
   }
 
   onGroupCancel(): void {
