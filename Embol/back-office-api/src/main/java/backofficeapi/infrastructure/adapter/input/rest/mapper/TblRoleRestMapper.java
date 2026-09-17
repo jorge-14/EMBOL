@@ -1,9 +1,11 @@
 package backofficeapi.infrastructure.adapter.input.rest.mapper;
 
 import backofficeapi.domain.model.TblRoleModel;
-import backofficeapi.infrastructure.adapter.input.rest.request.TblRoleRequestDto;
-import backofficeapi.infrastructure.adapter.input.rest.response.AuthRoleResponseDto;
+import backofficeapi.infrastructure.adapter.input.rest.request.tblRole.TblRoleRequestDto;
+import backofficeapi.infrastructure.adapter.input.rest.request.tblRole.TblRoleUpdateRequestDto;
 import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.ListRoleShortResponse;
+import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.PageListRolResponseDto;
+import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.TblRoleResponseDto;
 import org.springframework.stereotype.Component;
 
 /*
@@ -21,29 +23,43 @@ import org.springframework.stereotype.Component;
 @Component
 public class TblRoleRestMapper {
 
-    public TblRoleModel toModel(TblRoleRequestDto tblRoleRequestDto) {
-        if (tblRoleRequestDto == null) {
+    public TblRoleModel toModel(TblRoleRequestDto tblRolRequestDto) {
+        if (tblRolRequestDto == null) {
             return null;
         }
-        TblRoleModel tblRoleModel = new TblRoleModel();
-        tblRoleModel.setSNombre(tblRoleRequestDto.getName() != null ? tblRoleRequestDto.getName().trim() : null);
-        tblRoleModel.setSDescripcion(
-                tblRoleRequestDto.getDescription() != null ? tblRoleRequestDto.getDescription().trim() : null);
-        tblRoleModel.setSRolBase(tblRoleRequestDto.isBaseRole());
-        tblRoleModel.setSEstado(tblRoleRequestDto.getRoleStatus());
-        return tblRoleModel;
+        TblRoleModel tblRolModel = new TblRoleModel();
+
+        tblRolModel.setSNombre(tblRolRequestDto.getName() != null ? tblRolRequestDto.getName().trim() : null);
+        tblRolModel.setSDescripcion(tblRolRequestDto.getDescription() != null ? tblRolRequestDto.getDescription().trim() : null);
+        tblRolModel.setSRolBase(tblRolRequestDto.isBaseRole());
+        tblRolModel.setSEstado(tblRolRequestDto.getRoleStatus());
+
+        return tblRolModel;
     }
 
-    public AuthRoleResponseDto toAuthRoleResponseDto(TblRoleModel tblRoleModel) {
-        if (tblRoleModel == null) {
+    public TblRoleModel toModelUpdate(TblRoleUpdateRequestDto request) {
+        if (request == null) {
             return null;
         }
-        return AuthRoleResponseDto.builder()
-                .id(tblRoleModel.getIIdRol())
-                .name(tblRoleModel.getSNombre())
-                .description(tblRoleModel.getSDescripcion())
-                .baseRole(tblRoleModel.getSRolBase())
-                .roleStatus(tblRoleModel.getSEstado())
+        TblRoleModel tblRolModel = new TblRoleModel();
+
+        tblRolModel.setSNombre(request.getName() != null ? request.getName().trim() : null);
+        tblRolModel.setSDescripcion(request.getDescription() != null ? request.getDescription().trim() : null);
+        tblRolModel.setSEstado(request.getRoleStatus());
+
+        return tblRolModel;
+    }
+
+    public TblRoleResponseDto toAuthRoleResponseDto(TblRoleModel tblRolModel) {
+        if (tblRolModel == null) {
+            return null;
+        }
+        return TblRoleResponseDto.builder()
+                .id(tblRolModel.getIIdRol())
+                .name(tblRolModel.getSNombre())
+                .description(tblRolModel.getSDescripcion())
+                .baseRole(tblRolModel.getSRolBase())
+                .roleStatus(tblRolModel.getSEstado())
                 .build();
     }
 
@@ -54,6 +70,19 @@ public class TblRoleRestMapper {
         return ListRoleShortResponse.builder()
                 .id(model.getIIdRol())
                 .name(model.getSNombre())
+                .build();
+    }
+
+    public PageListRolResponseDto toPageResponse(TblRoleModel tblRolModel) {
+        if (tblRolModel == null) {
+            return null;
+        }
+        return PageListRolResponseDto.builder()
+                .id(tblRolModel.getIIdRol())
+                .name(tblRolModel.getSNombre())
+                .description(tblRolModel.getSDescripcion())
+                .baseRole(tblRolModel.getSRolBase())
+                .roleStatus(tblRolModel.getSEstado())
                 .build();
     }
 }

@@ -1,17 +1,15 @@
-package backofficeapi.infrastructure.adapter.input.rest.request;
+package backofficeapi.infrastructure.adapter.input.rest.response.tblRole;
 
 import backofficeapi.domain.enums.RoleStatus;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /*
  *----------------------------------------
- *   Código de Aplicación: EMBOL
- *   Código de Objeto: TblRoleRequestDto
- *   Descripción: DTO de solicitud para crear/actualizar Role (TBL_ROL)
+ *   Código de Aplicación:
+ *   Código de Objeto:
+ *   Descripción:
  *   Author Prog: Jorge Luis Choque Callizaya
  *----------------------------------------
  *   Fecha | Autor | Comentario
@@ -22,10 +20,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class TblRoleRequestDto {
+public class TblRoleResponseDto {
 
+    private Long id;
     private String name;
     private String description;
     private boolean baseRole;

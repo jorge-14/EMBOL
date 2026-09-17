@@ -1,6 +1,8 @@
-package backofficeapi.application.port.input;
+package backofficeapi.application.port.input.role;
 
 import backofficeapi.domain.model.TblRoleModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /*
  *----------------------------------------
@@ -16,5 +18,11 @@ import backofficeapi.domain.model.TblRoleModel;
 
 public interface CrudTblRoleUseCase {
 
-    TblRoleModel createRole(TblRoleModel tblRoleModel);
+    TblRoleModel createRole(TblRoleModel tblRolModel);
+
+    TblRoleModel updateRole(Long id, TblRoleModel tblRolModel);
+
+    TblRoleModel deleteRole(Long id);
+
+    Page<TblRoleModel> pageListRol(Pageable pageable);
 }

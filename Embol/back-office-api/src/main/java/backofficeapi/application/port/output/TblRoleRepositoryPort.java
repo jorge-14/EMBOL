@@ -1,8 +1,11 @@
 package backofficeapi.application.port.output;
 
 import backofficeapi.domain.model.TblRoleModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 /*
  *----------------------------------------
@@ -18,7 +21,11 @@ import java.util.List;
 
 public interface TblRoleRepositoryPort {
 
-    TblRoleModel saveRole(TblRoleModel tblRoleModel);
-
+    TblRoleModel saveRole(TblRoleModel tblRolModel);
     List<TblRoleModel> listRole();
+    Optional<TblRoleModel> findById(Long id);
+
+    Page<TblRoleModel> getPageListRol(Pageable pageable);
+
+    boolean existsRolByName(String nombre);
 }

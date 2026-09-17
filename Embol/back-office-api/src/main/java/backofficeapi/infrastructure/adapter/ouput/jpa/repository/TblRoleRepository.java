@@ -2,6 +2,8 @@ package backofficeapi.infrastructure.adapter.ouput.jpa.repository;
 
 import backofficeapi.domain.model.TblRoleModel;
 import backofficeapi.infrastructure.adapter.ouput.jpa.entity.TblRol;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -27,4 +29,14 @@ public interface TblRoleRepository extends JpaRepository<TblRol, Long> {
             "FROM TblRol t " +
             "ORDER BY t.sNombre ASC")
     List<TblRoleModel> listRole();
+
+    @Query("SELECT tblr " +
+            "FROM TblRol tblr " +
+            "ORDER BY tblr.sNombre ASC")
+    Page<TblRol> pageListGroup(Pageable pageable);
+
+    @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END " +
+            "FROM TblRol t " +
+            "WHERE UPPER(TRIM(t.sNombre)) = UPPER(TRIM(:nombre))")
+    boolean existsByName(String nombre);
 }
