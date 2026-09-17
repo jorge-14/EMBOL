@@ -44,10 +44,14 @@ export class GroupService {
   }
 
   getGroupById(id: any): Observable<GrupoRow | undefined> {
-    const group = MOCK_GROUPS.find(g => g.id === id);
-    return new Observable(obs => {
-      obs.next(group);
-      obs.complete();
-    });
+    return this.http.get<GrupoRow>(`${this.baseUrl}/${id}`);
+  }
+
+  updateGroupById(data: GrupoRow): Observable<GrupoRow> {
+    return this.http.put<GrupoRow>(`${this.baseUrl}/update-group/${data.id}`, data);
+  }
+
+  createGroup(data: GrupoRow): Observable<GrupoRow> {
+    return this.http.post<GrupoRow>(`${this.baseUrl}/create-group`, data);
   }
 }
