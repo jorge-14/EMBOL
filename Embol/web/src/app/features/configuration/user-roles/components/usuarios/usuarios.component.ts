@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { USUARIOS_IMPORTS } from '../../enums/user-roles-imports';
 import { UserService } from '../../../../../core/services/user.service';
 import { RoleService } from '../../../../../core/services/role.service';
-import GroupService from '../../../../../core/services/group.service';
+import { GroupService } from '../../../../../core/services/group.service';
 import { RolRow } from '../../models/roles/rol.model';
 import { GrupoRow } from '../../models/grupos/grupo.model';
 import { UserRow } from '../../models/users/user.model';

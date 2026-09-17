@@ -1,6 +1,6 @@
-package backofficeapi.application.usecase;
+package backofficeapi.application.usecase.user;
 
-import backofficeapi.application.port.input.CrudTblUserUseCase;
+import backofficeapi.application.port.input.user.CrudTblUserUseCase;
 import backofficeapi.application.port.output.TblUserRepositoryPort;
 import backofficeapi.domain.exception.BusinessApiException;
 import backofficeapi.domain.exception.TechnicalApiException;
@@ -22,7 +22,7 @@ import java.util.Optional;
  *----------------------------------------
  *   Código de Aplicación: EMBOL
  *   Código de Objeto: CrudTblUserUseCaseImpl
- *   Descripción: Implementación del caso de uso CRUD para TblUser (TBL_USUARIO) con roles y grupos
+ *   Descripción: Implementación de casos de uso CRUD para TblUser (TBL_USUARIO)
  *   Author Prog: Douglas Javieri / Camila Ledezma
  *----------------------------------------
  *   Fecha | Autor | Comentario
@@ -180,35 +180,5 @@ public class CrudTblUserUseCaseImpl implements CrudTblUserUseCase {
         existing.delete();
         tblUserRepositoryPort.save(existing);
         log.info("Usuario eliminado lógicamente (soft delete, deleted=true) con ID: {}", id);
-    }
-
-    @Override
-    @Transactional
-    public TblUserModel activateUserById(Long id) {
-        if (id == null) {
-            throw new BusinessApiException(HttpStatus.BAD_REQUEST, "El ID del usuario es requerido");
-        }
-        TblUserModel existing = tblUserRepositoryPort.findById(id)
-                .orElseThrow(() -> new TblUserNotFoundException(id));
-
-        existing.activate();
-        TblUserModel saved = tblUserRepositoryPort.save(existing);
-        log.info("Usuario activado con ID: {}", id);
-        return saved;
-    }
-
-    @Override
-    @Transactional
-    public TblUserModel deactivateUserById(Long id) {
-        if (id == null) {
-            throw new BusinessApiException(HttpStatus.BAD_REQUEST, "El ID del usuario es requerido");
-        }
-        TblUserModel existing = tblUserRepositoryPort.findById(id)
-                .orElseThrow(() -> new TblUserNotFoundException(id));
-
-        existing.deactivate();
-        TblUserModel saved = tblUserRepositoryPort.save(existing);
-        log.info("Usuario desactivado con ID: {}", id);
-        return saved;
     }
 }
