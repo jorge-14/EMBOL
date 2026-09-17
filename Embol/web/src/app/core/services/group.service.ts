@@ -17,7 +17,7 @@ export class GroupService {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
-      .set('sortBy', 'ID') // o el campo por defecto
+      .set('sortBy', 'modifiedDate') 
       .set('sortDir', 'DESC');
 
     return this.http.get<Page<any>>(`${this.baseUrl}/paginated-group`, { params })
