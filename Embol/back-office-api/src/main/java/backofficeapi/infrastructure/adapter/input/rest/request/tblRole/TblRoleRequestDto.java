@@ -1,6 +1,9 @@
 package backofficeapi.infrastructure.adapter.input.rest.request.tblRole;
 
 import backofficeapi.domain.enums.RoleStatus;
+import backofficeapi.infrastructure.adapter.input.rest.validation.NoEdgeSpaces;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,10 +30,15 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TblRoleRequestDto {
 
+    @NotBlank(message = "El Nombre es requerido.")
     @Size(max = 40, message = "El nombre no debe exceder los 40 caracteres.")
+    @NoEdgeSpaces
     private String name;
+    @NotBlank(message = "La Descripción es requerida.")
     @Size(max = 255, message = "La descripción no debe exceder los 255 caracteres.")
+    @NoEdgeSpaces
     private String description;
     private boolean baseRole;
+    @NotNull(message = "El Estado es requerido.")
     private RoleStatus roleStatus;
 }

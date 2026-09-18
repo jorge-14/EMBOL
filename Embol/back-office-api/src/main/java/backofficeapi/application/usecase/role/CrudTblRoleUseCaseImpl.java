@@ -38,27 +38,6 @@ public class CrudTblRoleUseCaseImpl implements CrudTblRoleUseCase {
     @Override
     @Transactional
     public TblRoleModel createRole(TblRoleModel tblRolModel) {
-
-        if (tblRolModel == null) {
-            log.error("Error de validación: los datos del role son requeridos");
-            throw new BusinessApiException(HttpStatus.BAD_REQUEST, "Los datos del role son requeridos");
-        }
-
-        if (tblRolModel.getSNombre() == null || tblRolModel.getSNombre().trim().isEmpty()) {
-            log.error("Error de validación: el nombre es requerido");
-            throw new BusinessApiException(HttpStatus.BAD_REQUEST, "El nombre del role es requerido");
-        }
-
-        if (tblRolModel.getSDescripcion() == null || tblRolModel.getSDescripcion().trim().isEmpty()) {
-            log.error("Error de validación: la descripción es requerido");
-            throw new BusinessApiException(HttpStatus.BAD_REQUEST, "La descripcion del role es requerido");
-        }
-
-        if (tblRolModel.getSEstado() == null) {
-            log.error("Error de validación: el estado es requerido");
-            throw new BusinessApiException(HttpStatus.BAD_REQUEST, "El estado del role es requerido");
-        }
-
         String normalizedNombre = tblRolModel.getSNombre().trim().replaceAll("\\s+", "_").toUpperCase();
         if (tblRoleRepositoryPort.existsRolByName(normalizedNombre)) {
             log.error("Error de negocio: ya existe un rol con el nombre: {}", normalizedNombre);
@@ -74,39 +53,30 @@ public class CrudTblRoleUseCaseImpl implements CrudTblRoleUseCase {
             log.error("Error crítico: Error al guardar el role: {}", saveRole);
             throw new TechnicalApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al guardar el role");
         }
+
+        log.info("Rol creado exitosamente con ID: {}", saveRole.getIIdRol());
         return saveRole;
     }
 
     @Override
     @Transactional
     public TblRoleModel updateRole(Long id, TblRoleModel tblRolModel) {
-        if (id == null) {
-            log.error("Error de validación: el ID del role es requerido");
-            throw new BusinessApiException(HttpStatus.BAD_REQUEST, "El ID del role es requerido");
-        }
-
-        if (tblRolModel == null) {
-            log.error("Error de validación: los datos del role a actualizar son requeridos");
-            throw new BusinessApiException(HttpStatus.BAD_REQUEST, "Los datos del role a actualizar son requeridos");
-        }
-
         TblRoleModel existingRole = tblRoleRepositoryPort.findById(id).orElseThrow(() -> {
-                   log.error("Error de negocio: no existe el grupo con ID: {}", id);
-                   return new BusinessApiException(HttpStatus.NOT_FOUND, "No se encontro el rol");
-                });
+            log.error("Error de negocio: no existe el rol con ID: {}", id);
+            return new BusinessApiException(HttpStatus.NOT_FOUND, "No se encontró el rol");
+        });
 
-        if (tblRolModel.getSNombre() != null && !tblRolModel.getSNombre().trim().isEmpty()) {
+        if (tblRolModel.getSNombre() != null) {
             String newNombre = tblRolModel.getSNombre().trim().replaceAll("\\s+", "_").toUpperCase();
-            if (!newNombre.equalsIgnoreCase(existingRole.getSNombre())) {
-                if (tblRoleRepositoryPort.existsRolByName(newNombre)) {
-                    log.error("Error de negocio: ya existe un rol con el nombre: {}", newNombre);
-                    throw new BusinessApiException(HttpStatus.BAD_REQUEST, "Ya existe un rol con el nombre: " + newNombre);
-                }
+            if (!newNombre.equalsIgnoreCase(existingRole.getSNombre())
+                    && tblRoleRepositoryPort.existsRolByName(newNombre)) {
+                log.error("Error de negocio: ya existe un rol con el nombre: {}", newNombre);
+                throw new BusinessApiException(HttpStatus.BAD_REQUEST, "Ya existe un rol con el nombre: " + newNombre);
             }
             existingRole.setSNombre(newNombre);
         }
 
-        if (tblRolModel.getSDescripcion() != null && !tblRolModel.getSDescripcion().trim().isEmpty()) {
+        if (tblRolModel.getSDescripcion() != null) {
             existingRole.setSDescripcion(tblRolModel.getSDescripcion().trim());
         }
 

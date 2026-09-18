@@ -1,6 +1,7 @@
 package backofficeapi.infrastructure.adapter.input.rest.request.tblRole;
 
 import backofficeapi.domain.enums.RoleStatus;
+import backofficeapi.infrastructure.adapter.input.rest.validation.NoEdgeSpaces;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,8 +27,10 @@ import lombok.NoArgsConstructor;
 public class TblRoleUpdateRequestDto {
 
     @Size(max = 40, message = "El nombre no debe exceder los 40 caracteres.")
+    @NoEdgeSpaces
     private String name;
     @Size(max = 255, message = "La descripción no debe exceder los 255 caracteres.")
+    @NoEdgeSpaces
     private String description;
     private RoleStatus roleStatus;
 }
