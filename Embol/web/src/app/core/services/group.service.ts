@@ -17,14 +17,19 @@ export class GroupService {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
-      .set('sortBy', 'modifiedDate') 
+      .set('sortBy', 'modifiedDate')
       .set('sortDir', 'DESC');
 
     return this.http.get<Page<any>>(`${this.baseUrl}/paginated-group`, { params })
       .pipe(
         map((response: any) => {
           return {
-            content: response.content,
+            content: (response.content || []).map((g: any) => ({
+              id: g.id,
+              nombre: g.name || g.nombre,
+              descripcion: g.description || g.descripcion,
+              estado: g.groupStatus || g.estado
+            })),
             page: {
               size: response.size,
               number: response.number,
@@ -37,23 +42,49 @@ export class GroupService {
   }
 
   getGroupList(): Observable<GrupoRow[]> {
-    return new Observable(obs => {
-      obs.next(MOCK_GROUPS);
-      obs.complete();
-    });
+    return this.http.get<Page<any>>(`${this.baseUrl}/paginated-group`, {
+      params: new HttpParams().set('page', '0').set('size', '1000')
+    }).pipe(
+      map(response => (response.content || []).map((g: any) => ({
+        id: g.id,
+        nombre: g.name || g.nombre,
+        descripcion: g.description || g.descripcion,
+        estado: g.groupStatus || g.estado
+      })))
+    );
   }
 
   getGroupById(id: any): Observable<GrupoRow | undefined> {
     return this.http.get<any>(`${this.baseUrl}/information-group-by-id/${id}`).pipe(
-      map(res => res.data)
+      map(res => {
+        const g = res.data;
+        if (!g) return undefined;
+        return {
+          id: g.id,
+          nombre: g.name || g.nombre,
+          descripcion: g.description || g.descripcion,
+          estado: g.groupStatus || g.estado
+        } as GrupoRow;
+      })
     );
   }
 
   updateGroupById(data: GrupoRow): Observable<GrupoRow> {
-    return this.http.put<GrupoRow>(`${this.baseUrl}/update-group/${data.id}`, data);
+    const body = {
+      id: data.id,
+      name: data.nombre,
+      description: data.descripcion,
+      groupStatus: data.estado
+    };
+    return this.http.put<GrupoRow>(`${this.baseUrl}/update-group/${data.id}`, body);
   }
 
   createGroup(data: GrupoRow): Observable<GrupoRow> {
-    return this.http.post<GrupoRow>(`${this.baseUrl}/create-group`, data);
+    const body = {
+      name: data.nombre,
+      description: data.descripcion,
+      groupStatus: data.estado
+    };
+    return this.http.post<GrupoRow>(`${this.baseUrl}/create-group`, body);
   }
 }

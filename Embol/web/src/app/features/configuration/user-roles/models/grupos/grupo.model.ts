@@ -3,6 +3,8 @@
 export interface GrupoRow {
   id: any;
   estado: string;
-  name: string;
-  description: string;
+  nombre: string;
+  descripcion: string;
+  name?: string;
+  description?: string;
 }

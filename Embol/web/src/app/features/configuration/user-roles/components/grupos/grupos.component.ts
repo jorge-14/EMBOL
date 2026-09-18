@@ -71,12 +71,12 @@ export class GruposComponent implements OnInit {
       next: (group) => {
         this.loading.set(false);
         if (!group) return;
-        
+
         this.groupModalConfig.set(buildUpdateGroupConfig());
         this.groupModalData.set({
           id: group.id,
-          name: group.name,
-          description: group.description,
+          nombre: group.nombre,
+          descripcion: group.descripcion,
           estado: group.estado
         });
         this.isGroupModalOpen.set(true);
@@ -90,7 +90,7 @@ export class GruposComponent implements OnInit {
 
   onDeactivate(id: any): void { console.log('[Grupos] Desactivar →', id);  /* TODO: confirm */ }
   onDelete(id: any): void     { this.onDeactivate(id); }
-  
+
   onAdd(): void {
     this.groupModalConfig.set(buildCreateGroupConfig());
     this.groupModalData.set(null);
