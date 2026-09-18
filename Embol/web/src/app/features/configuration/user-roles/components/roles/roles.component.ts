@@ -8,6 +8,7 @@ import { buildRolRowActions } from '../../configs/roles/roles-actions.config';
 import { buildRolConfig } from '../../configs/roles/roles-form.config';
 import { DynamicFormConfig } from '../../../../../shared/components/dynamic-form/models/dynamic-form.model';
 import { PageMetadata } from '../../../../../shared/models/pagination.model';
+import { ConfirmModalConfig } from '../../../../../shared/components/confirm-modal/models/confirm-modal.model';
 
 @Component({
   selector: 'app-roles',
@@ -63,30 +64,72 @@ export class RolesComponent implements OnInit {
   roleModalConfig = signal<DynamicFormConfig | null>(null);
   roleModalData = signal<any>(null);
 
+  // Modal de Confirmación para eliminar
+  isConfirmModalOpen = signal(false);
+  confirmModalConfig = signal<ConfirmModalConfig>({
+    title: '',
+    description: ''
+  });
+  private roleToDeleteId: any = null;
+
   // ── 6. Acciones de fila ────────────────────────────────────────────────────
   onEdit(id: any): void {
-    this.service.getRoleById(id).subscribe(role => {
-      if (!role) return;
+    this.loading.set(true);
+    this.service.getRoleById(id).subscribe({
+      next: (role) => {
+        this.loading.set(false);
+        if (!role) return;
 
-      this.roleModalConfig.set(buildRolConfig(true));
-      this.roleModalData.set({
-        id: role.id,
-        nombre: role.nombre,
-        descripcion: role.descripcion,
-        estado: role.estado
-      });
-      this.isRoleModalOpen.set(true);
+        this.roleModalConfig.set(buildRolConfig(true));
+        this.roleModalData.set({
+          id: role.id,
+          nombre: role.nombre,
+          descripcion: role.descripcion,
+          estado: role.estado
+        });
+        this.isRoleModalOpen.set(true);
+      },
+      error: (err) => {
+        console.error('Error obteniendo rol por ID', err);
+        this.loading.set(false);
+      }
     });
   }
 
   onDeactivate(id: any): void {
-    if (confirm('¿Está seguro de que desea eliminar este rol?')) {
-      this.service.deleteRole(id).subscribe({
-        next: () => this.loadRoles(),
-        error: (err) => console.error('Error al eliminar rol', err)
+    this.roleToDeleteId = id;
+    this.confirmModalConfig.set({
+      title: 'Eliminar Rol',
+      description: '¿Está seguro de que desea eliminar este rol? Esta acción no se puede deshacer.',
+      confirmLabel: 'Eliminar',
+      cancelLabel: 'Cancelar',
+      icon: 'danger'
+    });
+    this.isConfirmModalOpen.set(true);
+  }
+
+  onConfirmDelete(): void {
+    if (this.roleToDeleteId) {
+      this.loading.set(true);
+      this.service.deleteRole(this.roleToDeleteId).subscribe({
+        next: () => {
+          this.isConfirmModalOpen.set(false);
+          this.loadRoles();
+        },
+        error: (err) => {
+          console.error('Error al eliminar rol', err);
+          this.loading.set(false);
+          this.isConfirmModalOpen.set(false);
+        }
       });
     }
   }
+
+  onConfirmCancel(): void {
+    this.isConfirmModalOpen.set(false);
+    this.roleToDeleteId = null;
+  }
+
   onDelete(id: any): void     { this.onDeactivate(id); }
 
   onAdd(): void {
@@ -97,17 +140,37 @@ export class RolesComponent implements OnInit {
 
   onRoleSubmit(data: any): void {
     const isEdit = !!this.roleModalData();
-    const request = isEdit
-      ? this.service.updateRole(this.roleModalData().id, data)
-      : this.service.createRole(data);
+    if (isEdit) {
+      this.onUpdateSubmit(data);
+    } else {
+      this.onCreateSubmit(data);
+    }
+  }
 
-    request.subscribe({
+  private onUpdateSubmit(data: any): void {
+    this.loading.set(true);
+    this.service.updateRole(this.roleModalData().id, data).subscribe({
       next: () => {
         this.isRoleModalOpen.set(false);
         this.loadRoles();
       },
       error: (err) => {
-        console.error(`Error al ${isEdit ? 'actualizar' : 'crear'} rol`, err);
+        console.error('Error actualizando rol', err);
+        this.loading.set(false);
+      }
+    });
+  }
+
+  private onCreateSubmit(data: any): void {
+    this.loading.set(true);
+    this.service.createRole(data).subscribe({
+      next: () => {
+        this.isRoleModalOpen.set(false);
+        this.loadRoles();
+      },
+      error: (err) => {
+        console.error('Error creando rol', err);
+        this.loading.set(false);
       }
     });
   }

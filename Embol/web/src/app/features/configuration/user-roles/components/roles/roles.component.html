@@ -1,28 +1,21 @@
-@if (loading()) {
-  <div class="flex items-center justify-center py-12">
-    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
-    <span class="ml-3 text-sm text-gray-500">Cargando roles...</span>
-  </div>
-} @else {
-  <div class="flex justify-end mb-4">
-    <button (click)="onAdd()" class="bg-brand text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-brand-hover transition-colors shadow-sm">
-      <span class="text-lg leading-none">+</span> Nuevo Rol
-    </button>
-  </div>
-  
-  <app-data-table
-    [data]="roles()"
-    [columns]="columns"
-    [rowActions]="rowActions"
-    [trackByKey]="'id'"
-    [showFilter]="true"
-    [showPagination]="true"
-    [pageInfo]="pageInfo()"
-    (pageChange)="onPageChange($event)"
-    (pageSizeChange)="onPageSizeChange($event)"
-  >
-  </app-data-table>
-}
+<div class="flex justify-end mb-4">
+  <button (click)="onAdd()" class="bg-brand text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-brand-hover transition-colors shadow-sm">
+    <span class="text-lg leading-none">+</span> Nuevo Rol
+  </button>
+</div>
+
+<app-data-table
+  [data]="roles()"
+  [columns]="columns"
+  [rowActions]="rowActions"
+  [trackByKey]="'id'"
+  [showFilter]="true"
+  [showPagination]="true"
+  [pageInfo]="pageInfo()"
+  (pageChange)="onPageChange($event)"
+  (pageSizeChange)="onPageSizeChange($event)"
+>
+</app-data-table>
 
 @if (roleModalConfig()) {
   <app-dynamic-form
@@ -32,4 +25,20 @@
     (formSubmit)="onRoleSubmit($event)"
     (close)="onRoleCancel()"
   ></app-dynamic-form>
+}
+
+<app-confirm-modal
+  [config]="confirmModalConfig()"
+  [isOpen]="isConfirmModalOpen()"
+  (confirm)="onConfirmDelete()"
+  (close)="onConfirmCancel()"
+></app-confirm-modal>
+
+@if (loading()) {
+  <div class="fixed inset-0 z-[70] flex items-center justify-center bg-gray-900 bg-opacity-50 backdrop-blur-sm">
+    <div class="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center gap-3">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-brand"></div>
+      <span class="text-sm font-semibold text-gray-700">Procesando...</span>
+    </div>
+  </div>
 }
