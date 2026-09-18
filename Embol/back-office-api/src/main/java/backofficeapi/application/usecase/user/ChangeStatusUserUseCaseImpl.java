@@ -3,7 +3,6 @@ package backofficeapi.application.usecase.user;
 import backofficeapi.application.port.input.user.ChangeStatusUserUseCase;
 import backofficeapi.application.port.output.TblUserRepositoryPort;
 import backofficeapi.domain.exception.BusinessApiException;
-import backofficeapi.domain.exception.TblUserNotFoundException;
 import backofficeapi.domain.model.TblUserModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +36,7 @@ public class ChangeStatusUserUseCaseImpl implements ChangeStatusUserUseCase {
             throw new BusinessApiException(HttpStatus.BAD_REQUEST, "El ID del usuario es requerido");
         }
         TblUserModel existing = tblUserRepositoryPort.findById(id)
-                .orElseThrow(() -> new TblUserNotFoundException(id));
+                .orElseThrow(() -> new BusinessApiException(HttpStatus.NOT_FOUND, "No se encontró el usuario con ID: " + id));
 
         existing.activate();
         TblUserModel saved = tblUserRepositoryPort.save(existing);
@@ -52,7 +51,7 @@ public class ChangeStatusUserUseCaseImpl implements ChangeStatusUserUseCase {
             throw new BusinessApiException(HttpStatus.BAD_REQUEST, "El ID del usuario es requerido");
         }
         TblUserModel existing = tblUserRepositoryPort.findById(id)
-                .orElseThrow(() -> new TblUserNotFoundException(id));
+                .orElseThrow(() -> new BusinessApiException(HttpStatus.NOT_FOUND, "No se encontró el usuario con ID: " + id));
 
         existing.deactivate();
         TblUserModel saved = tblUserRepositoryPort.save(existing);

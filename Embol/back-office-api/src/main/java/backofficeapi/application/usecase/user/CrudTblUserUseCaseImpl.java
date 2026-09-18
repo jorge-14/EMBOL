@@ -4,8 +4,6 @@ import backofficeapi.application.port.input.user.CrudTblUserUseCase;
 import backofficeapi.application.port.output.TblUserRepositoryPort;
 import backofficeapi.domain.exception.BusinessApiException;
 import backofficeapi.domain.exception.TechnicalApiException;
-import backofficeapi.domain.exception.TblUserAlreadyExistsException;
-import backofficeapi.domain.exception.TblUserNotFoundException;
 import backofficeapi.domain.model.TblUserModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +58,7 @@ public class CrudTblUserUseCaseImpl implements CrudTblUserUseCase {
         String normalizedUsername = tblUserModel.getUsername().trim();
         if (tblUserRepositoryPort.existsByUsername(normalizedUsername)) {
             log.error("Error de negocio: ya existe un usuario con username: {}", normalizedUsername);
-            throw new TblUserAlreadyExistsException(normalizedUsername);
+            throw new BusinessApiException(HttpStatus.CONFLICT, "Ya existe un usuario con el nombre de usuario: " + normalizedUsername);
         }
 
         if (tblUserModel.getEmail() != null && !tblUserModel.getEmail().trim().isEmpty()) {
@@ -101,7 +99,7 @@ public class CrudTblUserUseCaseImpl implements CrudTblUserUseCase {
         }
 
         TblUserModel existingUser = tblUserRepositoryPort.findById(id)
-                .orElseThrow(() -> new TblUserNotFoundException(id));
+                .orElseThrow(() -> new BusinessApiException(HttpStatus.NOT_FOUND, "No se encontró el usuario con ID: " + id));
 
         if (tblUserModel.getName() != null && !tblUserModel.getName().trim().isEmpty()) {
             existingUser.setName(tblUserModel.getName().trim());
@@ -175,7 +173,7 @@ public class CrudTblUserUseCaseImpl implements CrudTblUserUseCase {
             throw new BusinessApiException(HttpStatus.BAD_REQUEST, "El ID del usuario es requerido");
         }
         TblUserModel existing = tblUserRepositoryPort.findById(id)
-                .orElseThrow(() -> new TblUserNotFoundException(id));
+                .orElseThrow(() -> new BusinessApiException(HttpStatus.NOT_FOUND, "No se encontró el usuario con ID: " + id));
 
         existing.delete();
         tblUserRepositoryPort.save(existing);
