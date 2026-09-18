@@ -52,13 +52,16 @@ export class RoleService {
   }
 
   getRoleById(id: any): Observable<RolRow> {
-    return this.http.get<RolRow>(`${this.apiUrl}/get-role/${id}`).pipe(
-      map(rol => ({
-        ...rol,
-        nombre: rol.name || rol.nombre,
-        descripcion: rol.description || rol.descripcion,
-        estado: (rol.roleStatus || rol.estado) === 'ACTIVE' ? 'Activo' : (rol.roleStatus || rol.estado) === 'INACTIVE' ? 'Inactivo' : (rol.roleStatus || rol.estado)
-      }))
+    return this.http.get<any>(`${this.apiUrl}/get-role/${id}`).pipe(
+      map(res => {
+        const rol = res.data;
+        return {
+          ...rol,
+          nombre: rol.name || rol.nombre,
+          descripcion: rol.description || rol.descripcion,
+          estado: (rol.roleStatus || rol.estado) === 'ACTIVE' ? 'Activo' : (rol.roleStatus || rol.estado) === 'INACTIVE' ? 'Inactivo' : (rol.roleStatus || rol.estado)
+        };
+      })
     );
   }
 

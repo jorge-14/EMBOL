@@ -5,14 +5,14 @@ import { GrupoRow } from '../../models/grupos/grupo.model';
 export function buildGruposColumns(): DataTableColumn<GrupoRow>[] {
   return [
     {
-      key: 'name',
+      key: 'nombre',
       header: 'Nombre',
       type: 'text',
       minWidth: '200px',
       cssClass: 'font-bold text-gray-900',
     },
     {
-      key: 'description',
+      key: 'descripcion',
       header: 'Descripción',
       type: 'text',
       minWidth: '260px',

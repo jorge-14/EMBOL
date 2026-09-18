@@ -3,8 +3,8 @@ import { DynamicFormConfig } from '../../../../../shared/components/dynamic-form
 export const buildCreateGroupConfig = (): DynamicFormConfig => ({
   title: 'Nuevo Grupo',
   fields: [
-    { key: 'name', label: 'NOMBRE', type: 'text', placeholder: 'Ej: Operaciones Sur', required: true, colSpan: 2 },
-    { key: 'description', label: 'DESCRIPCIÓN', type: 'text', placeholder: 'Describe el propósito del grupo', required: true, colSpan: 2 },
+    { key: 'nombre', label: 'NOMBRE', type: 'text', placeholder: 'Ej: Operaciones Sur', required: true, colSpan: 2 },
+    { key: 'descripcion', label: 'DESCRIPCIÓN', type: 'text', placeholder: 'Describe el propósito del grupo', required: true, colSpan: 2 },
   ],
   submitLabel: 'Guardar',
   cancelLabel: 'Cancelar'
@@ -13,8 +13,8 @@ export const buildCreateGroupConfig = (): DynamicFormConfig => ({
 export const buildUpdateGroupConfig = (): DynamicFormConfig => ({
   title: 'Editar Grupo',
   fields: [
-    { key: 'name', label: 'NOMBRE', type: 'text', placeholder: 'Ej: Operaciones Sur', required: true, colSpan: 2 },
-    { key: 'description', label: 'DESCRIPCIÓN', type: 'text', placeholder: 'Describe el propósito del grupo', required: true, colSpan: 2 }
+    { key: 'nombre', label: 'NOMBRE', type: 'text', placeholder: 'Ej: Operaciones Sur', required: true, colSpan: 2 },
+    { key: 'descripcion', label: 'DESCRIPCIÓN', type: 'text', placeholder: 'Describe el propósito del grupo', required: true, colSpan: 2 }
   ],
   submitLabel: 'Guardar Cambios',
   cancelLabel: 'Cancelar'

@@ -3,14 +3,14 @@
   <app-horizontal-select
     label="Filtrar por Rol"
     placeholder="Todos los roles"
-    [options]="roleOptions"
+    [options]="roleOptions()"
     [(value)]="roleFilter"
   ></app-horizontal-select>
 
   <app-horizontal-select
     label="Filtrar por Grupo"
     placeholder="Todos los grupos"
-    [options]="groupOptions"
+    [options]="groupOptions()"
     [(value)]="groupFilter"
   ></app-horizontal-select>
 
@@ -22,7 +22,7 @@
       Limpiar
     </button>
   </div>
-  
+
   <div class="ml-auto">
     <button (click)="onAdd()" class="bg-brand text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-brand-hover transition-colors shadow-sm">
       <span class="text-lg leading-none">+</span> Nuevo Usuario
@@ -30,12 +30,6 @@
   </div>
 </div>
 
-@if (loading()) {
-  <div class="flex items-center justify-center py-12">
-    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
-    <span class="ml-3 text-sm text-gray-500">Cargando usuarios...</span>
-  </div>
-} @else {
   <app-data-table
     [data]="users()"
     [columns]="columns"
@@ -48,7 +42,6 @@
     (pageSizeChange)="onPageSizeChange($event)"
   >
   </app-data-table>
-}
 
 @if (userModalConfig()) {
   <app-dynamic-form
@@ -58,4 +51,20 @@
     (formSubmit)="onUserFormSubmit($event)"
     (close)="onUserFormCancel()"
   ></app-dynamic-form>
+}
+
+<app-confirm-modal
+  [config]="confirmModalConfig()"
+  [isOpen]="isConfirmModalOpen()"
+  (confirm)="onConfirmDelete()"
+  (close)="onConfirmCancel()"
+></app-confirm-modal>
+
+@if (loading()) {
+  <div class="fixed inset-0 z-[70] flex items-center justify-center bg-gray-900 bg-opacity-50 backdrop-blur-sm">
+    <div class="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center gap-3">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-brand"></div>
+      <span class="text-sm font-semibold text-gray-700">Procesando...</span>
+    </div>
+  </div>
 }
