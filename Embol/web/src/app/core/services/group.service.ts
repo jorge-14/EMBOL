@@ -74,7 +74,7 @@ export class GroupService {
       id: data.id,
       name: data.nombre,
       description: data.descripcion,
-      groupStatus: data.estado
+      groupStatus: data.estado === 'Activo' ? 'ACTIVE' : 'INACTIVE'
     };
     return this.http.put<GrupoRow>(`${this.baseUrl}/update-group/${data.id}`, body);
   }
@@ -83,8 +83,12 @@ export class GroupService {
     const body = {
       name: data.nombre,
       description: data.descripcion,
-      groupStatus: data.estado
+      groupStatus: data.estado === 'Activo' ? 'ACTIVE' : 'INACTIVE'
     };
     return this.http.post<GrupoRow>(`${this.baseUrl}/create-group`, body);
+  }
+
+  deleteGroup(id: any): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/delete-group/${id}`);
   }
 }

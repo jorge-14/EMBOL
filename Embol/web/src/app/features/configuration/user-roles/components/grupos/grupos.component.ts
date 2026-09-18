@@ -8,6 +8,7 @@ import { buildGrupoRowActions } from '../../configs/grupos/grupos-actions.config
 import { buildCreateGroupConfig, buildUpdateGroupConfig } from '../../configs/grupos/grupos-form.config';
 import { DynamicFormConfig } from '../../../../../shared/components/dynamic-form/models/dynamic-form.model';
 import { PageMetadata } from '../../../../../shared/models/pagination.model';
+import { ConfirmModalConfig } from '../../../../../shared/components/confirm-modal/models/confirm-modal.model';
 
 @Component({
   selector: 'app-grupos',
@@ -64,6 +65,14 @@ export class GruposComponent implements OnInit {
   groupModalConfig = signal<DynamicFormConfig | null>(null);
   groupModalData = signal<GrupoRow | null>(null);
 
+  // Modal de Confirmación para eliminar
+  isConfirmModalOpen = signal(false);
+  confirmModalConfig = signal<ConfirmModalConfig>({
+    title: '',
+    description: ''
+  });
+  private groupToDeleteId: any = null;
+
   // ── 6. Acciones de fila ────────────────────────────────────────────────────
   onEdit(id: any): void {
     this.loading.set(true);
@@ -88,8 +97,39 @@ export class GruposComponent implements OnInit {
     });
   }
 
-  onDeactivate(id: any): void { console.log('[Grupos] Desactivar →', id);  /* TODO: confirm */ }
-  onDelete(id: any): void     { this.onDeactivate(id); }
+  onDelete(id: any): void {
+    this.groupToDeleteId = id;
+    this.confirmModalConfig.set({
+      title: 'Eliminar Grupo',
+      description: '¿Está seguro de que desea eliminar este grupo? Esta acción no se puede deshacer.',
+      confirmLabel: 'Eliminar',
+      cancelLabel: 'Cancelar',
+      icon: 'danger'
+    });
+    this.isConfirmModalOpen.set(true);
+  }
+
+  onConfirmDelete(): void {
+    if (this.groupToDeleteId) {
+      this.loading.set(true);
+      this.service.deleteGroup(this.groupToDeleteId).subscribe({
+        next: () => {
+          this.isConfirmModalOpen.set(false);
+          this.loadGroups();
+        },
+        error: (err: any) => {
+          console.error('Error al eliminar grupo', err);
+          this.loading.set(false);
+          this.isConfirmModalOpen.set(false);
+        }
+      });
+    }
+  }
+
+  onConfirmCancel(): void {
+    this.isConfirmModalOpen.set(false);
+    this.groupToDeleteId = null;
+  }
 
   onAdd(): void {
     this.groupModalConfig.set(buildCreateGroupConfig());

@@ -96,7 +96,7 @@ export class RolesComponent implements OnInit {
     });
   }
 
-  onDeactivate(id: any): void {
+  onDelete(id: any): void {
     this.roleToDeleteId = id;
     this.confirmModalConfig.set({
       title: 'Eliminar Rol',
@@ -129,8 +129,6 @@ export class RolesComponent implements OnInit {
     this.isConfirmModalOpen.set(false);
     this.roleToDeleteId = null;
   }
-
-  onDelete(id: any): void     { this.onDeactivate(id); }
 
   onAdd(): void {
     this.roleModalConfig.set(buildRolConfig(false));

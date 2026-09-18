@@ -3,7 +3,7 @@ import { DataTableRowAction } from '../../../../../shared/components/data-table/
 
 export interface UserRowCallbacks {
   onEdit:       (id: any) => void;
-  onDeactivate: (id: any) => void;
+  onDelete:     (id: any) => void;
   onActivate:   (id: any) => void;
 }
 
@@ -16,18 +16,10 @@ export function buildUserRowActions(cb: UserRowCallbacks): DataTableRowAction[] 
       handler: (row) => cb.onEdit(row.id),
     },
     {
-      icon: 'pi pi-ban',
-      tooltip: 'Desactivar',
+      icon: 'pi pi-trash',
+      tooltip: 'Eliminar Usuario',
       colorClass: 'text-red-500 hover:text-red-700',
-      handler: (row) => cb.onDeactivate(row.id),
-      visible: (row) => row.estado === 'Activo',
-    },
-    {
-      icon: 'pi pi-check-circle',
-      tooltip: 'Activar',
-      colorClass: 'text-green-500 hover:text-green-700',
-      handler: (row) => cb.onActivate(row.id),
-      visible: (row) => row.estado === 'Inactivo',
+      handler: (row) => cb.onDelete(row.id),
     },
   ];
 }

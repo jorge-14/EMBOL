@@ -50,9 +50,9 @@ export class UsuariosComponent implements OnInit {
   columns: DataTableColumn<UserRow>[] = buildUsuariosColumns();
 
   rowActions: DataTableRowAction[] = buildUserRowActions({
-    onEdit:       (id) => this.onEdit(id),
-    onDeactivate: (id) => this.onDeactivate(id),
-    onActivate:   (id) => this.onActivate(id),
+    onEdit:   (id) => this.onEdit(id),
+    onDelete: (id) => this.onDelete(id),
+    onActivate: (id) => this.onActivate(id),
   });
 
   // ── 4. Lifecycle ───────────────────────────────────────────────────────────
@@ -100,13 +100,13 @@ export class UsuariosComponent implements OnInit {
   userModalConfig = signal<DynamicFormConfig | null>(null);
   userModalData = signal<any>(null);
 
-  // Modal de Confirmación para desactivar/eliminar
+  // Modal de Confirmación para eliminar
   isConfirmModalOpen = signal(false);
   confirmModalConfig = signal<ConfirmModalConfig>({
     title: '',
     description: ''
   });
-  private userToDeactivateId: any = null;
+  private userToDeleteId: any = null;
 
   // ── 6. Acciones de fila ────────────────────────────────────────────────────
   onEdit(id: any): void {
@@ -144,28 +144,28 @@ export class UsuariosComponent implements OnInit {
     });
   }
 
-  onDeactivate(id: any): void {
-    this.userToDeactivateId = id;
+  onDelete(id: any): void {
+    this.userToDeleteId = id;
     this.confirmModalConfig.set({
-      title: 'Desactivar Usuario',
-      description: '¿Está seguro de que desea desactivar este usuario? Esta acción limitará su acceso al sistema.',
-      confirmLabel: 'Desactivar',
+      title: 'Eliminar Usuario',
+      description: '¿Está seguro de que desea eliminar este usuario? Esta acción no se puede deshacer.',
+      confirmLabel: 'Eliminar',
       cancelLabel: 'Cancelar',
       icon: 'danger'
     });
     this.isConfirmModalOpen.set(true);
   }
 
-  onConfirmDeactivate(): void {
-    if (this.userToDeactivateId) {
+  onConfirmDelete(): void {
+    if (this.userToDeleteId) {
       this.loading.set(true);
-      this.usersService.deleteUser(this.userToDeactivateId).subscribe({
+      this.usersService.deleteUser(this.userToDeleteId).subscribe({
         next: () => {
           this.isConfirmModalOpen.set(false);
           this.loadUsers();
         },
         error: (err) => {
-          console.error('Error al desactivar usuario', err);
+          console.error('Error al eliminar usuario', err);
           this.loading.set(false);
           this.isConfirmModalOpen.set(false);
         }
@@ -175,7 +175,7 @@ export class UsuariosComponent implements OnInit {
 
   onConfirmCancel(): void {
     this.isConfirmModalOpen.set(false);
-    this.userToDeactivateId = null;
+    this.userToDeleteId = null;
   }
 
   onActivate(id: any): void   {
