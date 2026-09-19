@@ -43,7 +43,6 @@ public class TblUserModel {
     private List<String> roleNames;
     private List<String> groupNames;
     private Boolean deleted;
-    private Long version;
     private LocalDateTime createdDate;
     private String createdBy;
     private LocalDateTime modifiedDate;

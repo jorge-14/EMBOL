@@ -70,7 +70,6 @@ public class TblUserRestMapper {
                 .roleNames(model.getRoleNames())
                 .groupNames(model.getGroupNames())
                 .deleted(model.getDeleted())
-                .version(model.getVersion())
                 .createdDate(model.getCreatedDate())
                 .createdBy(model.getCreatedBy())
                 .modifiedDate(model.getModifiedDate())
