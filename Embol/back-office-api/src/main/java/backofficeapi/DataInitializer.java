@@ -1,5 +1,7 @@
 package backofficeapi;
 
+import backofficeapi.application.port.input.action.CreateTblActionUseCase;
+import backofficeapi.domain.model.TblActionModel;
 import backofficeapi.domain.util.ResourceActionUtil;
 import backofficeapi.domain.util.ResourceActionUtil.AccionBaseDef;
 import backofficeapi.infrastructure.adapter.ouput.jpa.entity.TblAccion;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /*
@@ -33,6 +36,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
 
+    private final CreateTblActionUseCase createTblActionUseCase;
+
     private final TblActionRepository actionRepository;
     private final TblResourceRepository resourceRepository;
     private final TblResourceActionRepository resourceActionRepository;
@@ -40,36 +45,15 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        log.info(
-                "***************** [DataInitializer] Iniciando sincronización de Acciones y Recursos *****************");
-        Map<String, TblAccion> mapActions = addActions();
-        buildDefaultMenu(mapActions);
+        log.info("***************** [DataInitializer] Iniciando sincronización de Acciones y Recursos *****************");
+//        Map<String, TblActionModel> mapActions = addActions();
+//        buildDefaultMenu(mapActions);
         log.info("***************** [DataInitializer] Sincronización completada exitosamente *****************");
     }
 
-    // Inicializa acciones en la tabla tblAccion
-    private Map<String, TblAccion> addActions() {
-        Map<String, TblAccion> actionsMap = new HashMap<>();
-
-        for (AccionBaseDef def : ResourceActionUtil.getAccionesBaseList()) {
-            TblAccion action = actionRepository.findBySCodigo(def.codigo())
-                    .map(existing -> {
-                        existing.setSNombre(def.nombre());
-                        existing.setSDescripcion(def.descripcion());
-                        return actionRepository.save(existing);
-                    })
-                    .orElseGet(() -> actionRepository.save(
-                            TblAccion.builder()
-                                    .sCodigo(def.codigo())
-                                    .sNombre(def.nombre())
-                                    .sDescripcion(def.descripcion())
-                                    .build()));
-
-            actionsMap.put(def.codigo(), action);
-            log.info("[DataInitializer] Acción sincronizada: {} ({})", action.getSNombre(), action.getSCodigo());
-        }
-
-        return actionsMap;
+    private Map<String, TblActionModel> addActions() {
+        List<AccionBaseDef> accionesBaseList = ResourceActionUtil.getAccionesBaseList();
+        return createTblActionUseCase.saveActions(accionesBaseList);
     }
 
     // Construye Recursos y se asocia con las acciones
