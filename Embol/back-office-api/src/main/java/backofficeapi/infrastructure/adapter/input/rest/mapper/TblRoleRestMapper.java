@@ -6,6 +6,8 @@ import backofficeapi.infrastructure.adapter.input.rest.request.tblRole.TblRoleUp
 import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.ListRoleShortResponse;
 import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.PageListRolResponseDto;
 import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.TblRoleResponseDto;
+import backofficeapi.infrastructure.adapter.input.rest.dto.ResponsePage;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 /*
@@ -88,5 +90,9 @@ public class TblRoleRestMapper {
                 .baseRole(tblRolModel.getSRolBase())
                 .roleStatus(tblRolModel.getSEstado())
                 .build();
+    }
+
+    public ResponsePage<PageListRolResponseDto> toResponsePage(Page<TblRoleModel> page) {
+        return ResponsePage.from(page, this::toPageResponse);
     }
 }

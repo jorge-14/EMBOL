@@ -26,8 +26,7 @@ public interface TblGroupRepository extends JpaRepository<TblGrupo, Long> {
 
     @Query("SELECT tblg " +
             "FROM TblGrupo tblg " +
-            "WHERE tblg.deleted = false " +
-            "ORDER BY tblg.sNombre ASC")
+            "WHERE tblg.deleted = false")
     Page<TblGrupo> pageListGroup(Pageable pageable);
 
     @Query("SELECT tblg " +

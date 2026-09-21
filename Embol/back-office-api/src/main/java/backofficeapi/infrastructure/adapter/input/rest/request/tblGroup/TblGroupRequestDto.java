@@ -28,4 +28,6 @@ public class TblGroupRequestDto {
 
     @Size(max = 255, message = "La descripción del grupo no debe exceder los 40 caracteres.")
     private String description;
+
+    private String status;
 }

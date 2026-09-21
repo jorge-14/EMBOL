@@ -1,9 +1,12 @@
 package backofficeapi.infrastructure.adapter.input.rest;
 
 import backofficeapi.application.port.input.role.CrudTblRoleUseCase;
-import backofficeapi.application.port.input.role.GetRoleByIdUseCase;
-import backofficeapi.application.port.input.role.ListRoleUseCase;
 import backofficeapi.domain.model.TblRoleModel;
+import backofficeapi.application.port.input.role.ListRoleUseCase;
+import backofficeapi.application.port.input.role.GetRoleByIdUseCase;
+import backofficeapi.application.port.input.role.CreateRoleSagaUseCase;
+import backofficeapi.infrastructure.adapter.input.rest.request.saga.CreateRoleSagaRequestDto;
+import backofficeapi.domain.enums.RoleStatus;
 import backofficeapi.infrastructure.adapter.input.rest.dto.ResponsePage;
 import backofficeapi.infrastructure.adapter.input.rest.mapper.TblRoleRestMapper;
 import backofficeapi.infrastructure.adapter.input.rest.request.tblRole.TblRoleRequestDto;
@@ -24,8 +27,19 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.*;
 
 import backofficeapi.infrastructure.adapter.input.rest.dto.ResponseBody;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import backofficeapi.domain.exception.EntraIdNotFoundException;
+import backofficeapi.infrastructure.exception.EntraIdIntegrationException;
 
 /*
  *----------------------------------------
@@ -48,13 +62,16 @@ public class TblRoleController {
     private final TblRoleRestMapper tblRoleRestMapper;
     private final ListRoleUseCase listRoleUseCase;
     private final GetRoleByIdUseCase getRoleByIdUseCase;
+    private final CreateRoleSagaUseCase createRoleSagaUseCase;
 
     public TblRoleController(CrudTblRoleUseCase crudTblRoleUseCase, TblRoleRestMapper tblRoleRestMapper,
-            ListRoleUseCase listRoleUseCase, GetRoleByIdUseCase getRoleByIdUseCase) {
+            ListRoleUseCase listRoleUseCase, GetRoleByIdUseCase getRoleByIdUseCase,
+            CreateRoleSagaUseCase createRoleSagaUseCase) {
         this.crudTblRoleUseCase = crudTblRoleUseCase;
         this.tblRoleRestMapper = tblRoleRestMapper;
         this.listRoleUseCase = listRoleUseCase;
         this.getRoleByIdUseCase = getRoleByIdUseCase;
+        this.createRoleSagaUseCase = createRoleSagaUseCase;
     }
 
     @GetMapping("/list-role-short")
@@ -133,7 +150,7 @@ public class TblRoleController {
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDir, sortBy));
         Page<TblRoleModel> pageResult = crudTblRoleUseCase.pageListRol(pageable);
-        ResponsePage<PageListRolResponseDto> response = ResponsePage.from(pageResult, tblRoleRestMapper::toPageResponse);
+        ResponsePage<PageListRolResponseDto> response = tblRoleRestMapper.toResponsePage(pageResult);
         return ResponseEntity.ok(response);
     }
 
@@ -152,5 +169,57 @@ public class TblRoleController {
         TblRoleModel roleModel = getRoleByIdUseCase.getRoleById(id);
         TblRoleResponseDto responseDto = tblRoleRestMapper.toResponseDto(roleModel);
         return ResponseEntity.ok(ResponseBody.success("La informacion del grupo fue armada exitosamente", responseDto));
+    }
+
+    @PostMapping("/saga")
+    @Operation(
+        summary = "Crear rol con validación en Entra ID",
+        description = "Valida si el App Role existe en Entra ID. Si existe, lo crea localmente. Si no existe, retorna error.",
+        security = @SecurityRequirement(name = "BearerAuth")
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Rol validado y creado con éxito en BD local.",
+            content = @Content(mediaType = "application/json")
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Error de validación o datos faltantes",
+            content = @Content
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno - La SAGA falló.",
+            content = @Content
+        )
+    })
+    public ResponseEntity<ResponseBody<TblRoleResponseDto>> createRoleSaga(
+        @Parameter(description = "Objeto con los datos del nuevo rol a crear", required = true)
+        @RequestBody CreateRoleSagaRequestDto roleDto
+    ) {
+        log.info("Iniciando validación de SAGA para el rol: {}", roleDto.getName());
+        try {
+            TblRoleModel role = new TblRoleModel();
+            role.setSNombre(roleDto.getName());
+            role.setSDescripcion(roleDto.getDescription());
+            role.setSEstado(RoleStatus.ACTIVE);
+            role.setSRolBase(false);
+
+            TblRoleModel result = createRoleSagaUseCase.createRole(role);
+            log.info("Rol creado exitosamente mediante SAGA: {}", roleDto.getName());
+            return ResponseEntity.ok(ResponseBody.success("Rol validado y creado con éxito", tblRoleRestMapper.toResponseDto(result)));
+        } catch (EntraIdNotFoundException e) {
+            log.warn("Fallo de validación de negocio para rol {}: {}", roleDto.getName(), e.getMessage());
+            return ResponseEntity.badRequest().body(ResponseBody.<TblRoleResponseDto>error(String.valueOf(HttpStatus.BAD_REQUEST.value()), e.getMessage()));
+        } catch (EntraIdIntegrationException e) {
+            log.error("Fallo de infraestructura/conexión con Entra ID para rol {}: {}", roleDto.getName(), e.getMessage(), e.getCause());
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                    .body(ResponseBody.<TblRoleResponseDto>error(String.valueOf(HttpStatus.BAD_GATEWAY.value()), "Ocurrió un problema de conexión con Microsoft Entra ID. Intente más tarde."));
+        } catch (Exception e) {
+            log.error("Error técnico creando rol con SAGA {}: {}", roleDto.getName(), e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ResponseBody.<TblRoleResponseDto>error(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()), "Ocurrió un problema al procesar la solicitud."));
+        }
     }
 }

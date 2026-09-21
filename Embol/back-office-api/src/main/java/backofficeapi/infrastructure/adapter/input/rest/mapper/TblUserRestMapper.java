@@ -5,6 +5,8 @@ import backofficeapi.domain.model.TblUserModel;
 import backofficeapi.infrastructure.adapter.input.rest.request.tblUser.TblUserCreateRequestDto;
 import backofficeapi.infrastructure.adapter.input.rest.request.tblUser.TblUserUpdateRequestDto;
 import backofficeapi.infrastructure.adapter.input.rest.response.tblUser.TblUserResponseDto;
+import backofficeapi.infrastructure.adapter.input.rest.dto.ResponsePage;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -84,5 +86,9 @@ public class TblUserRestMapper {
         return list.stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    public ResponsePage<TblUserResponseDto> toResponsePage(Page<TblUserModel> page) {
+        return ResponsePage.from(page, this::toResponse);
     }
 }

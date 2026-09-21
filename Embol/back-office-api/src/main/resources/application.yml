@@ -40,10 +40,12 @@ spring:
           audiences: ${entra.client-id}
 
 # Microsoft Entra ID
+# secret value = 2-98Q~fTnjctw6f1OQw82WJn659MZa-maHIrXbQn
+# secret id = 719a18f0-fff4-45da-88cf-dab93311a2ad
 entra:
   tenant-id: 93294bfd-d915-45bf-884f-787290ec034d
   client-id: 5f0872cd-df06-4ab5-89f7-d04a5c0fbd50
-  client-secret: ${ENTRA_CLIENT_SECRET}
+  client-secret: 2-98Q~fTnjctw6f1OQw82WJn659MZa-maHIrXbQn
 
 # Logs
 logging:

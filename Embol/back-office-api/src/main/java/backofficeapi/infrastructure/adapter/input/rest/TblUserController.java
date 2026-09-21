@@ -3,6 +3,8 @@ package backofficeapi.infrastructure.adapter.input.rest;
 import backofficeapi.application.port.input.user.ChangeStatusUserUseCase;
 import backofficeapi.application.port.input.user.CrudTblUserUseCase;
 import backofficeapi.domain.model.TblUserModel;
+import backofficeapi.application.port.input.CreateUserSagaUseCase;
+import backofficeapi.infrastructure.adapter.input.rest.request.saga.CreateUserSagaRequestDto;
 import backofficeapi.infrastructure.adapter.input.rest.dto.ResponseBody;
 import backofficeapi.infrastructure.adapter.input.rest.dto.ResponsePage;
 import backofficeapi.infrastructure.adapter.input.rest.mapper.TblUserRestMapper;
@@ -28,6 +30,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import backofficeapi.domain.exception.EntraIdNotFoundException;
+import backofficeapi.infrastructure.exception.EntraIdIntegrationException;
 
 /*
  *----------------------------------------
@@ -50,6 +63,7 @@ public class TblUserController {
 
     private final CrudTblUserUseCase crudTblUserUseCase;
     private final ChangeStatusUserUseCase changeStatusUserUseCase;
+    private final CreateUserSagaUseCase createUserSagaUseCase;
     private final TblUserRestMapper mapper;
 
     @PostMapping("/create-user")
@@ -113,7 +127,7 @@ public class TblUserController {
                 sortDir);
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDir, sortBy));
         Page<TblUserModel> pageResult = crudTblUserUseCase.getListPageUsers(pageable);
-        ResponsePage<TblUserResponseDto> response = ResponsePage.from(pageResult, mapper::toResponse);
+        ResponsePage<TblUserResponseDto> response = mapper.toResponsePage(pageResult);
         return ResponseEntity.ok(response);
     }
 
@@ -137,5 +151,60 @@ public class TblUserController {
         TblUserModel deactivated = changeStatusUserUseCase.deactivateUserById(id);
         return ResponseEntity
                 .ok(ResponseBody.success("Usuario desactivado exitosamente", mapper.toResponse(deactivated)));
+    }
+
+    @PostMapping("/saga")
+    @Operation(
+        summary = "Crear usuario con validación en Entra ID",
+        description = "Valida si el usuario existe en Entra ID. Si existe, lo crea localmente. Si no existe, retorna error.",
+        security = @SecurityRequirement(name = "BearerAuth")
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Usuario validado y creado con éxito en BD local.",
+            content = @Content(mediaType = "application/json")
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Error de validación o datos faltantes",
+            content = @Content
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno - La SAGA falló o realizó compensación.",
+            content = @Content
+        )
+    })
+    public ResponseEntity<ResponseBody<TblUserResponseDto>> createUserSaga(
+        @Parameter(description = "Objeto con los datos del nuevo usuario a crear", required = true)
+        @RequestBody CreateUserSagaRequestDto userDto
+    ) {
+        log.info("Iniciando validación de SAGA para el usuario: {}", userDto.getEmail());
+        try {
+            TblUserModel user = new TblUserModel();
+            user.setUsername(userDto.getUsername());
+            user.setName(userDto.getName());
+            user.setLastname(userDto.getLastname());
+            user.setEmail(userDto.getEmail());
+            user.setRoleIds(userDto.getRoleIds());
+            user.setGroupIds(userDto.getGroupIds());
+            user.activate();
+
+            TblUserModel result = createUserSagaUseCase.createUser(user);
+            log.info("Usuario creado exitosamente mediante SAGA: {}", userDto.getEmail());
+            return ResponseEntity.ok(ResponseBody.success("Usuario validado y creado con éxito", mapper.toResponse(result)));
+        } catch (EntraIdNotFoundException e) {
+            log.warn("Fallo de validación de negocio para usuario {}: {}", userDto.getEmail(), e.getMessage());
+            return ResponseEntity.badRequest().body(ResponseBody.<TblUserResponseDto>error(String.valueOf(HttpStatus.BAD_REQUEST.value()), e.getMessage()));
+        } catch (EntraIdIntegrationException e) {
+            log.error("Fallo de infraestructura/conexión con Entra ID para usuario {}: {}", userDto.getEmail(), e.getMessage(), e.getCause());
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                    .body(ResponseBody.<TblUserResponseDto>error(String.valueOf(HttpStatus.BAD_GATEWAY.value()), "Ocurrió un problema de conexión con Microsoft Entra ID. Intente más tarde."));
+        } catch (Exception e) {
+            log.error("Error técnico creando usuario con SAGA {}: {}", userDto.getEmail(), e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ResponseBody.<TblUserResponseDto>error(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()), "Ocurrió un problema al procesar la solicitud."));
+        }
     }
 }
