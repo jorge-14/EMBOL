@@ -103,9 +103,40 @@
 
           <!-- Children list -->
           @if (isSectionExpanded(item.id) && !collapsed()) {
-            <div class="ml-6 mt-0.5 space-y-0.5">
+            <div class="ml-6 mt-0.5 space-y-0.5 border-l border-gray-100">
               @for (child of item.children; track child.id) {
-                @if (child.route) {
+                @if (child.children && child.children.length > 0) {
+                  <!-- Submenu (3rd level) -->
+                  <div class="mt-1">
+                    <button
+                      (click)="toggleSection(child.id)"
+                      class="w-full flex items-center gap-2 pl-4 pr-3 py-2 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-gray-800 hover:bg-gray-50 rounded-lg transition-colors"
+                    >
+                      <svg
+                        class="w-3 h-3 text-gray-400 transition-transform duration-200"
+                        [class.rotate-180]="isSectionExpanded(child.id)"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                      {{ child.label }}
+                    </button>
+
+                    @if (isSectionExpanded(child.id)) {
+                      <div class="ml-4 mt-0.5 space-y-0.5">
+                        @for (subChild of child.children; track subChild.id) {
+                          <a
+                            [routerLink]="subChild.route || null"
+                            routerLinkActive="!bg-brand !text-white !font-bold"
+                            [class.cursor-default]="!subChild.route"
+                            class="block pl-4 pr-3 py-2 text-sm text-gray-500 hover:text-gray-800 hover:bg-gray-50 rounded-lg transition-colors"
+                          >
+                            {{ subChild.label }}
+                          </a>
+                        }
+                      </div>
+                    }
+                  </div>
+                } @else if (child.route) {
                   <a
                     [routerLink]="child.route"
                     routerLinkActive="!bg-brand !text-white !font-bold"
@@ -114,9 +145,18 @@
                     {{ child.label }}
                   </a>
                 } @else {
-                  <span class="block pl-4 pr-3 py-2 text-sm text-gray-400 cursor-default">
-                    {{ child.label }}
-                  </span>
+                  <div
+                    class="w-full text-left pl-4 pr-3 py-2 text-xs font-bold uppercase tracking-wider text-gray-400 cursor-default"
+                  >
+                    <span class="flex items-center gap-2">
+                      <svg
+                        class="w-3 h-3 text-gray-300"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                      {{ child.label }}
+                    </span>
+                  </div>
                 }
               }
             </div>

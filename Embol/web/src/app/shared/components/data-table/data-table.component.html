@@ -47,7 +47,15 @@
   </div>
   }
 
-  <div class="overflow-x-auto">
+  <div class="overflow-x-auto relative">
+    @if (loading()) {
+      <div class="absolute inset-0 z-[60] flex items-center justify-center bg-white/60 backdrop-blur-[2px] transition-all">
+        <div class="flex flex-col items-center gap-3">
+          <i class="pi pi-spin pi-spinner text-brand text-4xl"></i>
+          <span class="text-sm font-medium text-gray-600">Procesando...</span>
+        </div>
+      </div>
+    }
     <table class="min-w-full divide-y divide-gray-200">
 
       <!-- THEAD -->
@@ -88,11 +96,11 @@
               [class.bg-[#f2f2f2]]="isEvenRow && !dirtyCells().has(toStr(row[trackByKey()]))"
               [class.bg-white]="!isEvenRow && !dirtyCells().has(toStr(row[trackByKey()]))"
               [class.bg-yellow-50/30]="dirtyCells().has(toStr(row[trackByKey()]))">
-            
+
             <button (click)="toggleActionMenu(i, $event)" class="text-brand hover:text-brand-hover p-1.5 rounded-md hover:bg-brand/10 transition-colors flex items-center justify-center">
               <i class="pi pi-bars text-lg"></i>
             </button>
-            
+
             <!-- ACTION MENU DROPDOWN -->
             @if (openActionMenu() === i) {
             <div class="fixed w-48 bg-white rounded-md shadow-2xl border border-gray-200 z-[9999] py-1 text-left"
@@ -101,7 +109,7 @@
                  (click)="$event.stopPropagation()">
                @for (action of rowActions(); track action.tooltip) {
                   @if (isActionVisible(action, row)) {
-                    <button (click)="onRowAction(action, row, i); closeActionMenu()" 
+                    <button (click)="onRowAction(action, row, i); closeActionMenu()"
                             class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-brand/5 flex items-center gap-3 transition-colors">
                        <i [class]="action.icon + ' text-brand text-base flex-shrink-0 w-5 text-center'"></i>
                        <span class="font-medium whitespace-normal">{{ action.tooltip }}</span>
@@ -220,7 +228,7 @@
   </div>
 
   <!-- ── PAGINATION ── -->
-  @if (showPagination() && pageInfo(); as pInfo) {
+  @if ((showPagination() || showPaginator()) && pageInfo(); as pInfo) {
   <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-400 sm:px-6">
     <div class="flex-1 flex justify-between sm:hidden">
       <button (click)="onPageChange(pInfo.number - 1)" [disabled]="pInfo.number === 0"

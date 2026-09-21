@@ -23,10 +23,12 @@ import { SelectOption } from '../models/select-option.model';
 export class HorizontalSelectComponent implements ControlValueAccessor {
   id = input<string>(`select-${Math.random().toString(36).substr(2, 9)}`);
   label = input<string>('');
+  labelPosition = input<'horizontal' | 'vertical'>('horizontal');
+  labelClass = input<string>('');
   placeholder = input<string>('Seleccione una opción...');
   options = input<SelectOption[]>([]);
   isInvalid = input<boolean>(false);
-  
+
   // Two-way binding signal
   value = model<any>(null);
 
