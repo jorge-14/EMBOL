@@ -1,11 +1,11 @@
-package backofficeapi.application.usecase.access;
+package backofficeapi.application.usecase.resource;
 
-import backofficeapi.application.port.input.access.GetResourceAccessUseCase;
-import backofficeapi.application.port.output.TblAccessRepositoryPort;
-import backofficeapi.infrastructure.adapter.input.rest.response.tblAccess.ActionPermissionDto;
-import backofficeapi.infrastructure.adapter.input.rest.response.tblAccess.GroupPermissionDto;
-import backofficeapi.infrastructure.adapter.input.rest.response.tblAccess.ResourceAccessResponseDto;
-import backofficeapi.infrastructure.adapter.input.rest.response.tblAccess.ResourcePermissionDto;
+import backofficeapi.application.port.input.resource.GetResourceAccessUseCase;
+import backofficeapi.application.port.output.TblResourceRepositoryPort;
+import backofficeapi.infrastructure.adapter.input.rest.response.tblResource.ActionPermissionDto;
+import backofficeapi.infrastructure.adapter.input.rest.response.tblResource.GroupPermissionDto;
+import backofficeapi.infrastructure.adapter.input.rest.response.tblResource.ResourceAccessResponseDto;
+import backofficeapi.infrastructure.adapter.input.rest.response.tblResource.ResourcePermissionDto;
 import backofficeapi.infrastructure.adapter.ouput.jpa.entity.TblAccion;
 import backofficeapi.infrastructure.adapter.ouput.jpa.entity.TblRecurso;
 import backofficeapi.infrastructure.adapter.ouput.jpa.entity.TblRecursoAccion;
@@ -18,39 +18,39 @@ import java.util.*;
  *----------------------------------------
  *   Código de Aplicación: EMBOL
  *   Código de Objeto: GetResourceAccessUseCaseImpl
- *   Descripción: Implementación del caso de uso para consultar accesos usando directamente los DTOs
+ *   Descripción: Implementación del caso de uso para consultar la matriz de accesos y recursos
  *   Author Prog: Camila Ledezma
  *----------------------------------------
  *   Fecha | Autor | Comentario
- *   18.09.2026 | Camila Ledezma | Creación Inicial simplificada
+ *   21.09.2026 | Camila Ledezma | Creación Inicial en módulo resource
  *----------------------------------------
  */
 @Service
 @RequiredArgsConstructor
 public class GetResourceAccessUseCaseImpl implements GetResourceAccessUseCase {
 
-    private final TblAccessRepositoryPort accessRepositoryPort;
+    private final TblResourceRepositoryPort resourceRepositoryPort;
 
     @Override
     public ResourceAccessResponseDto getAccess(String mode, Long id) {
         String normalizedMode = mode != null ? mode.trim().toUpperCase() : "ROL";
 
         String targetName = "ROL".equals(normalizedMode)
-                ? accessRepositoryPort.getRoleName(id)
-                : accessRepositoryPort.getGroupName(id);
+                ? resourceRepositoryPort.getRoleName(id)
+                : resourceRepositoryPort.getGroupName(id);
 
         List<Long> grantedResourceIds = "ROL".equals(normalizedMode)
-                ? accessRepositoryPort.getGrantedResourceIdsForRole(id)
-                : accessRepositoryPort.getGrantedResourceIdsForGroup(id);
+                ? resourceRepositoryPort.getGrantedResourceIdsForRole(id)
+                : resourceRepositoryPort.getGrantedResourceIdsForGroup(id);
 
         Set<Long> grantedSet = new HashSet<>(grantedResourceIds != null ? grantedResourceIds : List.of());
 
-        List<TblAccion> allActions = accessRepositoryPort.getAllActions();
+        List<TblAccion> allActions = resourceRepositoryPort.getAllActions();
         List<ActionPermissionDto> actionDtos = allActions.stream()
                 .map(this::mapToActionDto)
                 .toList();
 
-        List<TblRecursoAccion> supportedResourceActions = accessRepositoryPort.getSupportedResourceActions();
+        List<TblRecursoAccion> supportedResourceActions = resourceRepositoryPort.getSupportedResourceActions();
         Set<String> supportedSet = new HashSet<>();
         for (TblRecursoAccion ra : supportedResourceActions) {
             if (ra.getIIdRecurso() != null && ra.getIIdAccion() != null) {
@@ -59,12 +59,12 @@ public class GetResourceAccessUseCaseImpl implements GetResourceAccessUseCase {
             }
         }
 
-        List<TblRecurso> parents = accessRepositoryPort.getParentResources();
+        List<TblRecurso> parents = resourceRepositoryPort.getParentResources();
         List<GroupPermissionDto> groupDtos = new ArrayList<>();
         int totalGranted = 0;
 
         for (TblRecurso parent : parents) {
-            List<TblRecurso> children = accessRepositoryPort.getChildResources(parent.getIIdRecurso());
+            List<TblRecurso> children = resourceRepositoryPort.getChildResources(parent.getIIdRecurso());
             List<ResourcePermissionDto> resourceDtos = new ArrayList<>();
 
             for (TblRecurso child : children) {
@@ -110,45 +110,11 @@ public class GetResourceAccessUseCaseImpl implements GetResourceAccessUseCase {
 
     private ActionPermissionDto mapToActionDto(TblAccion accion) {
         String code = accion.getSCodigo() != null ? accion.getSCodigo().toUpperCase() : "";
-        String colorClass = "text-gray-600";
-        String activeColorClass = "bg-gray-500 border-gray-600";
-
-        switch (code) {
-            case "VER" -> {
-                colorClass = "text-green-600";
-                activeColorClass = "bg-green-500 border-green-600";
-            }
-            case "CREAR" -> {
-                colorClass = "text-blue-600";
-                activeColorClass = "bg-blue-500 border-blue-600";
-            }
-            case "MODIFICAR" -> {
-                colorClass = "text-amber-500";
-                activeColorClass = "bg-amber-500 border-amber-600";
-            }
-            case "ELIMINAR" -> {
-                colorClass = "text-red-600";
-                activeColorClass = "bg-red-500 border-red-600";
-            }
-            case "DESCARGAR" -> {
-                colorClass = "text-purple-600";
-                activeColorClass = "bg-purple-500 border-purple-600";
-            }
-            case "EXPORTAR" -> {
-                colorClass = "text-emerald-500";
-                activeColorClass = "bg-emerald-500 border-emerald-600";
-            }
-            case "APROBAR" -> {
-                colorClass = "text-rose-500";
-                activeColorClass = "bg-rose-500 border-rose-600";
-            }
-        }
+        String name = accion.getSNombre() != null ? accion.getSNombre() : code;
 
         return ActionPermissionDto.builder()
-                .key(accion.getSCodigo())
-                .label(accion.getSNombre() != null ? accion.getSNombre().toUpperCase() : code)
-                .colorClass(colorClass)
-                .activeColorClass(activeColorClass)
+                .key(code)
+                .label(name)
                 .build();
     }
 }

@@ -1,16 +1,16 @@
-package backofficeapi.application.port.input.access;
+package backofficeapi.application.port.input.resource;
 
-import backofficeapi.infrastructure.adapter.input.rest.response.tblAccess.ResourceAccessResponseDto;
+import backofficeapi.infrastructure.adapter.input.rest.response.tblResource.ResourceAccessResponseDto;
 
 /*
  *----------------------------------------
  *   Código de Aplicación: EMBOL
  *   Código de Objeto: GetResourceAccessUseCase
- *   Descripción: Puerto de entrada para consultar accesos de recursos y acciones
+ *   Descripción: Puerto de entrada para consultar la matriz de accesos y recursos
  *   Author Prog: Camila Ledezma
  *----------------------------------------
  *   Fecha | Autor | Comentario
- *   18.09.2026 | Camila Ledezma | Creación Inicial
+ *   21.09.2026 | Camila Ledezma | Creación Inicial en módulo resource
  *----------------------------------------
  */
 public interface GetResourceAccessUseCase {

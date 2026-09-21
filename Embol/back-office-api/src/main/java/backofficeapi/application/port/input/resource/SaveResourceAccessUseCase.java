@@ -1,16 +1,16 @@
-package backofficeapi.application.port.input.access;
+package backofficeapi.application.port.input.resource;
 
-import backofficeapi.infrastructure.adapter.input.rest.request.tblAccess.SaveResourceAccessRequestDto;
+import backofficeapi.infrastructure.adapter.input.rest.request.tblResource.SaveResourceAccessRequestDto;
 
 /*
  *----------------------------------------
  *   Código de Aplicación: EMBOL
  *   Código de Objeto: SaveResourceAccessUseCase
- *   Descripción: Puerto de entrada para guardar asignación de accesos
+ *   Descripción: Puerto de entrada para guardar la asignación de accesos
  *   Author Prog: Camila Ledezma
  *----------------------------------------
  *   Fecha | Autor | Comentario
- *   18.09.2026 | Camila Ledezma | Creación Inicial
+ *   21.09.2026 | Camila Ledezma | Creación Inicial en módulo resource
  *----------------------------------------
  */
 public interface SaveResourceAccessUseCase {

@@ -1,4 +1,4 @@
-package backofficeapi.infrastructure.adapter.input.rest.request.tblAccess;
+package backofficeapi.infrastructure.adapter.input.rest.request.tblResource;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -17,7 +17,7 @@ import java.util.List;
  *   Author Prog: Camila Ledezma
  *----------------------------------------
  *   Fecha | Autor | Comentario
- *   18.09.2026 | Camila Ledezma | Creación Inicial
+ *   21.09.2026 | Camila Ledezma | Creación Inicial en módulo resource
  *----------------------------------------
  */
 @Getter

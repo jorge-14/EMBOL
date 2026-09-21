@@ -14,6 +14,10 @@ import backofficeapi.infrastructure.adapter.input.rest.request.tblRole.TblRoleUp
 import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.ListRoleShortResponse;
 import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.PageListRolResponseDto;
 import backofficeapi.infrastructure.adapter.input.rest.response.tblRole.TblRoleResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -75,6 +79,11 @@ public class TblRoleController {
     }
 
     @GetMapping("/list-role-short")
+    @Operation(summary = "Listar roles resumidos", description = "Obtiene la lista resumida de roles activos.", tags = {
+            "Roles" }, responses = {
+            @ApiResponse(responseCode = "200", description = "Roles listados exitosamente"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<List<ListRoleShortResponse>> listRoleShort() {
         List<ListRoleShortResponse> response = listRoleUseCase.listRoleShort().stream()
                 .map(tblRoleRestMapper::toListRoleShortResponse)
@@ -83,6 +92,12 @@ public class TblRoleController {
     }
 
     @PostMapping("/create-role")
+    @Operation(summary = "Crear nuevo rol", description = "Registra un nuevo rol en el sistema.", tags = {
+            "Roles" }, responses = {
+            @ApiResponse(responseCode = "200", description = "Rol creado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<TblRoleResponseDto> createRole(@Valid @RequestBody TblRoleRequestDto tblRoleRequestDto,
                                                          Authentication authentication) {
 
@@ -103,8 +118,17 @@ public class TblRoleController {
     }
 
     @PutMapping("/update-role/{id}")
-    public ResponseEntity<TblRoleResponseDto> updateRole(@PathVariable Long id, @Valid @RequestBody TblRoleUpdateRequestDto tblRolUpdateRequestDto,
-                                                         Authentication authentication) {
+    @Operation(summary = "Actualizar rol", description = "Actualiza los datos de un rol existente.", tags = {
+            "Roles" }, responses = {
+            @ApiResponse(responseCode = "200", description = "Rol actualizado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos"),
+            @ApiResponse(responseCode = "404", description = "Rol no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public ResponseEntity<TblRoleResponseDto> updateRole(
+            @Parameter(description = "ID del rol", example = "1", required = true) @PathVariable Long id,
+            @Valid @RequestBody TblRoleUpdateRequestDto tblRolUpdateRequestDto,
+            Authentication authentication) {
 
         if (authentication != null && authentication.isAuthenticated()
                 && authentication instanceof JwtAuthenticationToken jwtAuth) {
@@ -123,8 +147,15 @@ public class TblRoleController {
     }
 
     @DeleteMapping("/delete-role/{id}")
-    public ResponseEntity<TblRoleResponseDto> deleteRole(@PathVariable Long id,
-                                                        Authentication authentication) {
+    @Operation(summary = "Eliminar rol", description = "Elimina un rol por su ID.", tags = {
+            "Roles" }, responses = {
+            @ApiResponse(responseCode = "200", description = "Rol eliminado exitosamente"),
+            @ApiResponse(responseCode = "404", description = "Rol no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public ResponseEntity<TblRoleResponseDto> deleteRole(
+            @Parameter(description = "ID del rol", example = "1", required = true) @PathVariable Long id,
+            Authentication authentication) {
 
         if (authentication != null && authentication.isAuthenticated()
                 && authentication instanceof JwtAuthenticationToken jwtAuth) {
@@ -142,11 +173,16 @@ public class TblRoleController {
     }
 
     @GetMapping("page-rol")
+    @Operation(summary = "Listar roles paginados", description = "Obtiene una página de roles con ordenamiento y paginación configurable.", tags = {
+            "Roles" }, responses = {
+            @ApiResponse(responseCode = "200", description = "Página de roles obtenida exitosamente"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<ResponsePage<PageListRolResponseDto>> listPage(
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "20") int size,
-            @RequestParam(value = "sortBy", defaultValue = "modifiedDate") String sortBy,
-            @RequestParam(value = "sortDir", defaultValue = "DESC") Sort.Direction sortDir
+            @Parameter(description = "Número de página (0-index)", example = "0") @RequestParam(value = "page", defaultValue = "0") int page,
+            @Parameter(description = "Cantidad de registros por página", example = "20") @RequestParam(value = "size", defaultValue = "20") int size,
+            @Parameter(description = "Campo de ordenamiento", example = "modifiedDate") @RequestParam(value = "sortBy", defaultValue = "modifiedDate") String sortBy,
+            @Parameter(description = "Dirección de orden (ASC o DESC)", example = "DESC") @RequestParam(value = "sortDir", defaultValue = "DESC") Sort.Direction sortDir
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDir, sortBy));
         Page<TblRoleModel> pageResult = crudTblRoleUseCase.pageListRol(pageable);
@@ -155,8 +191,15 @@ public class TblRoleController {
     }
 
     @GetMapping("/get-role/{id}")
-    public ResponseEntity<ResponseBody<TblRoleResponseDto>> getRoleById(@PathVariable Long id,
-                                                          Authentication authentication) {
+    @Operation(summary = "Obtener rol por ID", description = "Busca un rol específico por su identificador numérico.", tags = {
+            "Roles" }, responses = {
+            @ApiResponse(responseCode = "200", description = "Rol encontrado exitosamente"),
+            @ApiResponse(responseCode = "404", description = "Rol no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public ResponseEntity<ResponseBody<TblRoleResponseDto>> getRoleById(
+            @Parameter(description = "ID del rol", example = "1", required = true) @PathVariable Long id,
+            Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()
                 && authentication instanceof JwtAuthenticationToken jwtAuth) {
             Jwt jwt = jwtAuth.getToken();

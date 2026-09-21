@@ -1,4 +1,4 @@
-package backofficeapi.infrastructure.adapter.input.rest.response.tblAccess;
+package backofficeapi.infrastructure.adapter.input.rest.response.tblResource;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,17 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Map;
+import java.util.List;
 
 /*
  *----------------------------------------
  *   Código de Aplicación: EMBOL
- *   Código de Objeto: ResourcePermissionDto
- *   Descripción: DTO de recurso y sus permisos para la respuesta de accesos
+ *   Código de Objeto: GroupPermissionDto
+ *   Descripción: DTO de módulo/recurso padre para la respuesta de accesos
  *   Author Prog: Camila Ledezma
  *----------------------------------------
  *   Fecha | Autor | Comentario
- *   18.09.2026 | Camila Ledezma | Creación Inicial
+ *   21.09.2026 | Camila Ledezma | Creación Inicial en módulo resource
  *----------------------------------------
  */
 @Getter
@@ -24,9 +24,8 @@ import java.util.Map;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResourcePermissionDto {
+public class GroupPermissionDto {
     private Long id;
     private String name;
-    private String icon;
-    private Map<String, Boolean> permissions;
+    private List<ResourcePermissionDto> resources;
 }
