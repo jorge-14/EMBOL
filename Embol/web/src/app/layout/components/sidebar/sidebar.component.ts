@@ -13,7 +13,7 @@ export class SidebarComponent {
   private router = inject(Router);
 
   collapsed = signal(false);
-  expandedSections = signal<Set<string>>(new Set(['presupuestador', 'configuracion']));
+  expandedSections = signal<Set<string>>(new Set(['presupuestador', 'configuracion', 'cargas-beneficios']));
 
   // ── Menú — SOLO /planilla y /users tienen ruta real ──
   menuItems = signal<MenuItem[]>([
@@ -33,16 +33,18 @@ export class SidebarComponent {
       label: 'PRESUPUESTADOR',
       icon: 'dollar',
       children: [
-        // { id: 'sueldos',         label: 'Sueldos y Salarios',     route: '/estimator/salaries' },
-        // { id: 'dotacion',        label: 'Dotación' },
-        // { id: 'comisiones',      label: 'Comisiones' },
-        // { id: 'horas-extra',     label: 'Horas Extraordinarias' },
-        // { id: 'bonos',           label: 'Bonos y Gratificaciones' },
-        // { id: 'beneficios',      label: 'Beneficios al Personal' },
-        // { id: 'vacaciones',      label: 'Vacaciones' },
-        // { id: 'provisiones',     label: 'Provisiones y Cargas' },
-        // { id: 'ropa-trabajo',    label: 'Ropa de Trabajo' },
-        // { id: 'honorarios',      label: 'Honorarios y Terceros' },
+        { id: 'compensacion', label: 'COMPENSACIÓN' },
+        {
+          id: 'cargas-beneficios',
+          label: 'CARGAS Y BENEFICIOS',
+          children: [
+            { id: 'dotacion',        label: 'Dotación', route: '/presupuestador/dotacion' },
+            { id: 'beneficios',      label: 'Beneficios al Personal' },
+            { id: 'vacaciones',      label: 'Vacaciones' },
+            { id: 'provisiones',     label: 'Provisiones y Cargas' },
+            { id: 'ropa-trabajo',    label: 'Ropa de Trabajo' },
+          ]
+        },
       ],
     },
     // {

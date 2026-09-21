@@ -14,6 +14,7 @@ export interface MenuChildItem {
   id: string;
   label: string;
   route?: string;
+  children?: MenuChildItem[];
 }
 
 export interface BreadcrumbItem {

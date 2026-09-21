@@ -22,6 +22,10 @@ export const routes: Routes = [
         path: 'configuration/accesses',
         loadChildren: () => import('./features/configuration/accesses/accesses.routes').then(m => m.accessRoutes),
       },
+      {
+        path: 'presupuestador',
+        loadChildren: () => import('./features/presupuestador/presupuestador.routes').then(m => m.presupuestadorRoutes),
+      },
     ],
   },
 
