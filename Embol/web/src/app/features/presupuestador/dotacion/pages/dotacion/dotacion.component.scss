@@ -1,0 +1,31 @@
+.bg-brand {
+  background-color: #E30613;
+}
+
+.bg-brand-hover:hover {
+  background-color: #c40511;
+}
+
+.text-brand {
+  color: #E30613;
+}
+
+:host ::ng-deep {
+  .custom-checkbox {
+    .p-checkbox-box {
+      border-radius: 4px;
+      border-color: #d1d5db;
+      width: 18px;
+      height: 18px;
+
+      &.p-highlight {
+        background: #4b5563; // Un gris oscuro/negro como en la imagen
+        border-color: #4b5563;
+      }
+
+      &:not(.p-disabled):hover {
+        border-color: #9ca3af;
+      }
+    }
+  }
+}

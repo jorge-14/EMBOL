@@ -22,6 +22,10 @@ import lombok.experimental.SuperBuilder;
  *   Código de Aplicación: EMBOL
  *   Código de Objeto: TblUsuarioGrupo
  *   Descripción: Entidad JPA para la tabla intermedia TBL_USUARIO_GRUPO (Oracle)
+ *                Tabla intermedia (many-to-many) que asocia un Usuario con
+ *                un Grupo. Representa la pertenencia de un usuario a un
+ *                grupo organizacional, desde donde hereda los permisos
+ *                asignados a ese grupo.
  *   Author Prog: Camila Ledezma / Douglas Javieri
  *----------------------------------------
  *   Fecha | Autor | Comentario

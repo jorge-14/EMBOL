@@ -22,7 +22,11 @@ import lombok.experimental.SuperBuilder;
  *----------------------------------------
  *   Código de Aplicación: EMBOL
  *   Código de Objeto: TblUsuario
- *   Descripción: Entidad JPA para la tabla TBL_USUARIO (Oracle)
+ *   Descripción: Entidad JPA para la tabla TBL_USUARIO (Oracle).
+ *   Entidad que representa a un usuario del sistema, sincronizado
+ *                desde Entra ID (Azure AD). Es el punto de partida de la
+ *                autorización: obtiene permisos por asignación directa de
+ *                roles (TblUsuarioRol) o por pertenencia a grupos (TblUsuarioGrupo).
  *   Author Prog: Douglas Javieri / Camila Ledezma
  *----------------------------------------
  *   Fecha | Autor | Comentario

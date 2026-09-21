@@ -45,6 +45,9 @@ export class DataTableComponent {
   trackByKey      = input<string>('id');
   editableMode    = input<boolean>(false);
   showPagination  = input<boolean>(false);
+  showPaginator   = input<boolean>(true);
+  loading         = input<boolean>(false);
+  rows            = input<number>(10);
   pageInfo        = input<PageMetadata | null>(null);
 
   showFilter      = input<boolean>(false);
@@ -276,9 +279,9 @@ export class DataTableComponent {
     } else {
       const button = event.currentTarget as HTMLElement;
       const rect = button.getBoundingClientRect();
-      
+
       this.openActionMenu.set(index);
-      
+
       let top = rect.top;
       // Ajustar si está muy cerca del borde inferior
       if (window.innerHeight - rect.bottom < 150) {

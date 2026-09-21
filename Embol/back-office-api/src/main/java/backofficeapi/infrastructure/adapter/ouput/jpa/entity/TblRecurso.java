@@ -20,6 +20,12 @@ import lombok.experimental.SuperBuilder;
 /**
  * @author Douglas Cristhian Javieri Vino
  * @created 16/09/2026
+ *
+ * Entidad que representa un recurso protegido del sistema. Es
+ *                 jerárquica: un recurso puede tener un recurso padre
+ *                (iIdRecursoPadre), formando un árbol usado típicamente
+ *                para construir el menú de navegación según los permisos
+ *                del usuario.
  */
 
 @Entity

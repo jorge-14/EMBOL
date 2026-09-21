@@ -2,6 +2,10 @@ spring:
   application:
     name: back-office-api
 
+  banner:
+    location: classpath:banner.txt
+    charset: UTF-8
+
   # Oracle DataSource
   datasource:
     url: jdbc:oracle:thin:@192.168.6.37:1521/presupuestadorcmo
@@ -11,13 +15,13 @@ spring:
 
   # JPA / Hibernate
   jpa:
-    database-platform: org.hibernate.dialect.OracleDialect
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
+    open-in-view: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
 
   # OAuth2 Login
   security:

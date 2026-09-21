@@ -6,6 +6,11 @@ import lombok.*;
 /**
  * @author Douglas Cristhian Javieri Vino
  * @created 16/09/2026
+ *
+ * Tabla intermedia (many-to-many) que asocia un Recurso con
+ *                 una Acción. Define qué acciones específicas están
+ *                 disponibles sobre cada recurso (ej. el recurso "Usuarios"
+ *                 admite las acciones CREAR, EDITAR, ELIMINAR).
  */
 @Entity
 @Builder

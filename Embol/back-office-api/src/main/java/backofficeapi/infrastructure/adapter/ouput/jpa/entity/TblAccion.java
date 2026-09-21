@@ -18,7 +18,11 @@ import lombok.experimental.SuperBuilder;
  *----------------------------------------
  *   Código de Aplicación: EMBOL
  *   Código de Objeto: TblAccion
- *   Descripción: Entidad JPA para la tabla TBL_ACCION
+ *   Descripción: Entidad JPA para la tabla TBL_ACCION.
+ *                Entidad que representa una acción posible sobre un recurso
+ *                (ej. CREAR, EDITAR, ELIMINAR, VER). Se combina con un
+ *                Recurso a través de TblRecursoAccion para definir los
+ *                permisos específicos que luego se autorizan por Rol o Grupo.
  *   Author Prog: Douglas Cristhian Javieri Vino
  *----------------------------------------
  *   Fecha | Autor | Comentario

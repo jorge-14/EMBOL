@@ -6,6 +6,11 @@ import lombok.*;
 /**
  * @author Douglas Cristhian Javieri Vino
  * @created 16/09/2026
+ *
+ * Tabla intermedia (many-to-many) que asocia un Grupo con un
+ *              Recurso. Define qué recursos puede acceder todo un grupo
+ *              organizacional de forma directa, sin pasar por asignación
+ *              de roles individuales.
  */
 @Entity
 @Builder
@@ -14,6 +19,7 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+
 @Table(name = "TBL_GRUPO_RECURSO")
 public class TblGrupoRecurso extends AuditableEntity{
     @Id

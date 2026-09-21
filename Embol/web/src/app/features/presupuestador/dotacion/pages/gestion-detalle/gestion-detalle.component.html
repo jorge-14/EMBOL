@@ -1,0 +1,123 @@
+<div class="max-w-full">
+  <!-- Breadcrumbs -->
+  <nav class="flex mb-4 text-gray-500 text-sm" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+      <li class="inline-flex items-center">
+        <a href="#" class="hover:text-gray-700">Inicio</a>
+      </li>
+      <li>
+        <div class="flex items-center">
+          <i class="pi pi-angle-right text-xs mx-1"></i>
+          <a href="#" class="hover:text-gray-700">Dotación</a>
+        </div>
+      </li>
+      <li aria-current="page">
+        <div class="flex items-center">
+          <i class="pi pi-angle-right text-xs mx-1"></i>
+          <span class="text-gray-900 font-medium">Gestión {{ detalle()?.anio }}</span>
+        </div>
+      </li>
+    </ol>
+  </nav>
+
+  @if (detalle()) {
+    <!-- Header Section -->
+    <div class="flex justify-between items-start mb-6">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Gestión {{ detalle()?.anio }}</h1>
+        <p class="text-sm text-gray-500 mt-1">
+          {{ detalle()?.sucursal }} — {{ detalle()?.ciudad }} · {{ detalle()?.mesesCargados }} de {{ detalle()?.totalMeses }} meses cargados
+        </p>
+      </div>
+      <div class="flex gap-3">
+        <button
+          (click)="goBack()"
+          class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
+          <i class="pi pi-arrow-left text-xs"></i>
+          Gestiones
+        </button>
+        <button
+          (click)="openRangeModal()"
+          class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
+          <i class="pi pi-sync text-xs"></i>
+          Ver rango
+        </button>
+      </div>
+    </div>
+
+    <!-- Months Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      @for (mes of detalle()?.meses; track mes.nombre) {
+        <div
+          (click)="mes.disponible && mes.cargado && verVistaCompleta()"
+          class="bg-white rounded-xl border p-5 flex justify-between items-center transition-all"
+          [ngClass]="{
+            'border-gray-100 opacity-100 shadow-sm cursor-pointer hover:border-brand-primary/30 hover:shadow-md': mes.disponible && mes.cargado,
+            'border-gray-100 opacity-100 shadow-sm': mes.disponible && !mes.cargado,
+            'border-gray-50 opacity-50 cursor-not-allowed': !mes.disponible
+          }">
+          <div>
+            <h3 class="text-lg font-bold text-gray-800" [ngClass]="{'text-gray-400': !mes.disponible}">
+              {{ mes.nombre }}
+            </h3>
+            <p class="text-sm mt-1" [ngClass]="mes.disponible ? 'text-gray-500' : 'text-gray-300'">
+              {{ mes.disponible ? mes.empleados + ' empleados' : 'Aún no disponible' }}
+            </p>
+          </div>
+          <div>
+            @if (mes.cargado) {
+              <i class="pi pi-check text-green-500 text-sm"></i>
+            } @else if (!mes.disponible) {
+              <i class="pi pi-lock text-gray-300 text-sm"></i>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Range Modal -->
+  <p-dialog
+    [visible]="showRangeModal()"
+    (visibleChange)="showRangeModal.set($event)"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    header="Seleccionar rango"
+    [style]="{ width: '600px', overflow: 'visible' }"
+    [contentStyle]="{ overflow: 'visible', padding: '1rem 1.5rem 1rem 1.5rem' }"
+    styleClass="custom-range-dialog">
+
+    <div class="flex items-center gap-6 mt-0 mb-6">
+      <div class="flex-1">
+        <app-horizontal-select
+          label="Desde"
+          [options]="mesesOptions"
+          [(value)]="desdeMes">
+        </app-horizontal-select>
+      </div>
+      <div class="flex-1">
+        <app-horizontal-select
+          label="Hasta"
+          [options]="mesesOptions"
+          [(value)]="hastaMes">
+        </app-horizontal-select>
+      </div>
+    </div>
+
+    <ng-template #footer>
+      <div class="flex justify-end gap-3 mt-0">
+        <button
+          (click)="closeRangeModal()"
+          class="px-6 py-3 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors">
+          Cancelar
+        </button>
+        <button
+          (click)="verConsolidado()"
+          class="px-6 py-3 bg-brand text-white rounded-xl text-sm font-bold hover:bg-brand-hover transition-colors">
+          Ver consolidado
+        </button>
+      </div>
+    </ng-template>
+  </p-dialog>
+</div>
