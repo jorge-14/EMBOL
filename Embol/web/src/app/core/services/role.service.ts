@@ -75,7 +75,7 @@ export class RoleService {
     // return this.http.post(`${this.apiUrl}/create-role`, oldBody);
 
     // Nuevo endpoint (SAGA Local + EntraID):
-    return this.http.post(`${environment.apiBaseUrl}api/v1/roles/saga`, body);
+    return this.http.post(`${this.apiUrl}/saga`, body);
   }
 
   updateRole(id: any, role: any): Observable<any> {

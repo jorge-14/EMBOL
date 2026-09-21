@@ -89,7 +89,7 @@ export class GroupService {
     // return this.http.post<GrupoRow>(`${this.baseUrl}/create-group`, oldBody);
 
     // Nuevo endpoint (SAGA Local + EntraID):
-    return this.http.post<GrupoRow>(`${environment.apiBaseUrl}api/v1/groups/saga`, body);
+    return this.http.post<GrupoRow>(`${this.baseUrl}/saga`, body);
   }
 
   deleteGroup(id: any): Observable<any> {

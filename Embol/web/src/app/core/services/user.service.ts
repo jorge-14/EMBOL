@@ -57,7 +57,7 @@ export class UserService {
     // return this.http.post(`${this.apiUrl}/create-user`, oldBody);
     
     // Nuevo endpoint (SAGA Local + EntraID):
-    return this.http.post(`${environment.apiBaseUrl}api/v1/users/saga`, body);
+    return this.http.post(`${this.apiUrl}/saga`, body);
   }
 
   updateUser(id: any, user: any): Observable<any> {
