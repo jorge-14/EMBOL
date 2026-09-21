@@ -49,26 +49,19 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       @for (mes of detalle()?.meses; track mes.nombre) {
         <div
-          (click)="mes.disponible && mes.cargado && verVistaCompleta()"
-          class="bg-white rounded-xl border p-5 flex justify-between items-center transition-all"
-          [ngClass]="{
-            'border-gray-100 opacity-100 shadow-sm cursor-pointer hover:border-brand-primary/30 hover:shadow-md': mes.disponible && mes.cargado,
-            'border-gray-100 opacity-100 shadow-sm': mes.disponible && !mes.cargado,
-            'border-gray-50 opacity-50 cursor-not-allowed': !mes.disponible
-          }">
+          (click)="verVistaCompleta(mes.nombre)"
+          class="bg-white rounded-xl border border-gray-100 p-5 flex justify-between items-center transition-all opacity-100 shadow-sm cursor-pointer hover:border-brand-primary/30 hover:shadow-md">
           <div>
-            <h3 class="text-lg font-bold text-gray-800" [ngClass]="{'text-gray-400': !mes.disponible}">
+            <h3 class="text-lg font-bold text-gray-800">
               {{ mes.nombre }}
             </h3>
-            <p class="text-sm mt-1" [ngClass]="mes.disponible ? 'text-gray-500' : 'text-gray-300'">
-              {{ mes.disponible ? mes.empleados + ' empleados' : 'Aún no disponible' }}
+            <p class="text-sm mt-1 text-gray-500">
+              {{ mes.empleados }} empleados
             </p>
           </div>
           <div>
             @if (mes.cargado) {
               <i class="pi pi-check text-green-500 text-sm"></i>
-            } @else if (!mes.disponible) {
-              <i class="pi pi-lock text-gray-300 text-sm"></i>
             }
           </div>
         </div>

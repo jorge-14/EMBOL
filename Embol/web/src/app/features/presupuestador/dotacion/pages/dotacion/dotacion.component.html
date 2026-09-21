@@ -1,3 +1,4 @@
+@if (viewState() === 'lista') {
 <div class="max-w-full">
   <!-- Breadcrumbs -->
   <nav class="flex mb-4 text-gray-500 text-sm" aria-label="Breadcrumb">
@@ -70,3 +71,21 @@
     }
   </div>
 </div>
+}
+
+@if (viewState() === 'detalle') {
+  <app-gestion-detalle
+    [gestionId]="selectedGestionId()!"
+    (back)="goToList()"
+    (viewComplete)="onViewComplete($event)">
+  </app-gestion-detalle>
+}
+
+@if (viewState() === 'completa') {
+  <app-vista-completa
+    [gestionId]="selectedGestionId()!"
+    [initialDesde]="selectedDesde()"
+    [initialHasta]="selectedHasta()"
+    (back)="goToDetalle()">
+  </app-vista-completa>
+}

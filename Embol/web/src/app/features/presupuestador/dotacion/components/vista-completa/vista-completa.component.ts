@@ -1,7 +1,6 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, Input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { DotacionService } from '../../services/dotacion.service';
+import { DotacionService } from '../../../../../core/services/dotacion.service';
 import { EmpleadoDotacion, GestionDetalle, MovimientoPlanificado } from '../../models/dotacion.model';
 import { DataTableComponent } from '../../../../../shared/components/data-table/data-table.component';
 import { VISTA_COMPLETA_COLUMNS } from '../../configs/vista-completa/vista-completa-columns.config';
@@ -15,13 +14,28 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-vista-completa',
   standalone: true,
-  imports: [CommonModule, RouterModule, DataTableComponent, HorizontalSelectComponent, DialogModule, FormsModule],
+  imports: [CommonModule, DataTableComponent, HorizontalSelectComponent, DialogModule, FormsModule],
   templateUrl: './vista-completa.component.html',
   styleUrl: './vista-completa.component.scss'
 })
 export class VistaCompletaComponent implements OnInit {
 
-  gestionId = signal<number | null>(null);
+  @Input({ required: true }) set gestionId(val: number) {
+    this._gestionId.set(val);
+    this.loadData(val);
+  }
+  
+  @Input() set initialDesde(val: string | undefined) {
+    if (val) this.desdeMes.set(val);
+  }
+  
+  @Input() set initialHasta(val: string | undefined) {
+    if (val) this.hastaMes.set(val);
+  }
+
+  back = output<void>();
+
+  _gestionId = signal<number | null>(null);
   mesSeleccionado = signal<string>('Febrero 2025');
   gestionInfo = signal<GestionDetalle | null>(null);
   empleados = signal<EmpleadoDotacion[]>([]);
@@ -167,29 +181,14 @@ export class VistaCompletaComponent implements OnInit {
   ];
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
     private service: DotacionService
   ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      const id = +params['id'];
-      if (id) {
-        this.gestionId.set(id);
-        this.loadData(id);
-      }
-    });
-
-    this.route.queryParams.subscribe(params => {
-      const desde = params['desde'];
-      const hasta = params['hasta'];
-      if (desde && hasta) {
-        this.desdeMes.set(desde);
-        this.hastaMes.set(hasta);
-        this.updateMesSeleccionado();
-      }
-    });
+    // Already updating inside inputs if needed, but we ensure to update month text.
+    if (this._gestionId()) {
+      this.updateMesSeleccionado();
+    }
   }
 
   loadData(id: number): void {
@@ -197,21 +196,17 @@ export class VistaCompletaComponent implements OnInit {
     this.service.getGestionById(id).subscribe(gestion => {
       if (gestion) {
         this.gestionInfo.set(gestion);
-        // Si no hay params de consulta, usamos el mes por defecto o el de la gestión
-        if (!this.route.snapshot.queryParams['desde']) {
-          this.updateMesSeleccionado();
-        }
+        this.updateMesSeleccionado();
       }
     });
 
-    this.service.getEmpleadosByGestion(id).subscribe(data => {
-      this.empleados.set(data);
-      this.loading.set(false);
-    });
+    // In a real app we would call getEmpleadosByGestion(id), but we use mock
+    const empleadosData = this.service.getEmpleadosMock();
+    this.empleados.set(empleadosData);
+    this.loading.set(false);
 
-    this.service.getMovimientosByGestion(id).subscribe(data => {
-      this.movimientos.set(data);
-    });
+    const movsData = this.service.getMovimientosMock();
+    this.movimientos.set(movsData);
   }
 
   updateMesSeleccionado(): void {
@@ -224,7 +219,7 @@ export class VistaCompletaComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/presupuestador/dotacion']);
+    this.back.emit();
   }
 
   openRangeModal(): void {

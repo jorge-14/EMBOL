@@ -33,18 +33,7 @@ export class SidebarComponent {
       label: 'PRESUPUESTADOR',
       icon: 'dollar',
       children: [
-        { id: 'compensacion', label: 'COMPENSACIÓN' },
-        {
-          id: 'cargas-beneficios',
-          label: 'CARGAS Y BENEFICIOS',
-          children: [
-            { id: 'dotacion',        label: 'Dotación', route: '/presupuestador/dotacion' },
-            { id: 'beneficios',      label: 'Beneficios al Personal' },
-            { id: 'vacaciones',      label: 'Vacaciones' },
-            { id: 'provisiones',     label: 'Provisiones y Cargas' },
-            { id: 'ropa-trabajo',    label: 'Ropa de Trabajo' },
-          ]
-        },
+        { id: 'dotacion', label: 'Dotación', route: '/presupuestador/dotacion' }
       ],
     },
     // {

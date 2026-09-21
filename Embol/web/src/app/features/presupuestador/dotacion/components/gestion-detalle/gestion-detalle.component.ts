@@ -1,7 +1,6 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, input, output, effect, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
-import { DotacionService } from '../../services/dotacion.service';
+import { DotacionService } from '../../../../../core/services/dotacion.service';
 import { GestionDetalle } from '../../models/dotacion.model';
 import { DialogModule } from 'primeng/dialog';
 import { HorizontalSelectComponent } from '../../../../../shared/components/horizontal-controls/horizontal-select/horizontal-select.component';
@@ -15,6 +14,13 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './gestion-detalle.component.scss'
 })
 export class GestionDetalleComponent implements OnInit {
+  @Input({ required: true }) set gestionId(val: number) {
+    this.loadDetalle(val);
+  }
+
+  back = output<void>();
+  viewComplete = output<{ id: number, desde?: string, hasta?: string }>();
+
   detalle = signal<GestionDetalle | null>(null);
   loading = signal(false);
 
@@ -39,17 +45,10 @@ export class GestionDetalleComponent implements OnInit {
   hastaMes = signal('Septiembre');
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
     private dotacionService: DotacionService
   ) {}
 
-  ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (id) {
-      this.loadDetalle(id);
-    }
-  }
+  ngOnInit(): void {}
 
   loadDetalle(id: number): void {
     this.loading.set(true);
@@ -68,7 +67,7 @@ export class GestionDetalleComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/presupuestador/dotacion']);
+    this.back.emit();
   }
 
   openRangeModal(): void {
@@ -81,19 +80,22 @@ export class GestionDetalleComponent implements OnInit {
 
   verConsolidado(): void {
     if (this.detalle()) {
-      this.router.navigate(['/presupuestador/dotacion', this.detalle()?.id, 'vista-completa'], {
-        queryParams: {
-          desde: this.desdeMes(),
-          hasta: this.hastaMes()
-        }
+      this.viewComplete.emit({
+        id: this.detalle()!.id,
+        desde: this.desdeMes(),
+        hasta: this.hastaMes()
       });
       this.closeRangeModal();
     }
   }
 
-  verVistaCompleta(): void {
+  verVistaCompleta(mes?: string): void {
     if (this.detalle()) {
-      this.router.navigate(['/presupuestador/dotacion', this.detalle()?.id, 'vista-completa']);
+      this.viewComplete.emit({ 
+        id: this.detalle()!.id,
+        desde: mes,
+        hasta: mes
+      });
     }
   }
 }
