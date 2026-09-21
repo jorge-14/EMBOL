@@ -53,6 +53,12 @@ public class TblGroupRepositoryAdapter implements TblGroupRepositoryPort {
 
     @Override
     @Transactional(readOnly = true)
+    public Optional<TblGroupModel> getGroupById(Long id) {
+        return tblGroupRepository.findById(id).map(tblGroupMapper::toModel);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public TblGroupModel getInformationById(Long id) {
         TblGrupo tblGrupo = tblGroupRepository.informationGroup(id);
         return tblGroupMapper.toModel(tblGrupo);

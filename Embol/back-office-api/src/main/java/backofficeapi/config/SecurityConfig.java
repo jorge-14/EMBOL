@@ -23,46 +23,48 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/", "/error", "/oauth2/**", "/login/**", "/api/public/**", "/swagger-ui/**", "/v3/api-docs/**", "/api/v1/**").permitAll()
-                .anyRequest().authenticated()
-            )
-            // Habilita el login en el navegador (Redirige a Microsoft automáticamente)
-            .oauth2Login(org.springframework.security.config.Customizer.withDefaults())
-            // Mantiene el Resource Server para poder seguir recibiendo tokens de aplicaciones externas
-            .oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(jwt -> jwt
-                    .jwtAuthenticationConverter(jwtAuthenticationConverter())
-                )
-            );
-            
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/", "/error", "/oauth2/**", "/login/**", "/api/public/**", "/swagger-ui/**",
+                                "/v3/api-docs/**", "/api/v1/**")
+                        .permitAll()
+                        .anyRequest().authenticated())
+                // Habilita el login en el navegador (Redirige a Microsoft automáticamente)
+                .oauth2Login(org.springframework.security.config.Customizer.withDefaults())
+                // Mantiene el Resource Server para poder seguir recibiendo tokens de
+                // aplicaciones externas
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter())));
+
         return http.build();
     }
 
-    // Este método extrae "roles" y "groups" del token y los convierte en Autoridades de Spring
+    // Este método extrae con prioridad: si tiene roles usa los roles; si no, toma
+    // los grupos como respaldo
     private Converter<Jwt, ? extends AbstractAuthenticationToken> jwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
             Collection<GrantedAuthority> authorities = new ArrayList<>();
-            
-            // 1. Extraer Roles
+
             List<String> roles = jwt.getClaimAsStringList("roles");
-            if (roles != null) {
+            List<String> groups = jwt.getClaimAsStringList("groups");
+
+            // Si vienen roles en el token de Entra ID
+            if (roles != null && !roles.isEmpty()) {
                 for (String role : roles) {
-                    authorities.add(new SimpleGrantedAuthority(role)); // Es buena práctica el prefijo ROLE_
+                    // Se asegura el prefijo ROLE_ estándar en Spring Security
+                    String roleAuthority = role.startsWith("ROLE_") ? role : "ROLE_" + role;
+                    authorities.add(new SimpleGrantedAuthority(roleAuthority));
                 }
             }
-
-            // 2. Extraer Grupos (vienen como Object IDs)
-            List<String> groups = jwt.getClaimAsStringList("groups");
-            if (groups != null) {
+            // Si NO tiene roles, se cargan sus grupos
+            else if (groups != null && !groups.isEmpty()) {
                 for (String group : groups) {
-                    // Les añadimos el prefijo GROUP_ para distinguirlos fácilmente en el código
                     authorities.add(new SimpleGrantedAuthority("GROUP_" + group));
                 }
             }
-            
+
             return authorities;
         });
         return converter;
