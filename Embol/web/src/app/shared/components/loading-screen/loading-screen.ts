@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 
 @Component({
   selector: 'app-loading-screen',
   standalone: true,
-  imports: [],
+  imports: [NgTemplateOutlet],
   styleUrl: './loading-screen.css',
   templateUrl: './loading-screen.html',
 })

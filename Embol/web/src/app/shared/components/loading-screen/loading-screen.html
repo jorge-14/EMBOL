@@ -1,9 +1,5 @@
-@if (isLoading) {
-  <div class="fixed inset-0 z-[70] flex items-center justify-center bg-gray-900 bg-opacity-50 backdrop-blur-sm">
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl flex flex-col items-center gap-4">
-      <div class="animate-pulse flex items-center justify-center h-16 w-16 mb-2">
-        <!-- Light Mode Icon (hidden in dark mode) -->
-        <svg class="h-full w-auto block dark:hidden drop-shadow-md" width="1406" height="1821" viewBox="0 0 1406 1821" fill="none" xmlns="http://www.w3.org/2000/svg">
+<ng-template #lightIcon>
+  <svg class="h-full w-auto block dark:hidden drop-shadow-md" width="1406" height="1821" viewBox="0 0 1406 1821" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path fill-rule="evenodd" clip-rule="evenodd" d="M1218.19 696.251C1296.38 702.967 1340.23 722.696 1380.2 774.32C1382.37 777.458 1398.36 800.59 1403.82 815.741C1406.55 823.318 1404 1043.29 1405.23 1065.36C1406.23 1083.18 1399.61 1063.59 1391.07 1048.06C1102.74 523.491 509.635 1120.07 169.228 1238.18C62.1118 1275.35 1.4686 1234.14 1.30916 1212.4C1.16567 1192.8 -0.396775 979.453 0.582855 967.377C7.77331 976.718 3.68295 978.259 8.22149 989.228C60.5759 1115.74 307.058 1002.56 732.996 821.371C873.32 768.451 1040.82 692.115 1218.19 696.251Z" fill="#E2001B"/>
           <path fill-rule="evenodd" clip-rule="evenodd" d="M1218.19 696.251C1296.38 702.967 1340.23 722.696 1380.2 774.32C1382.37 777.458 1398.36 800.59 1403.82 815.741C1406.55 823.318 1404 1043.29 1405.23 1065.36C1406.23 1083.18 1399.61 1063.59 1391.07 1048.06C1102.74 523.491 509.635 1120.07 169.228 1238.18C62.1118 1275.35 1.4686 1234.14 1.30916 1212.4C1.16567 1192.8 -0.396775 979.453 0.582855 967.377C7.77331 976.718 3.68295 978.259 8.22149 989.228C60.5759 1115.74 307.058 1002.56 732.996 821.371C873.32 768.451 1040.82 692.115 1218.19 696.251Z" fill="#E2001B"/>
           <path fill-rule="evenodd" clip-rule="evenodd" d="M1221.77 348.528C1274.14 354.751 1332.1 363.557 1379.63 425.731C1400.53 457.951 1404.87 458.535 1404.98 487.867C1405.19 544.973 1404.44 704.538 1405.49 725.037C1395.44 723.941 1408.72 711.804 1336.84 619.005C1229.78 494.441 1079.36 414.257 731.288 585.788C484.482 707.416 247.133 897.02 95.1058 905.305C86.6913 905.273 57.0171 909.442 24.0232 890.358C-5.96444 873.013 1.30218 866.278 1.30218 831.535C1.30396 650.663 1.43859 650.789 0.0656884 622.619C0.056831 622.419 0.0656875 622.619 0.51033 620.142C2.12592 622.121 2.73886 621.489 3.46517 623.762C13.8691 656.297 26.4555 745.471 288.004 655.615C385.785 622.02 491.413 575.877 513.475 566.566C530.909 559.209 722.107 478.514 731.281 474.335C758.872 463.816 878.155 413.998 986.091 383.18C1127.14 342.909 1187.47 348.303 1221.77 348.528Z" fill="#E2001B"/>
@@ -66,8 +62,10 @@
           </linearGradient>
           </defs>
         </svg>
-        <!-- Dark Mode Icon (hidden in light mode) -->
-        <svg class="h-full w-auto hidden dark:block drop-shadow-md" width="1406" height="1920" viewBox="0 0 1406 1920" fill="none" xmlns="http://www.w3.org/2000/svg">
+</ng-template>
+
+<ng-template #darkIcon>
+  <svg class="h-full w-auto hidden dark:block drop-shadow-md" width="1406" height="1920" viewBox="0 0 1406 1920" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path fill-rule="evenodd" clip-rule="evenodd" d="M1218.19 696.251C1296.38 702.967 1340.23 722.696 1380.2 774.32C1382.37 777.458 1398.36 800.59 1403.82 815.741C1406.55 823.318 1404 1043.29 1405.23 1065.36C1406.23 1083.18 1399.61 1063.59 1391.07 1048.06C1102.74 523.491 509.634 1120.07 169.228 1238.18C62.1116 1275.35 1.46835 1234.14 1.30892 1212.4C1.16543 1192.8 -0.397019 979.453 0.582611 967.377C7.77306 976.718 3.68271 978.259 8.22125 989.228C60.5757 1115.74 307.058 1002.56 732.996 821.371C873.32 768.451 1040.82 692.115 1218.19 696.251Z" fill="white"/>
           <path fill-rule="evenodd" clip-rule="evenodd" d="M1218.19 696.251C1296.38 702.967 1340.23 722.696 1380.2 774.32C1382.37 777.458 1398.36 800.59 1403.82 815.741C1406.55 823.318 1404 1043.29 1405.23 1065.36C1406.23 1083.18 1399.61 1063.59 1391.07 1048.06C1102.74 523.491 509.634 1120.07 169.228 1238.18C62.1116 1275.35 1.46835 1234.14 1.30892 1212.4C1.16543 1192.8 -0.397019 979.453 0.582611 967.377C7.77306 976.718 3.68271 978.259 8.22125 989.228C60.5757 1115.74 307.058 1002.56 732.996 821.371C873.32 768.451 1040.82 692.115 1218.19 696.251Z" fill="white"/>
           <path fill-rule="evenodd" clip-rule="evenodd" d="M1221.77 348.528C1274.14 354.751 1332.1 363.557 1379.63 425.731C1400.53 457.951 1404.87 458.535 1404.98 487.867C1405.19 544.973 1404.44 704.538 1405.49 725.037C1395.44 723.941 1408.72 711.804 1336.84 619.005C1229.78 494.441 1079.36 414.257 731.288 585.788C484.482 707.416 247.133 897.02 95.1058 905.305C86.6913 905.273 57.0171 909.442 24.0232 890.358C-5.96444 873.013 1.30218 866.278 1.30218 831.535C1.30396 650.663 1.43859 650.789 0.0656884 622.619C0.056831 622.419 0.0656875 622.619 0.51033 620.142C2.12592 622.121 2.73886 621.489 3.46517 623.762C13.8691 656.297 26.4555 745.471 288.004 655.615C385.785 622.02 491.413 575.877 513.475 566.566C530.909 559.209 722.107 478.514 731.281 474.335C758.872 463.816 878.155 413.998 986.091 383.18C1127.14 342.909 1187.47 348.303 1221.77 348.528Z" fill="white"/>
@@ -130,6 +128,22 @@
           </linearGradient>
           </defs>
         </svg>
+</ng-template>
+
+@if (isLoading) {
+  <div class="fixed inset-0 z-[70] flex items-center justify-center bg-gray-900 bg-opacity-50 backdrop-blur-sm">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl flex flex-col items-center gap-4">
+      <div class="relative flex items-center justify-center h-16 w-16 mb-2">
+        <!-- Background Layer -->
+        <div class="absolute inset-0 opacity-20 flex items-center justify-center">
+          <ng-container *ngTemplateOutlet="lightIcon"></ng-container>
+          <ng-container *ngTemplateOutlet="darkIcon"></ng-container>
+        </div>
+        <!-- Foreground Layer -->
+        <div class="absolute inset-0 animate-fill-stages flex items-center justify-center drop-shadow-md">
+          <ng-container *ngTemplateOutlet="lightIcon"></ng-container>
+          <ng-container *ngTemplateOutlet="darkIcon"></ng-container>
+        </div>
       </div>
       <span class="text-sm font-semibold text-gray-700 dark:text-gray-200 tracking-wide">{{ text }}</span>
     </div>
