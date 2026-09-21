@@ -1,8 +1,6 @@
 export interface PermissionAction {
   key: string;
   label: string;
-  colorClass: string;
-  activeColorClass: string;
 }
 
 export interface PermissionResource {
