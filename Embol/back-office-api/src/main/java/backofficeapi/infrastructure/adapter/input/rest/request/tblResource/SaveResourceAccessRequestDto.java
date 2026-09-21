@@ -1,4 +1,4 @@
-package backofficeapi.infrastructure.adapter.input.rest.request.tblAccess;
+package backofficeapi.infrastructure.adapter.input.rest.request.tblResource;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -15,11 +15,11 @@ import java.util.List;
  *----------------------------------------
  *   Código de Aplicación: EMBOL
  *   Código de Objeto: SaveResourceAccessRequestDto
- *   Descripción: DTO de request para guardar asignación de accesos
+ *   Descripción: DTO de petición para guardar la matriz de accesos
  *   Author Prog: Camila Ledezma
  *----------------------------------------
  *   Fecha | Autor | Comentario
- *   18.09.2026 | Camila Ledezma | Creación Inicial
+ *   21.09.2026 | Camila Ledezma | Creación Inicial en módulo resource
  *----------------------------------------
  */
 @Getter
@@ -32,7 +32,7 @@ public class SaveResourceAccessRequestDto {
     @NotBlank(message = "El modo ('rol' o 'grupo') es obligatorio")
     private String mode;
 
-    @NotNull(message = "El id (del rol o grupo) es obligatorio")
+    @NotNull(message = "El id del rol o grupo es obligatorio")
     private Long id;
 
     @Valid

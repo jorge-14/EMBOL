@@ -1,9 +1,9 @@
-package backofficeapi.application.usecase.access;
+package backofficeapi.application.usecase.resource;
 
-import backofficeapi.application.port.input.access.SaveResourceAccessUseCase;
-import backofficeapi.application.port.output.TblAccessRepositoryPort;
-import backofficeapi.infrastructure.adapter.input.rest.request.tblAccess.ResourceSavePermissionDto;
-import backofficeapi.infrastructure.adapter.input.rest.request.tblAccess.SaveResourceAccessRequestDto;
+import backofficeapi.application.port.input.resource.SaveResourceAccessUseCase;
+import backofficeapi.application.port.output.TblResourceRepositoryPort;
+import backofficeapi.infrastructure.adapter.input.rest.request.tblResource.ResourceSavePermissionDto;
+import backofficeapi.infrastructure.adapter.input.rest.request.tblResource.SaveResourceAccessRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,18 +14,18 @@ import java.util.List;
  *----------------------------------------
  *   Código de Aplicación: EMBOL
  *   Código de Objeto: SaveResourceAccessUseCaseImpl
- *   Descripción: Implementación del caso de uso para guardar asignaciones usando directamente SaveResourceAccessRequestDto
+ *   Descripción: Implementación del caso de uso para guardar asignaciones de accesos
  *   Author Prog: Camila Ledezma
  *----------------------------------------
  *   Fecha | Autor | Comentario
- *   18.09.2026 | Camila Ledezma | Creación Inicial simplificada
+ *   21.09.2026 | Camila Ledezma | Creación Inicial en módulo resource
  *----------------------------------------
  */
 @Service
 @RequiredArgsConstructor
 public class SaveResourceAccessUseCaseImpl implements SaveResourceAccessUseCase {
 
-    private final TblAccessRepositoryPort accessRepositoryPort;
+    private final TblResourceRepositoryPort resourceRepositoryPort;
 
     @Override
     public void saveAccess(SaveResourceAccessRequestDto request) {
@@ -42,9 +42,9 @@ public class SaveResourceAccessUseCaseImpl implements SaveResourceAccessUseCase 
         }
 
         if ("ROL".equals(normalizedMode)) {
-            accessRepositoryPort.saveRoleResources(id, grantedResourceIds);
+            resourceRepositoryPort.saveRoleResources(id, grantedResourceIds);
         } else {
-            accessRepositoryPort.saveGroupResources(id, grantedResourceIds);
+            resourceRepositoryPort.saveGroupResources(id, grantedResourceIds);
         }
     }
 }
