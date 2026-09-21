@@ -26,7 +26,6 @@ const actionGroups = [
   styleUrl: './access-table.component.css',
 })
 export class AccessTableComponent {
-  readonly pageSize = 10;
   readonly config = input.required<AccessTableConfig>();
   readonly pendingKeys = input<Set<string>>(new Set());
   readonly principals = input<string[]>([]);
@@ -36,7 +35,6 @@ export class AccessTableComponent {
 
   readonly groupIndex = signal(0);
   readonly search = signal('');
-  readonly pageIndex = signal(0);
   readonly expanded = signal<Record<string, boolean>>({});
   readonly selected = signal<Set<string>>(new Set());
   readonly activePopover = signal<string | null>(null);
@@ -52,33 +50,11 @@ export class AccessTableComponent {
       .map(group => ({ ...group, resources: group.resources.filter(resource => resource.name.toLocaleLowerCase().includes(query)) }))
       .filter(group => group.resources.length > 0);
   });
-  readonly totalResources = computed(() => this.filteredGroups().reduce((total, group) => total + group.resources.length, 0));
-  readonly lastPageIndex = computed(() => Math.max(0, Math.ceil(this.totalResources() / this.pageSize) - 1));
-  readonly currentPageIndex = computed(() => Math.min(this.pageIndex(), this.lastPageIndex()));
-  readonly displayedCount = computed(() => Math.min((this.currentPageIndex() + 1) * this.pageSize, this.totalResources()));
-  readonly paginatedGroups = computed(() => {
-    const start = this.currentPageIndex() * this.pageSize;
-    const end = start + this.pageSize;
-    let offset = 0;
-    return this.filteredGroups()
-      .map(group => {
-        const resources = group.resources.slice(Math.max(0, start - offset), Math.max(0, end - offset));
-        offset += group.resources.length;
-        return { ...group, resources };
-      })
-      .filter(group => group.resources.length > 0);
-  });
   readonly allExpanded = computed(() => this.filteredGroups().length > 0 && this.filteredGroups().every(group => this.isExpanded(group.name)));
 
-  resetPage(): void { this.pageIndex.set(0); }
-  changePage(direction: -1 | 1): void {
-    this.pageIndex.set(Math.max(0, Math.min(this.lastPageIndex(), this.currentPageIndex() + direction)));
-    this.closePopover();
-  }
   setSearch(event: Event): void {
     this.clearSelected();
     this.closePopover();
-    this.resetPage();
     this.search.set((event.target as HTMLInputElement).value);
   }
   changeGroup(direction: -1 | 1): void {

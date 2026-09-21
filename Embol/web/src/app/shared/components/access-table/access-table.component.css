@@ -54,10 +54,6 @@ tbody tr:not(:last-child) > * { border-bottom: 1px solid #EFEFEE; }
 .popover-actions .apply-button { padding: .4rem .75rem; border-radius: .35rem; background: #E21E26; color: white; font-weight: 600; }
 .popover-actions .apply-button:disabled { opacity: .45; cursor: not-allowed; }
 .empty-state { padding: 2rem; color: #6B7072; text-align: center; }
-.resource-pagination { display: flex; align-items: center; justify-content: flex-end; gap: .7rem; padding: .9rem .2rem 0; color: #6B7072; font-size: .84rem; font-weight: 600; }
-.resource-pagination button { display: grid; place-items: center; width: 2rem; height: 2rem; border: 1px solid #D3D6D7; border-radius: .4rem; background: white; color: #52595b; font-size: 1.5rem; line-height: 1; }
-.resource-pagination button:not(:disabled):hover { background: #EFEFEE; }
-.resource-pagination button:disabled { opacity: .4; cursor: not-allowed; }
 .bulk-bar { position: fixed; z-index: 40; left: 50%; bottom: 5.5rem; transform: translateX(-50%); display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .55rem; width: max-content; max-width: calc(100vw - 2rem); padding: .7rem .9rem; border: 1px solid #D3D6D7; border-radius: .7rem; background: white; box-shadow: 0 10px 30px #0002; color: #303638; font-size: .82rem; }
 .bulk-bar span { margin-right: .5rem; font-weight: 700; }
 .bulk-bar button { padding: .45rem .7rem; border: 1px solid #D3D6D7; border-radius: .4rem; white-space: nowrap; font-weight: 600; }

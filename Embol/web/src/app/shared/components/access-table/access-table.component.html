@@ -34,7 +34,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (group of paginatedGroups(); track group.name) {
+        @for (group of filteredGroups(); track group.name) {
           <tr class="category-row">
             <th [attr.colspan]="visibleActions().length + 1" scope="rowgroup">
               <button type="button" (click)="toggleGroup(group.name)" [attr.aria-expanded]="isExpanded(group.name)">
@@ -97,12 +97,6 @@
       </tbody>
     </table>
   </div>
-
-  <nav class="resource-pagination" aria-label="Navegación de recursos">
-    <button type="button" aria-label="Recursos anteriores" [disabled]="currentPageIndex() === 0" (click)="changePage(-1)">‹</button>
-    <span aria-live="polite">{{ displayedCount() }} de {{ totalResources() }} recursos</span>
-    <button type="button" aria-label="Recursos siguientes" [disabled]="currentPageIndex() >= lastPageIndex()" (click)="changePage(1)">›</button>
-  </nav>
 
   @if (selected().size) {
     <div class="bulk-bar" role="region" aria-label="Acciones para recursos seleccionados">
