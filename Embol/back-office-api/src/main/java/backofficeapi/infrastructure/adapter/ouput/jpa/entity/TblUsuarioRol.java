@@ -22,6 +22,9 @@ import lombok.experimental.SuperBuilder;
  *   Código de Aplicación: EMBOL
  *   Código de Objeto: TblUsuarioRol
  *   Descripción: Entidad JPA para la tabla intermedia TBL_USUARIO_ROL (Oracle)
+ * Tabla intermedia (many-to-many) que asocia un Usuario con
+ *                un Rol. Representa la asignación directa de un rol a un
+ *                usuario específico.
  *   Author Prog: Camila Ledezma / Douglas Javieri
  *----------------------------------------
  *   Fecha | Autor | Comentario

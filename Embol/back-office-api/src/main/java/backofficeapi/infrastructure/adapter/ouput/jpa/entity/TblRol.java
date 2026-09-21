@@ -24,7 +24,11 @@ import org.hibernate.type.NumericBooleanConverter;
  *----------------------------------------
  *   Código de Aplicación:
  *   Código de Objeto:
- *   Descripción:
+ *   Descripción: Entidad que representa un rol de negocio (ej. ADMINISTRADOR,
+ *                SUPERVISOR). Agrupa un conjunto de permisos sobre recursos
+ *                (TblRolRecurso) y se asigna a uno o varios usuarios
+ *                (TblUsuarioRol). El flag sRolBase distingue los roles
+ *                predefinidos del sistema de los creados manualmente.
  *   Author Prog: Jorge Luis Choque Callizaya
  *----------------------------------------
  *   Fecha | Autor | Comentario
