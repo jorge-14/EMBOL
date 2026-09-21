@@ -1,0 +1,11 @@
+@keyframes fillStages {
+  0%, 24.99% { clip-path: inset(0 100% 0 0); }
+  25%, 49.99% { clip-path: inset(0 75% 0 0); }
+  50%, 74.99% { clip-path: inset(0 50% 0 0); }
+  75%, 99.99% { clip-path: inset(0 25% 0 0); }
+  100% { clip-path: inset(0 0 0 0); }
+}
+
+.animate-fill-stages {
+  animation: fillStages 1.5s infinite;
+}

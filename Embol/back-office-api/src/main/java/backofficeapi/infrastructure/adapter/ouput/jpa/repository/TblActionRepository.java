@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
 import java.util.Optional;
 
 /*
@@ -19,15 +18,22 @@ import java.util.Optional;
  *   18.09.2026 | Camila Ledezma | Creación Inicial
  *----------------------------------------
  */
+
 @Repository
 public interface TblActionRepository extends JpaRepository<TblAccion, Long> {
 
-    @Query("SELECT a FROM TblAccion a WHERE UPPER(TRIM(a.sCodigo)) = UPPER(TRIM(:codigo)) AND a.deleted = false")
-    Optional<TblAccion> findBySCodigo(@Param("codigo") String codigo);
+    @Query("SELECT a " +
+            "FROM TblAccion a " +
+            "WHERE UPPER(TRIM(a.sCodigo)) = UPPER(TRIM(:code)) AND a.deleted = false")
+    Optional<TblAccion> actionFindByCode(@Param("code") String code);
 
-    @Query("SELECT a FROM TblAccion a WHERE UPPER(TRIM(a.sNombre)) = UPPER(TRIM(:nombre)) AND a.deleted = false")
-    Optional<TblAccion> findBySNombre(@Param("nombre") String nombre);
+    @Query("SELECT a " +
+            "FROM TblAccion a " +
+            "WHERE UPPER(TRIM(a.sNombre)) = UPPER(TRIM(:name)) AND a.deleted = false")
+    Optional<TblAccion> findByName(@Param("name") String name);
 
-    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM TblAccion a WHERE UPPER(TRIM(a.sCodigo)) = UPPER(TRIM(:codigo)) AND a.deleted = false")
-    boolean existsBySCodigo(@Param("codigo") String codigo);
+    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END " +
+            "FROM TblAccion a " +
+            "WHERE UPPER(TRIM(a.sCodigo)) = UPPER(TRIM(:code)) AND a.deleted = false")
+    boolean existsByCode(@Param("code") String code);
 }

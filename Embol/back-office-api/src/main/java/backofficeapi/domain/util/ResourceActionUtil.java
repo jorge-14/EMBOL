@@ -42,14 +42,14 @@ public final class ResourceActionUtil {
     public static final String[] ACCESS_ACTIONS = READ_WRITE_ACTIONS;
     public static final String[] SIMULATOR_ACTIONS = CRUD_ACTIONS;
 
-    public record AccionBaseDef(String codigo, String nombre, String descripcion) {
+    public record BaseActionDef(String code, String name, String description) {
     }
 
-    public static List<AccionBaseDef> getAccionesBaseList() {
+    public static List<BaseActionDef> getBaseActionList() {
         return List.of(
-                new AccionBaseDef(ACTION_VER, "Ver", "Permite visualizar y listar registros"),
-                new AccionBaseDef(ACTION_CREAR, "Crear", "Permite registrar nuevos elementos"),
-                new AccionBaseDef(ACTION_MODIFICAR, "Modificar", "Permite editar o actualizar elementos existentes"),
-                new AccionBaseDef(ACTION_ELIMINAR, "Eliminar", "Permite eliminar o inactivar elementos"));
+                new BaseActionDef(ACTION_VER, "Ver", "Permite visualizar y listar registros"),
+                new BaseActionDef(ACTION_CREAR, "Crear", "Permite registrar nuevos elementos"),
+                new BaseActionDef(ACTION_MODIFICAR, "Modificar", "Permite editar o actualizar elementos existentes"),
+                new BaseActionDef(ACTION_ELIMINAR, "Eliminar", "Permite eliminar o inactivar elementos"));
     }
 }

@@ -1,0 +1,14 @@
+import { Component, Input } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+
+@Component({
+  selector: 'app-loading-screen',
+  standalone: true,
+  imports: [NgTemplateOutlet],
+  styleUrl: './loading-screen.css',
+  templateUrl: './loading-screen.html',
+})
+export class LoadingScreenComponent {
+  @Input() isLoading: boolean = false;
+  @Input() text: string = 'Procesando...';
+}

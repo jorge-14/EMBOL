@@ -197,7 +197,7 @@ public class TblResourceRepositoryAdapter implements TblResourceRepositoryPort {
             TblRecurso resource = resourceRepository.findById(resourceId).orElse(null);
             if (resource != null) {
                 for (String code : actionCodes) {
-                    actionRepository.findBySCodigo(code).ifPresent(action -> {
+                    actionRepository.actionFindByCode(code).ifPresent(action -> {
                         if (!resourceActionRepository.existsByIIdRecursoAndIIdAccion(resource, action)) {
                             resourceActionRepository.save(
                                     TblRecursoAccion.builder()
