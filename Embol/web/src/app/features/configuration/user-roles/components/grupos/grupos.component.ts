@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { delay } from 'rxjs';
 import { GRUPOS_IMPORTS } from '../../enums/user-roles-imports';
 import { GroupService } from '../../../../../core/services/group.service';
 import { GrupoRow } from '../../models/grupos/grupo.model';
@@ -45,7 +46,7 @@ export class GruposComponent implements OnInit {
   // ── 5. Carga de datos ──────────────────────────────────────────────────────
   loadGroups(page: number = this.currentPage, size: number = this.pageSize): void {
     this.loading.set(true);
-    this.service.getPagedGroups(page, size).subscribe({
+    this.service.getPagedGroups(page, size).pipe(delay(5000)).subscribe({
       next: (result) => {
         console.log("Resultado es ", result);
         this.groups.set(result.content);
