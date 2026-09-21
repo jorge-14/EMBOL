@@ -86,7 +86,7 @@ export class GruposComponent implements OnInit {
           id: group.id,
           nombre: group.nombre,
           descripcion: group.descripcion,
-          estado: group.estado
+          status: group.status
         });
         this.isGroupModalOpen.set(true);
       },

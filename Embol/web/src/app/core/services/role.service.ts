@@ -68,11 +68,14 @@ export class RoleService {
   createRole(role: any): Observable<any> {
     const body = {
       name: role.nombre,
-      description: role.descripcion,
-      roleStatus: role.estado === 'Activo' ? 'ACTIVE' : 'INACTIVE',
-      baseRole: false
+      description: role.descripcion
     };
-    return this.http.post(`${this.apiUrl}/create-role`, body);
+    // Endpoint anterior (solo BD local):
+    // const oldBody = { ...body, roleStatus: role.estado === 'Activo' ? 'ACTIVE' : 'INACTIVE', baseRole: false };
+    // return this.http.post(`${this.apiUrl}/create-role`, oldBody);
+
+    // Nuevo endpoint (SAGA Local + EntraID):
+    return this.http.post(`${environment.apiBaseUrl}api/v1/roles/saga`, body);
   }
 
   updateRole(id: any, role: any): Observable<any> {

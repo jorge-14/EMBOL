@@ -17,7 +17,7 @@ export class GroupService {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
-      .set('sortBy', 'modifiedDate')
+      .set('sortBy', 'id')
       .set('sortDir', 'DESC');
 
     return this.http.get<Page<any>>(`${this.baseUrl}/paginated-group`, { params })
@@ -28,7 +28,7 @@ export class GroupService {
               id: g.id,
               nombre: g.name || g.nombre,
               descripcion: g.description || g.descripcion,
-              estado: g.groupStatus || g.estado
+              status: g.status
             })),
             page: {
               size: response.size,
@@ -49,7 +49,7 @@ export class GroupService {
         id: g.id,
         nombre: g.name || g.nombre,
         descripcion: g.description || g.descripcion,
-        estado: g.groupStatus || g.estado
+        status: g.status
       })))
     );
   }
@@ -63,7 +63,7 @@ export class GroupService {
           id: g.id,
           nombre: g.name || g.nombre,
           descripcion: g.description || g.descripcion,
-          estado: g.groupStatus || g.estado
+          status: g.status
         } as GrupoRow;
       })
     );
@@ -74,7 +74,7 @@ export class GroupService {
       id: data.id,
       name: data.nombre,
       description: data.descripcion,
-      groupStatus: data.estado === 'Activo' ? 'ACTIVE' : 'INACTIVE'
+      status: data.status || 'Activo'
     };
     return this.http.put<GrupoRow>(`${this.baseUrl}/update-group/${data.id}`, body);
   }
@@ -82,10 +82,14 @@ export class GroupService {
   createGroup(data: GrupoRow): Observable<GrupoRow> {
     const body = {
       name: data.nombre,
-      description: data.descripcion,
-      groupStatus: data.estado === 'Activo' ? 'ACTIVE' : 'INACTIVE'
+      description: data.descripcion
     };
-    return this.http.post<GrupoRow>(`${this.baseUrl}/create-group`, body);
+    // Endpoint anterior (solo BD local):
+    // const oldBody = { ...body, status: data.status || 'Activo' };
+    // return this.http.post<GrupoRow>(`${this.baseUrl}/create-group`, oldBody);
+
+    // Nuevo endpoint (SAGA Local + EntraID):
+    return this.http.post<GrupoRow>(`${environment.apiBaseUrl}api/v1/groups/saga`, body);
   }
 
   deleteGroup(id: any): Observable<any> {

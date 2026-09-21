@@ -49,11 +49,15 @@ export class UserService {
       name: names[0],
       lastname: names.slice(1).join(' '),
       email: user.email,
-      userStatus: user.estado === 'Activo' ? 'ACTIVE' : 'INACTIVE',
       roleIds: user.roles || [],
       groupIds: user.grupos || []
     };
-    return this.http.post(`${this.apiUrl}/create-user`, body);
+    // Endpoint anterior (solo BD local):
+    // const oldBody = { ...body, userStatus: user.estado === 'Activo' ? 'ACTIVE' : 'INACTIVE' };
+    // return this.http.post(`${this.apiUrl}/create-user`, oldBody);
+    
+    // Nuevo endpoint (SAGA Local + EntraID):
+    return this.http.post(`${environment.apiBaseUrl}api/v1/users/saga`, body);
   }
 
   updateUser(id: any, user: any): Observable<any> {

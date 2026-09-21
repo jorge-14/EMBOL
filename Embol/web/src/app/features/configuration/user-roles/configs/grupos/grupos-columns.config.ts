@@ -19,7 +19,7 @@ export function buildGruposColumns(): DataTableColumn<GrupoRow>[] {
       cssClass: 'text-gray-500',
     },
     {
-      key: 'estado',
+      key: 'status',
       header: 'Estado',
       type: 'badge',
       width: '100px',

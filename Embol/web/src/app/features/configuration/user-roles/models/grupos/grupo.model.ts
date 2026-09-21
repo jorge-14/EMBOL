@@ -2,7 +2,7 @@
 
 export interface GrupoRow {
   id: any;
-  estado: string;
+  status: string;
   nombre: string;
   descripcion: string;
   name?: string;
