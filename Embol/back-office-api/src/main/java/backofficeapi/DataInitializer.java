@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.Map;
 
@@ -37,8 +36,8 @@ public class DataInitializer implements CommandLineRunner {
         @Override
         public void run(String... args) {
                 log.info("***************** [DataInitializer] Iniciando sincronización de Acciones y Recursos *****************");
-                Map<String, TblActionModel> mapActions = addActions();
-                buildDefaultMenu(mapActions);
+                addActions();
+                buildDefaultMenu();
                 log.info("***************** [DataInitializer] Sincronización completada exitosamente *****************");
         }
 
@@ -47,78 +46,73 @@ public class DataInitializer implements CommandLineRunner {
                 return createTblActionUseCase.saveActions(baseActionList);
         }
 
-        private void buildDefaultMenu(Map<String, TblActionModel> mapActions) {
+        private void buildDefaultMenu() {
                 // -------------------------------------------------------------
                 // 1. MÓDULO PADRE: ADMINISTRACIÓN
                 // -------------------------------------------------------------
                 TblResourceModel modAdmin = createOrUpdateResource(
-                                "ADMINISTRACIÓN",
-                                "Módulo de gestión y administración general del sistema",
-                                "settings",
-                                null,
-                                null);
+                        "ADMINISTRACIÓN",
+                        "Módulo de gestión y administración general del sistema",
+                        "settings",
+                        null,
+                        null);
 
                 createOrUpdateResource(
-                                "Usuarios",
-                                "Interfaz para administración y gestión de usuarios",
-                                "users",
-                                modAdmin,
-                                ResourceActionUtil.USER_ACTIONS);
+                        "Usuarios",
+                        "Interfaz para administración y gestión de usuarios",
+                        "users",
+                        modAdmin,
+                        ResourceActionUtil.USER_ACTIONS);
 
                 createOrUpdateResource(
-                                "Roles y Grupos",
-                                "Interfaz para administración de roles y grupos de usuarios",
-                                "shield",
-                                modAdmin,
-                                ResourceActionUtil.ROLE_ACTIONS);
+                        "Roles y Grupos",
+                        "Interfaz para administración de roles y grupos de usuarios",
+                        "shield",
+                        modAdmin,
+                        ResourceActionUtil.ROLE_ACTIONS);
 
                 createOrUpdateResource(
-                                "Accesos",
-                                "Interfaz para configuración y asignación de matriz de accesos",
-                                "lock",
-                                modAdmin,
-                                ResourceActionUtil.ACCESS_ACTIONS);
+                        "Accesos",
+                        "Interfaz para configuración y asignación de matriz de accesos",
+                        "lock",
+                        modAdmin,
+                        ResourceActionUtil.ACCESS_ACTIONS);
 
                 createOrUpdateResource(
-                                "Parámetros del Sistema",
-                                "Interfaz para administración de parámetros y configuraciones globales",
-                                "sliders",
-                                modAdmin,
-                                ResourceActionUtil.READ_WRITE_ACTIONS);
+                        "Parámetros del Sistema",
+                        "Interfaz para administración de parámetros y configuraciones globales",
+                        "sliders",
+                        modAdmin,
+                        ResourceActionUtil.READ_WRITE_ACTIONS);
 
                 // -------------------------------------------------------------
                 // 2. MÓDULO PADRE: SIMULADOR
                 // -------------------------------------------------------------
                 TblResourceModel modSimulador = createOrUpdateResource(
-                                "SIMULADOR",
-                                "Módulo de simulaciones y escenarios salariales",
-                                "calculator",
-                                null,
-                                null);
+                        "SIMULADOR",
+                        "Módulo de simulaciones y escenarios salariales",
+                        "calculator",
+                        null,
+                        null);
 
                 createOrUpdateResource(
-                                "Simulador Salarial",
-                                "Interfaz para simulación de costos y cálculos salariales",
-                                "dollar-sign",
-                                modSimulador,
-                                ResourceActionUtil.SIMULATOR_ACTIONS);
+                        "Simulador Salarial",
+                        "Interfaz para simulación de costos y cálculos salariales",
+                        "dollar-sign",
+                        modSimulador,
+                        ResourceActionUtil.SIMULATOR_ACTIONS);
 
                 createOrUpdateResource(
-                                "Escenarios",
-                                "Interfaz para gestión y comparación de escenarios salariales",
-                                "layers",
-                                modSimulador,
-                                ResourceActionUtil.CRUD_ACTIONS);
+                        "Escenarios",
+                        "Interfaz para gestión y comparación de escenarios salariales",
+                        "layers",
+                        modSimulador,
+                        ResourceActionUtil.CRUD_ACTIONS);
         }
 
-        private TblResourceModel createOrUpdateResource(
-                        String name,
-                        String description,
-                        String icon,
-                        TblResourceModel parentResource,
-                        String[] actionCodes) {
-
+        private TblResourceModel createOrUpdateResource(String name, String description, String icon,
+                                                        TblResourceModel parentResource, String[] actionCodes) {
                 return createOrUpdateResourceUseCase.createOrUpdateResource(name, description, icon, parentResource,
-                                actionCodes);
+                        actionCodes);
         }
 }

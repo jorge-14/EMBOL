@@ -15,14 +15,23 @@ import java.util.List;
  */
 public final class ResourceActionUtil {
 
-    private ResourceActionUtil() {
-
-    }
+    private ResourceActionUtil() { }
 
     public static final String ACTION_VER = "VER";
     public static final String ACTION_CREAR = "CREAR";
     public static final String ACTION_MODIFICAR = "MODIFICAR";
     public static final String ACTION_ELIMINAR = "ELIMINAR";
+    public static final String ACTION_EXCEL_REPORT = "REPORTE EXCEL";
+
+    public record BaseActionDef(String code, String name, String description) { }
+
+    public static List<BaseActionDef> getBaseActionList() {
+        return List.of(new BaseActionDef(ACTION_VER, "Ver", "Permite visualizar y listar registros"),
+                new BaseActionDef(ACTION_CREAR, "Crear", "Permite registrar nuevos elementos"),
+                new BaseActionDef(ACTION_MODIFICAR, "Modificar", "Permite editar o actualizar elementos existentes"),
+                new BaseActionDef(ACTION_ELIMINAR, "Eliminar", "Permite eliminar o inactivar elementos"),
+                new BaseActionDef(ACTION_EXCEL_REPORT, "Reporte Excel", "Permite descargar reportes tipo excel"));
+    }
 
     public static final String[] CRUD_ACTIONS = new String[] {
             ACTION_VER, ACTION_CREAR, ACTION_MODIFICAR, ACTION_ELIMINAR
@@ -33,7 +42,7 @@ public final class ResourceActionUtil {
     };
 
     public static final String[] READ_WRITE_ACTIONS = new String[] {
-            ACTION_VER, ACTION_MODIFICAR
+            ACTION_VER, ACTION_MODIFICAR, ACTION_EXCEL_REPORT
     };
 
     public static final String[] USER_ACTIONS = CRUD_ACTIONS;
@@ -41,15 +50,4 @@ public final class ResourceActionUtil {
     public static final String[] GROUP_ACTIONS = CRUD_ACTIONS;
     public static final String[] ACCESS_ACTIONS = READ_WRITE_ACTIONS;
     public static final String[] SIMULATOR_ACTIONS = CRUD_ACTIONS;
-
-    public record BaseActionDef(String code, String name, String description) {
-    }
-
-    public static List<BaseActionDef> getBaseActionList() {
-        return List.of(
-                new BaseActionDef(ACTION_VER, "Ver", "Permite visualizar y listar registros"),
-                new BaseActionDef(ACTION_CREAR, "Crear", "Permite registrar nuevos elementos"),
-                new BaseActionDef(ACTION_MODIFICAR, "Modificar", "Permite editar o actualizar elementos existentes"),
-                new BaseActionDef(ACTION_ELIMINAR, "Eliminar", "Permite eliminar o inactivar elementos"));
-    }
 }
