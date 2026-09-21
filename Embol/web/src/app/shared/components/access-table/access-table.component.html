@@ -17,13 +17,29 @@
       @for (group of config().groups; track group.name) {
         <!-- Group Header -->
         <tr class="bg-gray-50/30">
-          <td [attr.colspan]="config().actions.length + 1" class="px-6 py-2.5 text-[11px] font-black text-gray-500 uppercase tracking-widest">
-            {{ group.name }}
+          <td [attr.colspan]="config().actions.length + 1" class="px-6 py-2.5 text-sm font-semibold text-gray-600">
+            <div class="flex items-center justify-between gap-4">
+              <span>{{ group.name }}</span>
+              <div class="flex items-center gap-2 font-medium text-gray-500">
+                <input #groupPage type="number" value="0" hidden />
+                <button type="button" aria-label="Recursos anteriores de {{ group.name }}"
+                  [disabled]="groupPage.valueAsNumber === 0"
+                  (click)="groupPage.valueAsNumber = groupPage.valueAsNumber - 1"
+                  class="flex h-7 w-7 items-center justify-center rounded border border-gray-300 bg-white disabled:cursor-not-allowed disabled:opacity-40">‹</button>
+                <span aria-live="polite">
+                  {{ (groupPage.valueAsNumber + 1) * 10 < group.resources.length ? (groupPage.valueAsNumber + 1) * 10 : group.resources.length }} de {{ group.resources.length }}
+                </span>
+                <button type="button" aria-label="Recursos siguientes de {{ group.name }}"
+                  [disabled]="(groupPage.valueAsNumber + 1) * 10 >= group.resources.length"
+                  (click)="groupPage.valueAsNumber = groupPage.valueAsNumber + 1"
+                  class="flex h-7 w-7 items-center justify-center rounded border border-gray-300 bg-white disabled:cursor-not-allowed disabled:opacity-40">›</button>
+              </div>
+            </div>
           </td>
         </tr>
 
         <!-- Resources -->
-        @for (resource of group.resources; track resource.name) {
+        @for (resource of group.resources.slice(groupPage.valueAsNumber * 10, (groupPage.valueAsNumber + 1) * 10); track resource.name) {
           <tr class="hover:bg-gray-50/50 transition-colors">
             <td class="px-6 py-4 text-sm font-medium text-gray-700">
               {{ resource.name }}
