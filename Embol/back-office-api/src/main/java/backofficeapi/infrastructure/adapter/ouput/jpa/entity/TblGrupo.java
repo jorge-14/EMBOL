@@ -13,6 +13,12 @@ import lombok.experimental.SuperBuilder;
 /**
  * @author Douglas Cristhian Javieri Vino
  * @created 16/09/2026
+ *
+ * Entidad que representa un grupo organizacional (ej. un área,
+ *               sucursal o equipo). Permite asignar usuarios en bloque
+ *              (TblUsuarioGrupo) y otorgar permisos sobre recursos a todo
+ *               el grupo a la vez (TblGrupoRecurso), sin necesidad de asignar
+ *               roles individualmente a cada usuario.
  */
 
 @Entity

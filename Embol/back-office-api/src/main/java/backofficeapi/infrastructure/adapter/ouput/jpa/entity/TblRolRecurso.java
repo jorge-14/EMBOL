@@ -6,7 +6,12 @@ import lombok.*;
 /**
  * @author Douglas Cristhian Javieri Vino
  * @created 16/09/2026
+ *
+ *  Tabla intermedia (many-to-many) que asocia un Rol con un
+ *              Recurso. Define qué recursos puede acceder un rol,
+ *              sirviendo de base para el control de autorización.
  */
+
 @Entity
 @Builder
 @Getter
