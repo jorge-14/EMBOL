@@ -105,11 +105,13 @@ export class AccessListComponent {
     if (mode === this.mode()) return;
     this.accessTable()?.clearSelected();
     this.accessTable()?.closePopover();
+    this.accessTable()?.resetPage();
     this.mode.set(mode);
   }
   selectPrincipal(name: string): void {
     this.accessTable()?.clearSelected();
     this.accessTable()?.closePopover();
+    this.accessTable()?.resetPage();
     this.selectedByMode.update(selected => ({ ...selected, [this.mode()]: name }));
   }
   toggleSummary(): void { this.isSummaryOpen.update(open => !open); }
