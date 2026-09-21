@@ -1,63 +1,101 @@
-<div class="access-page">
-  <header class="page-heading">
+<div class="max-w-7xl mx-auto p-6">
+  <!-- Header Section -->
+  <div class="flex items-center justify-between mb-2">
     <div>
-      <h1>Accesos</h1>
-      <p>Asigna permisos de operación sobre recursos por rol o por grupo</p>
+      <h1 class="text-2xl font-bold text-gray-800 tracking-tight">Accesos</h1>
+      <p class="text-sm text-gray-500">Asigna permisos de operación sobre recursos por Rol o por Grupo</p>
     </div>
-    <button type="button" class="summary-button" (click)="toggleSummary()">Ver resumen</button>
-  </header>
+    <button
+      (click)="toggleSummary()"
+      class="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      Ver resumen
+    </button>
+  </div>
 
-  <section class="selection-bar" aria-label="Selección de acceso">
-    <div class="selection-controls">
-      <div class="field">
-        <span class="field-label">Modo</span>
-        <div class="mode-switch" role="group" aria-label="Modo de acceso">
-          <button type="button" [class.active]="mode() === 'rol'" [attr.aria-pressed]="mode() === 'rol'" (click)="setMode('rol')">Por rol</button>
-          <button type="button" [class.active]="mode() === 'grupo'" [attr.aria-pressed]="mode() === 'grupo'" (click)="setMode('grupo')">Por grupo</button>
+  <!-- Selection Controls Card -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div class="flex items-center gap-6">
+        <!-- MODO Selector -->
+        <div class="flex flex-col gap-2">
+          <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">MODO</label>
+          <div class="inline-flex p-1 bg-gray-50 rounded-lg border border-gray-200">
+            <button
+              (click)="setMode('rol')"
+              class="flex items-center gap-2 px-4 py-1.5 rounded-md text-xs font-semibold transition-all"
+              [ngClass]="mode() === 'rol' ? 'bg-[#6B6661] text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+              </svg>
+              Por Rol
+            </button>
+            <button
+              (click)="setMode('grupo')"
+              class="flex items-center gap-2 px-4 py-1.5 rounded-md text-xs font-semibold transition-all"
+              [ngClass]="mode() === 'grupo' ? 'bg-[#6B6661] text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              Por Grupo
+            </button>
+          </div>
+        </div>
+
+        <!-- ROL Selector -->
+        <div class="flex flex-col gap-2 min-w-[200px]">
+          <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ mode() === 'rol' ? 'ROL' : 'GRUPO' }}</label>
+          <select
+            [(ngModel)]="selectedRole"
+            class="w-full px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand/20 focus:border-brand outline-none transition-all text-gray-700"
+          >
+            @for (role of roles(); track role) {
+              <option [value]="role">{{ role }}</option>
+            }
+          </select>
         </div>
       </div>
-      <label class="field principal-field">
-        <span class="field-label">{{ mode() === 'rol' ? 'Rol' : 'Grupo' }}</span>
-        <select [ngModel]="selectedPrincipal()" (ngModelChange)="selectPrincipal($event)">
-          @for (principal of principalOptions(); track principal) {
-            <option [value]="principal">{{ principal }}</option>
-          }
-        </select>
-      </label>
+
+      <!-- Action Button -->
+      <button
+        (click)="saveChanges()"
+        class="flex items-center gap-2 px-6 py-2.5 bg-brand text-white rounded-lg font-bold text-sm shadow-sm hover:bg-brand/90 transition-all"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+        </svg>
+        Guardar cambios
+      </button>
     </div>
 
-    <div class="permission-summary" aria-live="polite">
-      <div class="summary-line"><strong>{{ selectedPrincipal() }}</strong><span>{{ permissionTotals().granted }} de {{ permissionTotals().applicable }} permisos otorgados</span></div>
-      <div class="progress-track" role="progressbar" [attr.aria-valuenow]="permissionTotals().granted" [attr.aria-valuemax]="permissionTotals().applicable" aria-valuemin="0" [attr.aria-label]="'Permisos otorgados de ' + selectedPrincipal()">
-        <span [style.width.%]="permissionTotals().percentage"></span>
+    <!-- Info Banner -->
+    <div class="mt-4 flex items-center gap-3 px-4 py-3 bg-gray-50 rounded-xl border border-gray-100">
+      <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-white text-xs font-bold">
+        {{ selectedRole().charAt(0) }}
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-bold text-gray-700">{{ selectedRole() }}</span>
+        <span class="text-gray-300">→</span>
+        <span class="text-sm font-bold text-green-500">49 permisos habilitados</span>
       </div>
     </div>
+  </div>
 
-    <button type="button" class="save-button" [disabled]="pendingCount() === 0" (click)="saveChanges()">Guardar cambios</button>
-  </section>
-
+  <!-- Permissions Table -->
   <app-access-table
     [config]="tableConfig()"
-    [pendingKeys]="pendingKeys()"
-    [principals]="principalOptions()"
-    [currentPrincipal]="selectedPrincipal()"
     (permissionChange)="onPermissionChange($event)"
-    (propagatePermission)="onPropagate($event)"
   />
 
-  @if (pendingCount() > 0) {
-    <div class="save-bar" role="status">
-      <span>{{ pendingCount() }} {{ pendingCount() === 1 ? 'cambio sin guardar' : 'cambios sin guardar' }}</span>
-      <div class="save-bar-actions">
-        <button type="button" class="discard-button" (click)="discardChanges()">Descartar</button>
-        <button type="button" class="save-button" (click)="saveChanges()">Guardar cambios</button>
-      </div>
-    </div>
-  }
-
+  <!-- Summary Modal -->
   <app-access-summary-modal
     [isOpen]="isSummaryOpen()"
-    [subtitle]="'Vista informativa · ' + selectedPrincipal()"
+    [subtitle]="'Vista informativa · ' + selectedRole()"
     [config]="tableConfig()"
     (close)="toggleSummary()"
   />
