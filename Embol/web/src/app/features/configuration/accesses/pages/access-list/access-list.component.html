@@ -32,8 +32,6 @@
         <span [style.width.%]="permissionTotals().percentage"></span>
       </div>
     </div>
-
-    <button type="button" class="save-button" [disabled]="pendingCount() === 0" (click)="saveChanges()">Guardar cambios</button>
   </section>
 
   <app-access-table

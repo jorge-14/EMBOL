@@ -13,11 +13,6 @@ export interface PropagatePermission extends PermissionChange {
   targets: string[];
 }
 
-const actionGroups = [
-  { name: 'Datos', keys: ['ver', 'crear', 'modificar', 'eliminar'] },
-  { name: 'Distribución', keys: ['descargar', 'exportar', 'aprobar'] },
-] as const;
-
 @Component({
   selector: 'app-access-table',
   standalone: true,
@@ -26,6 +21,7 @@ const actionGroups = [
   styleUrl: './access-table.component.css',
 })
 export class AccessTableComponent {
+  readonly pageSize = 10;
   readonly config = input.required<AccessTableConfig>();
   readonly pendingKeys = input<Set<string>>(new Set());
   readonly principals = input<string[]>([]);
@@ -33,17 +29,19 @@ export class AccessTableComponent {
   readonly permissionChange = output<PermissionChange>();
   readonly propagatePermission = output<PropagatePermission>();
 
-  readonly groupIndex = signal(0);
+  readonly actionPage = signal(0);
   readonly search = signal('');
   readonly expanded = signal<Record<string, boolean>>({});
   readonly selected = signal<Set<string>>(new Set());
   readonly activePopover = signal<string | null>(null);
   readonly propagationTargets = signal<Set<string>>(new Set());
+  readonly lastActionPage = computed(() => Math.max(0, Math.ceil(this.config().actions.length / this.pageSize) - 1));
+  readonly currentActionPage = computed(() => Math.min(this.actionPage(), this.lastActionPage()));
+  readonly visibleActionCount = computed(() => Math.min((this.currentActionPage() + 1) * this.pageSize, this.config().actions.length));
   readonly visibleActions = computed(() => {
-    const keys: readonly string[] = actionGroups[this.groupIndex()].keys;
-    return this.config().actions.filter(action => keys.includes(action.key));
+    const start = this.currentActionPage() * this.pageSize;
+    return this.config().actions.slice(start, start + this.pageSize);
   });
-  readonly activeGroupName = computed(() => actionGroups[this.groupIndex()].name);
   readonly filteredGroups = computed(() => {
     const query = this.search().trim().toLocaleLowerCase();
     return this.config().groups
@@ -57,8 +55,8 @@ export class AccessTableComponent {
     this.closePopover();
     this.search.set((event.target as HTMLInputElement).value);
   }
-  changeGroup(direction: -1 | 1): void {
-    this.groupIndex.update(index => Math.max(0, Math.min(actionGroups.length - 1, index + direction)));
+  changeActionPage(direction: -1 | 1): void {
+    this.actionPage.set(Math.max(0, Math.min(this.lastActionPage(), this.currentActionPage() + direction)));
     this.closePopover();
   }
   isExpanded(name: string): boolean { return this.expanded()[name] !== false; }

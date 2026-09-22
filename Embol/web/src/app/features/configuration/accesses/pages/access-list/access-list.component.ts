@@ -8,23 +8,39 @@ import { MOCK_GROUPS, MOCK_ROLES } from '../../../user-roles/configs/mock-data.c
 
 type Mode = 'rol' | 'grupo';
 
+const newPermissionDefaults = {
+  descargar_json: false, importar_json: false,
+  descargar_pdf: false, importar_pdf: false,
+  descargar_excel: false, importar_excel: false,
+  descargar_svg: false, importar_svg: false,
+  rechazar: false, publicar: false, archivar: false,
+  duplicar: false, compartir: false,
+};
+
 const initialConfig: AccessTableConfig = {
   actions: [
     { key: 'ver', label: 'Ver' }, { key: 'crear', label: 'Crear' },
     { key: 'modificar', label: 'Modificar' }, { key: 'eliminar', label: 'Eliminar' },
-    { key: 'descargar', label: 'Descargar' }, { key: 'exportar', label: 'Exportar' },
+    { key: 'descargar_png', label: 'Descargar PNG' }, { key: 'exportar_png', label: 'Exportar PNG' },
+    { key: 'descargar_json', label: 'Descargar JSON' }, { key: 'importar_json', label: 'Importar JSON' },
+    { key: 'descargar_pdf', label: 'Descargar PDF' }, { key: 'importar_pdf', label: 'Importar PDF' },
+    { key: 'descargar_excel', label: 'Descargar Excel' }, { key: 'importar_excel', label: 'Importar Excel' },
+    { key: 'descargar_svg', label: 'Descargar SVG' }, { key: 'importar_svg', label: 'Importar SVG' },
     { key: 'aprobar', label: 'Aprobar' },
+    { key: 'rechazar', label: 'Rechazar' }, { key: 'publicar', label: 'Publicar' },
+    { key: 'archivar', label: 'Archivar' }, { key: 'duplicar', label: 'Duplicar' },
+    { key: 'compartir', label: 'Compartir' },
   ],
   groups: [
     { name: 'Administración', resources: [
-      { name: 'Usuarios', permissions: { ver: true, crear: true, modificar: false, eliminar: true, descargar: null, exportar: null, aprobar: null } },
-      { name: 'Roles y Grupos', permissions: { ver: true, crear: true, modificar: true, eliminar: true, descargar: null, exportar: null, aprobar: null } },
-      { name: 'Parámetros del Sistema', permissions: { ver: true, crear: null, modificar: true, eliminar: null, descargar: null, exportar: null, aprobar: true } },
+      { name: 'Usuarios', permissions: { ver: true, crear: true, modificar: false, eliminar: true, descargar_png: null, exportar_png: null, aprobar: null, ...newPermissionDefaults } },
+      { name: 'Roles y Grupos', permissions: { ver: true, crear: true, modificar: true, eliminar: true, descargar_png: null, exportar_png: null, aprobar: null, ...newPermissionDefaults } },
+      { name: 'Parámetros del Sistema', permissions: { ver: true, crear: null, modificar: true, eliminar: null, descargar_png: null, exportar_png: null, aprobar: true, ...newPermissionDefaults } },
     ] },
     { name: 'Simulador', resources: [
-      { name: 'Simulador Salarial', permissions: { ver: true, crear: true, modificar: true, eliminar: false, descargar: null, exportar: true, aprobar: true } },
-      { name: 'Escenarios', permissions: { ver: true, crear: true, modificar: true, eliminar: true, descargar: null, exportar: null, aprobar: true } },
-      { name: 'Reportes Simulador', permissions: { ver: true, crear: null, modificar: null, eliminar: null, descargar: true, exportar: true, aprobar: null } },
+      { name: 'Simulador Salarial', permissions: { ver: true, crear: true, modificar: true, eliminar: false, descargar_png: null, exportar_png: true, aprobar: true, ...newPermissionDefaults } },
+      { name: 'Escenarios', permissions: { ver: true, crear: true, modificar: true, eliminar: true, descargar_png: null, exportar_png: null, aprobar: true, ...newPermissionDefaults } },
+      { name: 'Reportes Simulador', permissions: { ver: true, crear: null, modificar: null, eliminar: null, descargar_png: true, exportar_png: true, aprobar: null, ...newPermissionDefaults } },
     ] },
   ],
 };
