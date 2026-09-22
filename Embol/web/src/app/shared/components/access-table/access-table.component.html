@@ -7,7 +7,7 @@
     </label>
     <button type="button" class="expand-button" (click)="toggleAll()">{{ allExpanded() ? 'Colapsar todo' : 'Expandir todo' }}</button>
     <div class="legend" aria-label="Leyenda de estados">
-      <span><i class="legend-swatch granted">✓</i>Otorgado</span>
+      <span><i class="legend-swatch granted"><span class="pi pi-check" aria-hidden="true"></span></i>Otorgado</span>
       <span><i class="legend-swatch denied"></i>No otorgado</span>
       <span><i class="legend-swatch unavailable">—</i>No aplica</span>
       <span><i class="legend-swatch pending"></i>Cambio sin guardar</span>
@@ -62,7 +62,7 @@
                           [attr.aria-label]="action.label + ' en ' + resource.name + ': ' + (resource.permissions[action.key] ? 'otorgado' : 'no otorgado')"
                           [attr.aria-pressed]="resource.permissions[action.key] === true"
                           (click)="togglePermission(group.name, resource, action)">
-                          @if (resource.permissions[action.key]) { <span aria-hidden="true">✓</span> }
+                          @if (resource.permissions[action.key]) { <i class="pi pi-check" aria-hidden="true"></i> }
                         </button>
                         <button type="button" class="propagate-trigger" [attr.aria-label]="'Propagar ' + action.label + ' de ' + resource.name"
                           [attr.aria-expanded]="activePopover() === cellKey(group.name, resource.name, action.key)"
