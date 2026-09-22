@@ -26,7 +26,7 @@
       <div>
         <h1 class="text-3xl font-bold text-gray-900">Gestión {{ detalle()?.anio }}</h1>
         <p class="text-sm text-gray-500 mt-1">
-          {{ detalle()?.sucursal }} — {{ detalle()?.ciudad }} · {{ detalle()?.mesesCargados }} de {{ detalle()?.totalMeses }} meses cargados
+          {{ detalle()?.sucursal }} — {{ detalle()?.ciudad }} · {{ detalle()?.mesesCargados }} de {{ detalle()?.totalMeses }} meses sincronizados
         </p>
       </div>
       <div class="flex gap-3">
@@ -56,12 +56,22 @@
               {{ mes.nombre }}
             </h3>
             <p class="text-sm mt-1 text-gray-500">
-              {{ mes.empleados }} empleados
+              {{ mes.empleados }} empleados en BP
             </p>
+            <span
+              [class]="mes.estado === 'Sincronizado'
+                ? 'inline-flex mt-3 bg-green-50 text-green-600 text-[10px] font-bold px-2 py-1 rounded-full'
+                : mes.estado === 'Error de sincronización'
+                  ? 'inline-flex mt-3 bg-red-50 text-red-600 text-[10px] font-bold px-2 py-1 rounded-full'
+                  : 'inline-flex mt-3 bg-orange-50 text-orange-500 text-[10px] font-bold px-2 py-1 rounded-full'">
+              {{ mes.estado }}
+            </span>
           </div>
           <div>
-            @if (mes.cargado) {
+            @if (mes.estado === 'Sincronizado') {
               <i class="pi pi-check text-green-500 text-sm"></i>
+            } @else if (mes.estado === 'Sincronizando') {
+              <i class="pi pi-spin pi-spinner text-gray-400 text-sm"></i>
             }
           </div>
         </div>

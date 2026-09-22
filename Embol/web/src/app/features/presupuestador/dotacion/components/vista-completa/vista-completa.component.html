@@ -1,353 +1,136 @@
 <div class="p-6">
-  <!-- Breadcrumbs -->
+  <app-loading-screen [isLoading]="loading()" text="Sincronizando datos..."></app-loading-screen>
   <nav class="flex mb-4 text-xs text-gray-500" aria-label="Breadcrumb">
     <ol class="inline-flex items-center space-x-1">
       <li><a href="#" class="hover:text-gray-700">Inicio</a></li>
-      <li class="flex items-center">
-        <i class="pi pi-chevron-right text-[8px] mx-2"></i>
-        <a href="#" class="hover:text-gray-700">Presupuestador</a>
-      </li>
-      <li class="flex items-center">
-        <i class="pi pi-chevron-right text-[8px] mx-2"></i>
-        <a (click)="goBack()" class="hover:text-gray-700 cursor-pointer">Dotación</a>
-      </li>
-      <li class="flex items-center" aria-current="page">
-        <i class="pi pi-chevron-right text-[8px] mx-2"></i>
-        <span class="font-bold text-gray-900">Gestión {{ gestionInfo()?.anio }}</span>
-      </li>
+      <li class="flex items-center"><i class="pi pi-chevron-right text-[8px] mx-2"></i><a href="#" class="hover:text-gray-700">Presupuestador</a></li>
+      <li class="flex items-center"><i class="pi pi-chevron-right text-[8px] mx-2"></i><a (click)="goBack()" class="hover:text-gray-700 cursor-pointer">Dotación</a></li>
+      <li class="flex items-center" aria-current="page"><i class="pi pi-chevron-right text-[8px] mx-2"></i><span class="font-bold text-gray-900">Gestión {{ gestion().anio }}</span></li>
     </ol>
   </nav>
 
-  <!-- Header -->
   <div class="flex justify-between items-start mb-6">
     <div>
-      <h1 class="text-3xl font-bold text-gray-900 mb-1">Vista completa</h1>
+      <h1 class="text-3xl font-bold text-gray-900 mb-1">{{ mesSeleccionado() }}</h1>
       <p class="text-sm text-gray-500 flex items-center">
-        {{ gestionInfo()?.sucursal }} — {{ gestionInfo()?.ciudad }}
+        {{ gestion().sucursal }} — {{ gestion().ciudad }}
         <span class="mx-2">•</span>
-        {{ empleados().length }} empleados cargados
+        {{ businessPlan().length }} empleados en Business Plan
       </p>
-      <p class="text-sm mt-1">
-        <span class="text-gray-500">Período: </span>
-        <span class="font-medium">{{ mesSeleccionado() }}</span>
-        <button
-          (click)="openRangeModal()"
-          class="ml-2 text-red-600 font-medium hover:underline text-xs"
-        >
-          Cambiar
-        </button>
-      </p>
+      <p class="text-sm mt-1"><span class="text-gray-500">Período: </span><span class="font-medium">{{ mesSeleccionado() }}</span><button (click)="openRangeModal()" class="ml-2 text-red-600 font-medium hover:underline text-xs">Cambiar</button></p>
     </div>
-    <button
-      (click)="goBack()"
-      class="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-    >
-      <i class="pi pi-arrow-left mr-2"></i>
-      Gestiones
+    <button (click)="goBack()" class="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+      <i class="pi pi-arrow-left mr-2"></i>Gestiones
     </button>
   </div>
 
-  <!-- Tabla -->
-  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-    <div class="p-4 border-b border-gray-100 flex justify-between items-center">
-      <h2 class="text-lg font-bold text-gray-900">Tabla maestra</h2>
-      <div class="flex items-center gap-3">
-        <div class="relative">
-          <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-          <input
-            type="text"
-            placeholder="Buscar por nombre, CI o cargo..."
-            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm w-80 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary"
-          >
-        </div>
-
-        <div class="w-48">
-          <app-horizontal-select
-            [options]="areaOptions"
-            [(value)]="filtroArea"
-            placeholder="Filtrar por área"
-          ></app-horizontal-select>
-        </div>
-
-        <span class="text-xs text-gray-400 font-medium ml-2">{{ empleadosFiltrados().length }} registros</span>
-      </div>
-    </div>
-
-    <app-data-table
-      [data]="empleadosFiltrados()"
-      [columns]="columns"
-      [rowActions]="rowActions"
-      [trackByKey]="'id'"
-      headerBgClass="bg-gray-50/50"
-      headerTextClass="text-gray-500 font-semibold text-[11px] uppercase tracking-wider"
-    ></app-data-table>
+  <div class="mb-5 border-b border-gray-200 flex gap-6">
+    <button type="button" (click)="setTab('business-plan')" [class]="selectedTab() === 'business-plan' ? 'pb-3 border-b-2 border-red-600 text-red-600 text-sm font-bold' : 'pb-3 border-b-2 border-transparent text-gray-500 text-sm font-semibold hover:text-gray-700'">Business Plan</button>
+    <button type="button" (click)="setTab('datos-reales')" [class]="selectedTab() === 'datos-reales' ? 'pb-3 border-b-2 border-red-600 text-red-600 text-sm font-bold' : 'pb-3 border-b-2 border-transparent text-gray-500 text-sm font-semibold hover:text-gray-700'">Datos Reales</button>
   </div>
 
-  <!-- Vistas agrupadas -->
-  <div class="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-    <div class="p-4 border-b border-gray-100">
-      <h2 class="text-lg font-bold text-gray-900 mb-4">Vistas agrupadas</h2>
-
-      <div class="flex flex-wrap gap-2">
-        <button
-          *ngFor="let opt of agrupacionOptions"
-          (click)="agrupacionSeleccionada.set(opt.value)"
-          [class]="agrupacionSeleccionada() === opt.value
-            ? 'px-4 py-1.5 rounded-full text-sm font-medium border border-brand text-brand bg-white'
-            : 'px-4 py-1.5 rounded-full text-sm font-medium border border-gray-200 text-gray-500 hover:bg-gray-50 bg-white'"
-        >
-          {{ opt.label }}
-        </button>
-      </div>
-    </div>
-
-    <div class="p-6 flex flex-col md:flex-row gap-8">
-      <!-- Tabla de resumen lateral -->
-      <div class="w-full md:w-1/3">
-        <table class="w-full border-collapse">
-          <thead>
-            <tr class="bg-gray-50/50">
-              <th class="px-4 py-2 text-left text-[11px] font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
-                {{ agrupacionSeleccionada() }}
-              </th>
-              <th class="px-4 py-2 text-right text-[11px] font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
-                Empleados
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of datosAgrupados()" class="hover:bg-gray-50/50 transition-colors">
-              <td class="px-4 py-3 text-sm text-gray-700 border-b border-gray-50">
-                {{ item.label }}
-              </td>
-              <td class="px-4 py-3 text-sm font-bold text-gray-900 text-right border-b border-gray-50">
-                {{ item.count }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Gráfico de barras horizontales -->
-      <div class="w-full md:w-2/3 flex flex-col justify-center">
-        <div class="space-y-6">
-          <div *ngFor="let item of datosAgrupados()" class="flex items-center gap-4">
-            <div class="w-32 text-right text-xs text-gray-500 truncate" [title]="item.label">
-              {{ item.label }}
-            </div>
-            <div class="flex-1 h-8 bg-gray-50 rounded-sm overflow-hidden relative">
-              <div
-                class="h-full bg-brand rounded-sm transition-all duration-500 ease-out"
-                [style.width.%]="(item.count / maxCount()) * 100"
-              ></div>
-            </div>
-            <div class="w-8 text-xs font-bold text-gray-900">
-              {{ item.count }}
-            </div>
-          </div>
-        </div>
-
-        <!-- Eje X (Líneas de guía) -->
-        <div class="mt-4 flex items-center gap-4">
-          <div class="w-32"></div>
-          <div class="flex-1 flex justify-between px-0 text-[10px] text-gray-400">
-            <span>0</span>
-            <span>{{ (maxCount() / 4).toFixed(1) }}</span>
-            <span>{{ (maxCount() / 2).toFixed(1) }}</span>
-            <span>{{ (maxCount() * 0.75).toFixed(1) }}</span>
-            <span>{{ maxCount() }}</span>
-          </div>
-          <div class="w-8"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Movimientos planificados -->
-  <div class="mt-10 bg-white rounded-3xl border border-gray-100 shadow-sm mb-6">
-    <div class="p-6 flex justify-between items-center border-b border-gray-50">
-      <h3 class="text-lg font-bold text-gray-900">Movimientos planificados</h3>
-      <button
-        (click)="openAddMovimientoModal()"
-        class="flex items-center gap-2 px-4 py-2 bg-brand text-white rounded-xl text-sm font-bold hover:bg-brand-hover transition-colors shadow-sm">
-        <i class="pi pi-plus text-xs"></i>
-        Añadir movimiento
+  @if (!sourceAvailable()) {
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 min-h-80 flex flex-col items-center justify-center px-6 text-center">
+      <span class="w-14 h-14 rounded-full bg-gray-50 flex items-center justify-center mb-4"><i class="pi pi-sync text-xl text-gray-400"></i></span>
+      <h2 class="text-lg font-bold text-gray-900">Datos reales pendientes de sincronización</h2>
+      <p class="text-sm text-gray-500 mt-2 max-w-lg">El Business Plan de este mes ya está disponible. Sincroniza con SAP para consultar los datos reales.</p>
+      @if (syncError()) { <p class="text-sm text-red-600 mt-3">{{ syncError() }}</p> }
+      <button type="button" (click)="synchronize()" class="mt-5 px-6 py-3 bg-brand text-white rounded-xl text-sm font-bold hover:bg-brand-hover transition-colors">
+        {{ syncError() ? 'Reintentar sincronización' : 'Sincronizar Dotación SAP' }}
       </button>
     </div>
-
-    <div class="px-6 py-4 flex gap-2 overflow-x-auto no-scrollbar border-b border-gray-50">
-      <button
-        *ngFor="let option of ['Todos', 'Desfase', 'Adición', 'Desvinculación', 'Vacante']"
-        (click)="filtroMovimiento.set(option)"
-        [class]="filtroMovimiento() === option
-          ? 'px-6 py-2 bg-gray-700 text-white rounded-full text-sm font-medium transition-all shadow-sm'
-          : 'px-6 py-2 bg-white text-gray-500 border border-gray-100 rounded-full text-sm font-medium hover:bg-gray-50 transition-all'"
-      >
-        {{ option }}
-      </button>
-    </div>
-
-    <div class="p-0">
+  } @else {
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div class="p-4 border-b border-gray-100 flex justify-between items-center">
+        <h2 class="text-lg font-bold text-gray-900">Tabla maestra</h2>
+        <div class="flex items-center gap-3">
+          <div class="relative">
+            <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input type="text" placeholder="Buscar por nombre, CI o cargo..." [ngModel]="search()" (ngModelChange)="setSearch($event)" class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm w-80 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary">
+          </div>
+          <div class="w-48"><app-horizontal-select [options]="areaOptions" [value]="filtroArea()" (valueChange)="setArea($event)" placeholder="Filtrar por área"></app-horizontal-select></div>
+          <span class="text-xs text-gray-400 font-medium ml-2">{{ empleadosFiltrados().length }} registros</span>
+        </div>
+      </div>
       <app-data-table
-        [columns]="movimientosColumns"
-        [data]="movimientosFiltrados()"
-        [loading]="loading()"
-        [showPaginator]="false"
-        [rows]="10"
-        headerBgClass="bg-gray-50/50"
-        headerTextClass="text-gray-500 font-semibold text-[11px] uppercase tracking-wider"
-      >
+        [data]="pagedEmployees()" [columns]="columns" [rowActions]="rowActions" [trackByKey]="'id'"
+        [pageInfo]="pageInfo()" [showPagination]="true" [rows]="pageSize()"
+        (pageChange)="onPageChange($event)" (pageSizeChange)="onPageSizeChange($event)"
+        headerBgClass="bg-gray-50/50" headerTextClass="text-gray-500 font-semibold text-[11px] uppercase tracking-wider">
       </app-data-table>
     </div>
-  </div>
 
-  <!-- Range Modal -->
-  <p-dialog
-    [visible]="showRangeModal()"
-    (visibleChange)="showRangeModal.set($event)"
-    [modal]="true"
-    [draggable]="false"
-    [resizable]="false"
-    header="Seleccionar rango"
-    [style]="{ width: '600px', overflow: 'visible' }"
-    [contentStyle]="{ overflow: 'visible', padding: '1rem 1.5rem 1rem 1.5rem' }"
-    styleClass="custom-range-dialog">
+    @if (monthState() === 'Sincronizado') {
+      <div class="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="p-4 border-b border-gray-100">
+          <div class="flex items-center justify-between gap-4 mb-4">
+            <h2 class="text-lg font-bold text-gray-900">Vistas agrupadas</h2>
+            <div class="flex items-center gap-4 text-xs text-gray-500">
+              <span class="flex items-center gap-2"><i class="w-3 h-3 rounded-sm bg-[#E21E26]"></i>Business Plan</span>
+              <span class="flex items-center gap-2"><i class="w-3 h-3 rounded-sm bg-[#686766]"></i>Datos Reales</span>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            @for (option of agrupacionOptions; track option) {
+              <button (click)="agrupacionSeleccionada.set(option)" [class]="agrupacionSeleccionada() === option ? 'px-4 py-1.5 rounded-full text-sm font-medium border border-brand text-brand bg-white' : 'px-4 py-1.5 rounded-full text-sm font-medium border border-gray-200 text-gray-500 hover:bg-gray-50 bg-white'">{{ option }}</button>
+            }
+          </div>
+        </div>
+        <div class="p-6 flex flex-col md:flex-row gap-8">
+          <div class="w-full md:w-1/3">
+            <table class="w-full border-collapse">
+              <thead><tr class="bg-gray-50/50"><th class="px-4 py-2 text-left text-[11px] font-semibold text-gray-500 uppercase border-b border-gray-100">{{ agrupacionSeleccionada() }}</th><th class="px-4 py-2 text-right text-[11px] font-semibold text-gray-500 uppercase border-b border-gray-100">BP</th><th class="px-4 py-2 text-right text-[11px] font-semibold text-gray-500 uppercase border-b border-gray-100">Real</th></tr></thead>
+              <tbody>@for (item of comparisonData(); track item.label) { <tr class="hover:bg-gray-50/50"><td class="px-4 py-3 text-sm text-gray-700 border-b border-gray-50">{{ item.label }}</td><td class="px-4 py-3 text-sm font-bold text-gray-900 text-right border-b border-gray-50">{{ item.businessPlan }}</td><td class="px-4 py-3 text-sm font-bold text-gray-900 text-right border-b border-gray-50">{{ item.datosReales }}</td></tr> }</tbody>
+            </table>
+          </div>
+          <div class="w-full md:w-2/3 flex flex-col justify-center">
+            <div class="space-y-5">
+              @for (item of comparisonData(); track item.label) {
+                <div class="flex items-center gap-4">
+                  <div class="w-32 text-right text-xs text-gray-500 truncate" [title]="item.label">{{ item.label }}</div>
+                  <div class="flex-1 space-y-1">
+                    <div class="h-3 bg-gray-50 rounded-sm overflow-hidden"><div class="h-full bg-[#E21E26]" [style.width.%]="maxCount() ? (item.businessPlan / maxCount()) * 100 : 0"></div></div>
+                    <div class="h-3 bg-gray-50 rounded-sm overflow-hidden"><div class="h-full bg-[#686766]" [style.width.%]="maxCount() ? (item.datosReales / maxCount()) * 100 : 0"></div></div>
+                  </div>
+                  <div class="w-12 text-xs font-bold text-gray-900">{{ item.businessPlan }} / {{ item.datosReales }}</div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
 
-    <div class="flex items-center gap-6 mt-0 mb-6">
-      <div class="flex-1">
-        <app-horizontal-select
-          label="Desde"
-          [options]="mesesOptions"
-          [(value)]="desdeMes">
-        </app-horizontal-select>
+    <div class="mt-10 bg-white rounded-3xl border border-gray-100 shadow-sm mb-6">
+      <div class="p-6 flex justify-between items-center border-b border-gray-50">
+        <h3 class="text-lg font-bold text-gray-900">Movimientos planificados</h3>
+        <button (click)="openAddMovimientoModal()" class="flex items-center gap-2 px-4 py-2 bg-brand text-white rounded-xl text-sm font-bold hover:bg-brand-hover transition-colors shadow-sm"><i class="pi pi-plus text-xs"></i>Añadir movimiento</button>
       </div>
-      <div class="flex-1">
-        <app-horizontal-select
-          label="Hasta"
-          [options]="mesesOptions"
-          [(value)]="hastaMes">
-        </app-horizontal-select>
+      <div class="px-6 py-4 flex gap-2 overflow-x-auto no-scrollbar border-b border-gray-50">
+        @for (option of ['Todos', 'Desfase', 'Adición', 'Desvinculación', 'Vacante']; track option) {
+          <button (click)="filtroMovimiento.set(option)" [class]="filtroMovimiento() === option ? 'px-6 py-2 bg-gray-700 text-white rounded-full text-sm font-medium transition-all shadow-sm' : 'px-6 py-2 bg-white text-gray-500 border border-gray-100 rounded-full text-sm font-medium hover:bg-gray-50 transition-all'">{{ option }}</button>
+        }
       </div>
+      <app-data-table [columns]="movimientosColumns" [data]="movimientosFiltrados()" [showPaginator]="false" [rows]="10" headerBgClass="bg-gray-50/50" headerTextClass="text-gray-500 font-semibold text-[11px] uppercase tracking-wider"></app-data-table>
     </div>
+  }
 
-    <ng-template #footer>
-      <div class="flex justify-end gap-3 mt-0">
-        <button
-          (click)="closeRangeModal()"
-          class="px-6 py-3 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors">
-          Cancelar
-        </button>
-        <button
-          (click)="verConsolidado()"
-          class="px-6 py-3 bg-brand text-white rounded-xl text-sm font-bold hover:bg-brand-hover transition-colors">
-          Ver consolidado
-        </button>
-      </div>
-    </ng-template>
+  <p-dialog [visible]="showRangeModal()" (visibleChange)="showRangeModal.set($event)" [modal]="true" [draggable]="false" [resizable]="false" header="Seleccionar rango" [style]="{ width: '600px', overflow: 'visible' }" [contentStyle]="{ overflow: 'visible', padding: '1rem 1.5rem' }" styleClass="custom-range-dialog">
+    <div class="flex items-center gap-6 mb-6">
+      <div class="flex-1"><app-horizontal-select label="Desde" [options]="mesesOptions" [(value)]="desdeMes"></app-horizontal-select></div>
+      <div class="flex-1"><app-horizontal-select label="Hasta" [options]="mesesOptions" [(value)]="hastaMes"></app-horizontal-select></div>
+    </div>
+    <ng-template #footer><div class="flex justify-end gap-3"><button (click)="closeRangeModal()" class="px-6 py-3 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50">Cancelar</button><button (click)="verConsolidado()" class="px-6 py-3 bg-brand text-white rounded-xl text-sm font-bold hover:bg-brand-hover">Ver consolidado</button></div></ng-template>
   </p-dialog>
 
-  <!-- Add Movimiento Modal -->
-  <p-dialog
-    [visible]="showAddMovimientoModal()"
-    (visibleChange)="showAddMovimientoModal.set($event)"
-    [modal]="true"
-    [draggable]="false"
-    [resizable]="false"
-    header="Añadir movimiento"
-    [style]="{ width: '600px', overflow: 'visible' }"
-    [contentStyle]="{ overflow: 'visible', padding: '1.5rem' }"
-    styleClass="custom-add-movimiento-dialog">
-
+  <p-dialog [visible]="showAddMovimientoModal()" (visibleChange)="showAddMovimientoModal.set($event)" [modal]="true" [draggable]="false" [resizable]="false" header="Añadir movimiento" [style]="{ width: '600px', overflow: 'visible' }" [contentStyle]="{ overflow: 'visible', padding: '1.5rem' }" styleClass="custom-add-movimiento-dialog">
     <div class="space-y-6">
-      <!-- Tipo de Movimiento -->
-      <div>
-        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Tipo de movimiento</label>
-        <div class="flex flex-wrap gap-2">
-          <button
-            *ngFor="let tipo of ['Desfase', 'Adición', 'Desvinculación', 'Vacante']"
-            (click)="setTipoMovimiento(tipo)"
-            [class]="nuevoMovimiento().tipo === tipo
-              ? 'px-6 py-2 rounded-lg text-sm font-medium border border-brand text-brand bg-white'
-              : 'px-6 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-500 hover:bg-gray-50 bg-white'"
-          >
-            {{ tipo }}
-          </button>
-        </div>
-      </div>
-
-      <!-- Nombre -->
-      <div>
-        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Nombre</label>
-        <input
-          type="text"
-          [(ngModel)]="nuevoMovimiento().nombre"
-          placeholder="Ej: Juan Pérez Mendoza"
-          class="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand"
-        >
-      </div>
-
-      <!-- Cargo y Área -->
-      <div class="flex gap-4">
-        <div class="flex-1">
-          <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Cargo</label>
-          <input
-            type="text"
-            [(ngModel)]="nuevoMovimiento().cargo"
-            placeholder="Ej: Operario línea K-108"
-            class="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand"
-          >
-        </div>
-        <div class="flex-1">
-          <app-horizontal-select
-            label="Área"
-            labelPosition="vertical"
-            labelClass="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2"
-            [options]="areaOptions.slice(1)"
-            [(value)]="nuevoMovimiento().area"
-          ></app-horizontal-select>
-        </div>
-      </div>
-
-      <!-- Planta -->
-      <div class="flex gap-4">
-        <div class="flex-1">
-          <app-horizontal-select
-            label="Planta"
-            labelPosition="vertical"
-            labelClass="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2"
-            [options]="plantaOptions"
-            [(value)]="nuevoMovimiento().planta"
-          ></app-horizontal-select>
-        </div>
-        <div class="flex-1"></div>
-      </div>
-
-
-      <!-- Observaciones -->
-      <div>
-        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Observaciones</label>
-        <textarea
-          [(ngModel)]="nuevoMovimiento().observaciones"
-          rows="3"
-          placeholder="Ej: Cobertura por expansión de línea"
-          class="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand resize-none"
-        ></textarea>
-      </div>
+      <div><label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Tipo de movimiento</label><div class="flex flex-wrap gap-2">@for (type of ['Desfase', 'Adición', 'Desvinculación', 'Vacante']; track type) { <button (click)="setTipoMovimiento($any(type))" [class]="nuevoMovimiento().tipo === type ? 'px-6 py-2 rounded-lg text-sm font-medium border border-brand text-brand bg-white' : 'px-6 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-500 hover:bg-gray-50 bg-white'">{{ type }}</button> }</div></div>
+      <div><label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Nombre</label><input type="text" [(ngModel)]="nuevoMovimiento().nombre" placeholder="Ej: Juan Pérez Mendoza" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm"></div>
+      <div class="flex gap-4"><div class="flex-1"><label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Cargo</label><input type="text" [(ngModel)]="nuevoMovimiento().cargo" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm"></div><div class="flex-1"><app-horizontal-select label="Área" labelPosition="vertical" [options]="areaOptions.slice(1)" [(value)]="nuevoMovimiento().area"></app-horizontal-select></div></div>
+      <div><app-horizontal-select label="Planta" labelPosition="vertical" [options]="plantaOptions" [(value)]="nuevoMovimiento().planta"></app-horizontal-select></div>
+      <div><label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Observaciones</label><textarea [(ngModel)]="nuevoMovimiento().observaciones" rows="3" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm resize-none"></textarea></div>
     </div>
-
-    <ng-template #footer>
-      <div class="flex justify-end gap-3 mt-0">
-        <button
-          (click)="closeAddMovimientoModal()"
-          class="px-6 py-3 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors">
-          Cancelar
-        </button>
-        <button
-          (click)="saveMovimiento()"
-          class="px-6 py-3 bg-brand text-white rounded-xl text-sm font-bold hover:bg-brand-hover transition-colors">
-          Guardar
-        </button>
-      </div>
-    </ng-template>
+    <ng-template #footer><div class="flex justify-end gap-3"><button (click)="closeAddMovimientoModal()" class="px-6 py-3 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50">Cancelar</button><button (click)="saveMovimiento()" class="px-6 py-3 bg-brand text-white rounded-xl text-sm font-bold hover:bg-brand-hover">Guardar</button></div></ng-template>
   </p-dialog>
 </div>

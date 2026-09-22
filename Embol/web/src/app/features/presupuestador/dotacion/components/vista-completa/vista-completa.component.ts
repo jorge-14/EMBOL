@@ -1,265 +1,209 @@
-import { Component, OnInit, signal, computed, Input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, computed, input, OnInit, output, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { DialogModule } from 'primeng/dialog';
 import { DotacionService } from '../../../../../core/services/dotacion.service';
-import { EmpleadoDotacion, GestionDetalle, MovimientoPlanificado } from '../../models/dotacion.model';
 import { DataTableComponent } from '../../../../../shared/components/data-table/data-table.component';
-import { VISTA_COMPLETA_COLUMNS } from '../../configs/vista-completa/vista-completa-columns.config';
-import { MOVIMIENTOS_COLUMNS } from '../../configs/vista-completa/movimientos-columns.config';
 import { DataTableRowAction } from '../../../../../shared/components/data-table/models/data-table.model';
 import { HorizontalSelectComponent } from '../../../../../shared/components/horizontal-controls/horizontal-select/horizontal-select.component';
 import { SelectOption } from '../../../../../shared/components/horizontal-controls/models/select-option.model';
-import { DialogModule } from 'primeng/dialog';
-import { FormsModule } from '@angular/forms';
+import { LoadingScreenComponent } from '../../../../../shared/components/loading-screen/loading-screen';
+import { PageMetadata } from '../../../../../shared/models/pagination.model';
+import { MOVIMIENTOS_COLUMNS } from '../../configs/vista-completa/movimientos-columns.config';
+import { VISTA_COMPLETA_COLUMNS } from '../../configs/vista-completa/vista-completa-columns.config';
+import { EmpleadoDotacion, EstadoMesDotacion, FuenteDotacion, GestionDotacion, MovimientoPlanificado } from '../../models/dotacion.model';
 
 @Component({
   selector: 'app-vista-completa',
   standalone: true,
-  imports: [CommonModule, DataTableComponent, HorizontalSelectComponent, DialogModule, FormsModule],
+  imports: [CommonModule, DataTableComponent, HorizontalSelectComponent, LoadingScreenComponent, DialogModule, FormsModule],
   templateUrl: './vista-completa.component.html',
   styleUrl: './vista-completa.component.scss'
 })
 export class VistaCompletaComponent implements OnInit {
+  readonly gestion = input.required<GestionDotacion>();
+  readonly businessPlanByMonth = input<Record<string, EmpleadoDotacion[]>>({});
+  readonly realDataByMonth = input<Record<string, EmpleadoDotacion[]>>({});
+  readonly monthStates = input<Record<string, EstadoMesDotacion>>({});
+  readonly initialDesde = input<string | undefined>(undefined);
+  readonly initialHasta = input<string | undefined>(undefined);
+  readonly back = output<void>();
+  readonly syncCompleted = output<{ month: string; data: EmpleadoDotacion[] }>();
 
-  @Input({ required: true }) set gestionId(val: number) {
-    this._gestionId.set(val);
-    this.loadData(val);
-  }
-  
-  @Input() set initialDesde(val: string | undefined) {
-    if (val) this.desdeMes.set(val);
-  }
-  
-  @Input() set initialHasta(val: string | undefined) {
-    if (val) this.hastaMes.set(val);
-  }
+  readonly selectedTab = signal<FuenteDotacion>('datos-reales');
+  readonly desdeMes = signal('Enero');
+  readonly hastaMes = signal('Enero');
+  readonly filtroArea = signal('Todas');
+  readonly search = signal('');
+  readonly page = signal(0);
+  readonly pageSize = signal(10);
+  readonly loading = signal(false);
+  readonly syncError = signal('');
+  readonly showRangeModal = signal(false);
+  readonly showAddMovimientoModal = signal(false);
+  readonly agrupacionSeleccionada = signal('Tipo');
+  readonly filtroMovimiento = signal('Todos');
+  readonly movimientos = signal<MovimientoPlanificado[]>([]);
 
-  back = output<void>();
-
-  _gestionId = signal<number | null>(null);
-  mesSeleccionado = signal<string>('Febrero 2025');
-  gestionInfo = signal<GestionDetalle | null>(null);
-  empleados = signal<EmpleadoDotacion[]>([]);
-  loading = signal<boolean>(false);
-
-  // Filtros
-  filtroArea = signal<string>('Todas');
-  areaOptions: SelectOption[] = [
-    { label: 'Todas', value: 'Todas' },
-    { label: 'ADM', value: 'ADM' },
-    { label: 'COM', value: 'COM' },
-    { label: 'LOG', value: 'LOG' },
-    { label: 'PROD MOD', value: 'PROD MOD' },
-    { label: 'PROD MOI', value: 'PROD MOI' }
+  readonly columns = VISTA_COMPLETA_COLUMNS;
+  readonly movimientosColumns = MOVIMIENTOS_COLUMNS;
+  readonly mesesOptions: SelectOption[] = [
+    { label: 'Enero', value: 'Enero' }, { label: 'Febrero', value: 'Febrero' },
+    { label: 'Marzo', value: 'Marzo' }, { label: 'Abril', value: 'Abril' },
+    { label: 'Mayo', value: 'Mayo' }, { label: 'Junio', value: 'Junio' },
+    { label: 'Julio', value: 'Julio' }, { label: 'Agosto', value: 'Agosto' },
+    { label: 'Septiembre', value: 'Septiembre' }, { label: 'Octubre', value: 'Octubre' },
+    { label: 'Noviembre', value: 'Noviembre' }, { label: 'Diciembre', value: 'Diciembre' }
   ];
-
-  plantaOptions: SelectOption[] = [
+  readonly areaOptions: SelectOption[] = [
+    { label: 'Todas', value: 'Todas' }, { label: 'ADM', value: 'ADM' },
+    { label: 'COM', value: 'COM' }, { label: 'LOG', value: 'LOG' },
+    { label: 'PROD MOD', value: 'PROD MOD' }, { label: 'PROD MOI', value: 'PROD MOI' }
+  ];
+  readonly plantaOptions: SelectOption[] = [
     { label: 'CBB — Cochabamba', value: 'CBB — Cochabamba' },
     { label: 'LPZ — La Paz', value: 'LPZ — La Paz' },
     { label: 'SCZ — Santa Cruz', value: 'SCZ — Santa Cruz' }
   ];
+  readonly agrupacionOptions = ['Tipo', 'Área', 'Familia a cargo', 'Categoría', 'Centro de costo', 'Cargo'];
 
-  mesesAbreviadosOptions: SelectOption[] = [
-    { label: 'Ene', value: 'Ene' },
-    { label: 'Feb', value: 'Feb' },
-    { label: 'Mar', value: 'Mar' },
-    { label: 'Abr', value: 'Abr' },
-    { label: 'May', value: 'May' },
-    { label: 'Jun', value: 'Jun' },
-    { label: 'Jul', value: 'Jul' },
-    { label: 'Ago', value: 'Ago' },
-    { label: 'Sep', value: 'Sep' },
-    { label: 'Oct', value: 'Oct' },
-    { label: 'Nov', value: 'Nov' },
-    { label: 'Dic', value: 'Dic' }
-  ];
-
-  empleadosFiltrados = computed(() => {
-    const data = this.empleados();
-    const filtro = this.filtroArea();
-
-    if (filtro === 'Todas') {
-      return data;
-    }
-
-    return data.filter(e => e.area === filtro);
+  readonly nuevoMovimiento = signal<Partial<MovimientoPlanificado>>({
+    tipo: 'Desfase', nombre: '', cargo: '', area: 'ADM', planta: 'CBB — Cochabamba', observaciones: ''
   });
 
-  // Rango Modal
-  showRangeModal = signal(false);
-  showAddMovimientoModal = signal(false);
-
-  nuevoMovimiento = signal<Partial<MovimientoPlanificado>>({
-    tipo: 'Desfase',
-    nombre: '',
-    cargo: '',
-    area: 'ADM',
-    planta: 'CBB — Cochabamba',
-    observaciones: ''
+  readonly activeMonths = computed(() => {
+    const from = this.mesesOptions.findIndex(item => item.value === this.desdeMes());
+    const to = this.mesesOptions.findIndex(item => item.value === this.hastaMes());
+    const start = Math.max(0, Math.min(from, to));
+    const end = Math.max(from, to, 0);
+    return this.mesesOptions.slice(start, end + 1).map(item => item.value);
   });
-
-  mesesOptions: SelectOption[] = [
-    { label: 'Enero', value: 'Enero' },
-    { label: 'Febrero', value: 'Febrero' },
-    { label: 'Marzo', value: 'Marzo' },
-    { label: 'Abril', value: 'Abril' },
-    { label: 'Mayo', value: 'Mayo' },
-    { label: 'Junio', value: 'Junio' },
-    { label: 'Julio', value: 'Julio' },
-    { label: 'Agosto', value: 'Agosto' },
-    { label: 'Septiembre', value: 'Septiembre' },
-    { label: 'Octubre', value: 'Octubre' },
-    { label: 'Noviembre', value: 'Noviembre' },
-    { label: 'Diciembre', value: 'Diciembre' }
-  ];
-  desdeMes = signal('Enero');
-  hastaMes = signal('Septiembre');
-
-  // Agrupación
-  agrupacionSeleccionada = signal<string>('Tipo');
-  agrupacionOptions = [
-    { label: 'Tipo', value: 'Tipo' },
-    { label: 'Área', value: 'Área' },
-    { label: 'Familia a cargo', value: 'Familia a cargo' },
-    { label: 'Categoría', value: 'Categoría' },
-    { label: 'Centro de costo', value: 'Centro de costo' },
-    { label: 'Cargo', value: 'Cargo' }
-  ];
-
-  datosAgrupados = computed(() => {
-    const empleados = this.empleadosFiltrados();
-    const agrupacion = this.agrupacionSeleccionada();
-    const counts: Record<string, number> = {};
-
-    empleados.forEach(emp => {
-      let key = '';
-      switch (agrupacion) {
-        case 'Tipo': key = emp.tipo; break;
-        case 'Área': key = emp.area; break;
-        case 'Familia a cargo': key = emp.familiaCargo.toString(); break;
-        case 'Categoría': key = emp.categoria; break;
-        case 'Centro de costo': key = emp.centroCosto; break;
-        case 'Cargo': key = emp.cargo; break;
-        default: key = 'Otro';
-      }
-      counts[key] = (counts[key] || 0) + 1;
+  readonly mesSeleccionado = computed(() => {
+    const months = this.activeMonths();
+    const period = months.length === 1 ? months[0] : `${months[0]} - ${months[months.length - 1]}`;
+    return `${period} ${this.gestion().anio}`;
+  });
+  readonly monthState = computed<EstadoMesDotacion>(() => {
+    if (this.loading()) return 'Sincronizando';
+    return this.monthStates()[this.activeMonths()[0]] ?? 'Datos reales pendientes';
+  });
+  readonly businessPlan = computed(() => this.rowsForMonths(this.businessPlanByMonth()));
+  readonly actualData = computed(() => this.rowsForMonths(this.realDataByMonth()));
+  readonly sourceData = computed(() => this.selectedTab() === 'business-plan' ? this.businessPlan() : this.actualData());
+  readonly sourceAvailable = computed(() => this.selectedTab() === 'business-plan' || this.monthState() === 'Sincronizado');
+  readonly empleadosFiltrados = computed(() => {
+    const query = this.search().trim().toLocaleLowerCase();
+    const area = this.filtroArea();
+    return this.sourceData().filter(employee => {
+      const matchesArea = area === 'Todas' || employee.area === area;
+      const matchesSearch = !query || [employee.nombre, employee.ci, employee.cargo]
+        .some(value => String(value ?? '').toLocaleLowerCase().includes(query));
+      return matchesArea && matchesSearch;
     });
-
-    const entries = Object.entries(counts).map(([label, count]) => ({ label, count }));
-    // Ordenar por cuenta descendente
-    return entries.sort((a, b) => b.count - a.count);
   });
-
-  maxCount = computed(() => {
-    const datos = this.datosAgrupados();
-    if (datos.length === 0) return 0;
-    return Math.max(...datos.map(d => d.count));
+  readonly pageInfo = computed<PageMetadata>(() => {
+    const totalElements = this.empleadosFiltrados().length;
+    const totalPages = Math.ceil(totalElements / this.pageSize());
+    const number = Math.min(this.page(), Math.max(0, totalPages - 1));
+    return { size: this.pageSize(), number, totalElements, totalPages };
   });
-
-  columns = VISTA_COMPLETA_COLUMNS;
-  movimientosColumns = MOVIMIENTOS_COLUMNS;
-
-  movimientos = signal<MovimientoPlanificado[]>([]);
-  filtroMovimiento = signal<string>('Todos');
-
-  movimientosFiltrados = computed(() => {
-    const data = this.movimientos();
-    const filtro = this.filtroMovimiento();
-
-    if (filtro === 'Todos') {
-      return data;
-    }
-
-    return data.filter(m => m.tipo === filtro);
+  readonly pagedEmployees = computed(() => {
+    const info = this.pageInfo();
+    return this.empleadosFiltrados().slice(info.number * info.size, (info.number + 1) * info.size);
   });
+  readonly comparisonData = computed(() => {
+    const bp = this.groupCounts(this.businessPlan());
+    const actual = this.groupCounts(this.actualData());
+    return [...new Set([...Object.keys(bp), ...Object.keys(actual)])]
+      .map(label => ({ label, businessPlan: bp[label] ?? 0, datosReales: actual[label] ?? 0 }))
+      .sort((a, b) => Math.max(b.businessPlan, b.datosReales) - Math.max(a.businessPlan, a.datosReales));
+  });
+  readonly maxCount = computed(() => Math.max(0, ...this.comparisonData().flatMap(item => [item.businessPlan, item.datosReales])));
+  readonly movimientosFiltrados = computed(() => this.filtroMovimiento() === 'Todos'
+    ? this.movimientos()
+    : this.movimientos().filter(item => item.tipo === this.filtroMovimiento()));
 
-  rowActions: DataTableRowAction<EmpleadoDotacion>[] = [
-    {
-      icon: 'pi pi-ellipsis-h',
-      tooltip: 'Movimientos',
-      handler: (row) => console.log('Movimientos', row)
-    }
-  ];
+  readonly rowActions: DataTableRowAction<EmpleadoDotacion>[] = [{
+    icon: 'pi pi-ellipsis-h', tooltip: 'Movimientos', handler: row => console.log('Movimientos', row)
+  }];
 
-  constructor(
-    private service: DotacionService
-  ) {}
+  constructor(private readonly service: DotacionService) {
+    this.movimientos.set(this.service.getMovimientosMock());
+  }
 
   ngOnInit(): void {
-    // Already updating inside inputs if needed, but we ensure to update month text.
-    if (this._gestionId()) {
-      this.updateMesSeleccionado();
-    }
+    this.desdeMes.set(this.initialDesde() ?? 'Enero');
+    this.hastaMes.set(this.initialHasta() ?? this.initialDesde() ?? 'Enero');
   }
 
-  loadData(id: number): void {
-    this.loading.set(true);
-    this.service.getGestionById(id).subscribe(gestion => {
-      if (gestion) {
-        this.gestionInfo.set(gestion);
-        this.updateMesSeleccionado();
+  private rowsForMonths(source: Record<string, EmpleadoDotacion[]>): EmpleadoDotacion[] {
+    const months = this.activeMonths();
+    return months.flatMap((month, monthIndex) => (source[month] ?? []).map(employee => ({
+      ...employee,
+      id: months.length === 1 ? employee.id : (monthIndex + 1) * 1_000_000 + employee.id
+    })));
+  }
+
+  private groupCounts(rows: EmpleadoDotacion[]): Record<string, number> {
+    const counts: Record<string, number> = {};
+    for (const employee of rows) {
+      let key = '';
+      switch (this.agrupacionSeleccionada()) {
+        case 'Tipo': key = employee.tipo; break;
+        case 'Área': key = employee.area; break;
+        case 'Familia a cargo': key = String(employee.familiaCargo); break;
+        case 'Categoría': key = employee.categoria; break;
+        case 'Centro de costo': key = employee.centroCosto; break;
+        case 'Cargo': key = employee.cargo; break;
       }
-    });
-
-    // In a real app we would call getEmpleadosByGestion(id), but we use mock
-    const empleadosData = this.service.getEmpleadosMock();
-    this.empleados.set(empleadosData);
-    this.loading.set(false);
-
-    const movsData = this.service.getMovimientosMock();
-    this.movimientos.set(movsData);
-  }
-
-  updateMesSeleccionado(): void {
-    const anio = this.gestionInfo()?.anio || '';
-    if (this.desdeMes() === this.hastaMes()) {
-      this.mesSeleccionado.set(`${this.desdeMes()} ${anio}`);
-    } else {
-      this.mesSeleccionado.set(`${this.desdeMes()} - ${this.hastaMes()} ${anio}`);
+      const label = key || 'Sin especificar';
+      counts[label] = (counts[label] ?? 0) + 1;
     }
+    return counts;
   }
 
-  goBack(): void {
-    this.back.emit();
-  }
-
+  setTab(tab: FuenteDotacion): void { this.selectedTab.set(tab); this.page.set(0); }
+  setSearch(value: string): void { this.search.set(value); this.page.set(0); }
+  setArea(value: string): void { this.filtroArea.set(value); this.page.set(0); }
+  onPageChange(page: number): void { this.page.set(page); }
+  onPageSizeChange(size: number): void { this.pageSize.set(size); this.page.set(0); }
+  goBack(): void { this.back.emit(); }
   openRangeModal(): void {
+    this.desdeMes.set(this.activeMonths()[0]);
+    this.hastaMes.set(this.activeMonths()[this.activeMonths().length - 1]);
     this.showRangeModal.set(true);
   }
+  closeRangeModal(): void { this.showRangeModal.set(false); }
+  verConsolidado(): void { this.showRangeModal.set(false); this.page.set(0); }
 
-  closeRangeModal(): void {
-    this.showRangeModal.set(false);
-  }
-
-  verConsolidado(): void {
-    this.updateMesSeleccionado();
-    this.closeRangeModal();
+  synchronize(): void {
+    const month = this.activeMonths()[0];
+    if (!month || this.loading()) return;
+    this.loading.set(true);
+    this.syncError.set('');
+    setTimeout(() => {
+      try {
+        const data = this.service.getEmpleadosMock().map(employee => ({ ...employee }));
+        this.syncCompleted.emit({ month, data });
+      } catch {
+        this.syncError.set('No se pudo sincronizar la dotación con SAP.');
+      } finally {
+        this.loading.set(false);
+      }
+    }, 700);
   }
 
   openAddMovimientoModal(): void {
-    this.nuevoMovimiento.set({
-      tipo: 'Desfase',
-      nombre: '',
-      cargo: '',
-      area: 'ADM',
-      planta: 'CBB — Cochabamba',
-      observaciones: ''
-    });
+    this.nuevoMovimiento.set({ tipo: 'Desfase', nombre: '', cargo: '', area: 'ADM', planta: 'CBB — Cochabamba', observaciones: '' });
     this.showAddMovimientoModal.set(true);
   }
-
-  closeAddMovimientoModal(): void {
-    this.showAddMovimientoModal.set(false);
-  }
-
+  closeAddMovimientoModal(): void { this.showAddMovimientoModal.set(false); }
   saveMovimiento(): void {
-    const mov = this.nuevoMovimiento() as MovimientoPlanificado;
-    mov.id = Math.floor(Math.random() * 1000) + 100;
-
-    this.movimientos.update(prev => [mov, ...prev]);
+    const movement = { ...this.nuevoMovimiento(), id: Date.now() } as MovimientoPlanificado;
+    this.movimientos.update(items => [movement, ...items]);
     this.closeAddMovimientoModal();
   }
-
-  setTipoMovimiento(tipo: any): void {
-    this.nuevoMovimiento.update(prev => ({ ...prev, tipo }));
+  setTipoMovimiento(tipo: MovimientoPlanificado['tipo']): void {
+    this.nuevoMovimiento.update(movement => ({ ...movement, tipo }));
   }
 }

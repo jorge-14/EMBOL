@@ -1,9 +1,12 @@
 export interface GestionDotacion {
   id: number;
   anio: number;
+  nombre?: string;
+  descripcion?: string;
   mesesCargados: number;
   totalMeses: number;
   tieneDatos: boolean;
+  tieneBusinessPlan?: boolean;
   comparar: boolean;
   sucursal?: string;
   ciudad?: string;
@@ -14,6 +17,24 @@ export interface MesDotacion {
   empleados: number;
   disponible: boolean;
   cargado: boolean;
+  estado?: EstadoMesDotacion;
+}
+
+export type EstadoMesDotacion =
+  | 'BP disponible'
+  | 'Datos reales pendientes'
+  | 'Sincronizando'
+  | 'Sincronizado'
+  | 'Error de sincronización';
+
+export type FuenteDotacion = 'business-plan' | 'datos-reales';
+
+export interface VistaPreviaImportacion {
+  headers: string[];
+  rows: Record<string, string | number | boolean | null>[];
+  registrosDetectados: number;
+  camposMapeados: number;
+  advertencias: string[];
 }
 
 export interface GestionDetalle {

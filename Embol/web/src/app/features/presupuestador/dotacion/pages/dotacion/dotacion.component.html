@@ -39,7 +39,7 @@
             [class]="gestion.tieneDatos
               ? 'bg-green-50 text-green-600 text-[10px] font-bold px-2 py-1 rounded-full'
               : 'bg-orange-50 text-orange-400 text-[10px] font-bold px-2 py-1 rounded-full'">
-            {{ gestion.tieneDatos ? 'Con datos' : 'Sin datos' }}
+            {{ gestion.tieneDatos ? 'Con datos' : 'BP disponible' }}
           </span>
         </div>
 
@@ -69,13 +69,100 @@
         </button>
       </div>
     }
+    <button
+      type="button"
+      (click)="openCreateModal()"
+      class="bg-white rounded-2xl shadow-sm border border-dashed border-gray-300 p-6 flex min-h-[250px] flex-col items-center justify-center gap-4 text-gray-500 transition-all hover:shadow-md hover:border-gray-400">
+      <span class="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center">
+        <i class="pi pi-plus text-xl"></i>
+      </span>
+      <span class="text-sm font-bold text-gray-700">Añadir gestión</span>
+    </button>
   </div>
+
+  <p-dialog
+    [visible]="showCreateModal()"
+    (visibleChange)="showCreateModal.set($event)"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    header="Añadir gestión"
+    [style]="{ width: '600px' }"
+    styleClass="dotacion-dialog">
+    <div class="space-y-5">
+      <label class="block">
+        <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Nombre de la gestión</span>
+        <input type="text" [ngModel]="gestionNombre()" (ngModelChange)="gestionNombre.set($event)"
+          placeholder="Ej: Gestión 2027"
+          class="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand">
+      </label>
+      <label class="block">
+        <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Descripción</span>
+        <textarea [ngModel]="gestionDescripcion()" (ngModelChange)="gestionDescripcion.set($event)" rows="3"
+          class="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand"></textarea>
+      </label>
+      <div>
+        <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Importar archivo XLSX</span>
+        <label class="flex flex-col items-center justify-center gap-2 min-h-36 px-6 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
+          <i [class]="parsingFile() ? 'pi pi-spin pi-spinner text-2xl text-gray-400' : 'pi pi-upload text-2xl text-gray-400'"></i>
+          <span class="text-sm font-semibold text-gray-700">{{ selectedFile()?.name || 'Seleccionar archivo XLSX' }}</span>
+          <span class="text-xs text-gray-500 text-center">Carga el archivo XLSX del Business Plan aprobado para toda la gestión.</span>
+          <input type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="sr-only" [disabled]="parsingFile()" (change)="onFileSelected($event)">
+        </label>
+        @if (importError()) { <p class="mt-2 text-xs text-red-600">{{ importError() }}</p> }
+      </div>
+    </div>
+    <ng-template #footer>
+      <div class="flex justify-end gap-3">
+        <button type="button" (click)="closeCreateModal()" class="px-6 py-3 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50">Cancelar</button>
+        <button type="button" (click)="openPreview()" [disabled]="!gestionNombre().trim() || !importPreview()" class="px-6 py-3 bg-brand text-white rounded-xl text-sm font-bold hover:bg-brand-hover disabled:opacity-40">Crear Gestión</button>
+      </div>
+    </ng-template>
+  </p-dialog>
+
+  <p-dialog
+    [visible]="showPreviewModal()"
+    (visibleChange)="showPreviewModal.set($event)"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [header]="'Vista previa de importación — ' + (gestionNombre() || 'Nueva gestión')"
+    [style]="{ width: '850px' }"
+    styleClass="dotacion-dialog">
+    @if (importPreview(); as preview) {
+      <p class="text-sm text-gray-600 mb-5">Se detectaron <strong>{{ preview.registrosDetectados }} registros</strong> correspondientes al Business Plan anual.</p>
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div class="border border-gray-200 rounded-xl p-4"><p class="text-xs text-gray-500">Registros detectados</p><p class="text-2xl font-bold text-gray-900">{{ preview.registrosDetectados }}</p></div>
+        <div class="border border-gray-200 rounded-xl p-4"><p class="text-xs text-gray-500">Campos mapeados</p><p class="text-2xl font-bold text-gray-900">{{ preview.camposMapeados }} de {{ preview.headers.length }}</p></div>
+      </div>
+      @if (preview.advertencias.length) {
+        <div class="mb-5 p-4 rounded-xl bg-orange-50 text-orange-700 text-sm">
+          <p class="font-bold mb-1">Advertencias</p>
+          @for (warning of preview.advertencias; track warning) { <p>{{ warning }}</p> }
+        </div>
+      }
+      <div class="border border-gray-200 rounded-xl overflow-auto max-h-72">
+        <table class="min-w-full text-xs">
+          <thead class="bg-gray-50 sticky top-0"><tr>@for (header of preview.headers; track header) { <th class="px-3 py-2 text-left whitespace-nowrap text-gray-500">{{ header }}</th> }</tr></thead>
+          <tbody>@for (row of preview.rows.slice(0, 5); track $index) { <tr class="border-t border-gray-100">@for (header of preview.headers; track header) { <td class="px-3 py-2 whitespace-nowrap text-gray-700">{{ row[header] }}</td> }</tr> }</tbody>
+        </table>
+      </div>
+    }
+    <ng-template #footer>
+      <div class="flex justify-end gap-3">
+        <button type="button" (click)="cancelPreview()" class="px-6 py-3 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50">Cancelar</button>
+        <button type="button" (click)="confirmImport()" [disabled]="!gestionNombre().trim()" class="px-6 py-3 bg-brand text-white rounded-xl text-sm font-bold hover:bg-brand-hover disabled:opacity-40">Confirmar e importar</button>
+      </div>
+    </ng-template>
+  </p-dialog>
 </div>
 }
 
 @if (viewState() === 'detalle') {
   <app-gestion-detalle
-    [gestionId]="selectedGestionId()!"
+    [gestion]="selectedGestion()!"
+    [businessPlanByMonth]="selectedBusinessPlan()"
+    [monthStates]="selectedMonthStates()"
     (back)="goToList()"
     (viewComplete)="onViewComplete($event)">
   </app-gestion-detalle>
@@ -83,9 +170,13 @@
 
 @if (viewState() === 'completa') {
   <app-vista-completa
-    [gestionId]="selectedGestionId()!"
+    [gestion]="selectedGestion()!"
+    [businessPlanByMonth]="selectedBusinessPlan()"
+    [realDataByMonth]="selectedRealData()"
+    [monthStates]="selectedMonthStates()"
     [initialDesde]="selectedDesde()"
     [initialHasta]="selectedHasta()"
-    (back)="goToDetalle()">
+    (back)="goToDetalle()"
+    (syncCompleted)="onSyncCompleted($event)">
   </app-vista-completa>
 }

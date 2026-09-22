@@ -1,10 +1,9 @@
 import { GestionDotacion, EmpleadoDotacion, MovimientoPlanificado } from '../models/dotacion.model';
 
 export const GESTIONES_MOCK: GestionDotacion[] = [
-  { id: 1, anio: 2024, mesesCargados: 0, totalMeses: 12, tieneDatos: false, comparar: false, sucursal: 'CBB', ciudad: 'Cochabamba' },
-  { id: 2, anio: 2025, mesesCargados: 12, totalMeses: 12, tieneDatos: true, comparar: true, sucursal: 'CBB', ciudad: 'Cochabamba' },
-  { id: 3, anio: 2026, mesesCargados: 9, totalMeses: 12, tieneDatos: true, comparar: true, sucursal: 'CBB', ciudad: 'Cochabamba' },
-  { id: 4, anio: 2027, mesesCargados: 0, totalMeses: 12, tieneDatos: false, comparar: false, sucursal: 'CBB', ciudad: 'Cochabamba' },
+  { id: 1, anio: 2024, mesesCargados: 0, totalMeses: 12, tieneDatos: false, tieneBusinessPlan: true, comparar: false, sucursal: 'CBB', ciudad: 'Cochabamba' },
+  { id: 2, anio: 2025, mesesCargados: 12, totalMeses: 12, tieneDatos: true, tieneBusinessPlan: true, comparar: true, sucursal: 'CBB', ciudad: 'Cochabamba' },
+  { id: 3, anio: 2026, mesesCargados: 9, totalMeses: 12, tieneDatos: true, tieneBusinessPlan: true, comparar: true, sucursal: 'CBB', ciudad: 'Cochabamba' },
 ];
 
 export const EMPLEADOS_MOCK: EmpleadoDotacion[] = [

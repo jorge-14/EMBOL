@@ -11,6 +11,13 @@
 }
 
 :host ::ng-deep {
+  .dotacion-dialog {
+    .p-dialog-header { padding: 1.5rem 1.5rem .5rem; }
+    .p-dialog-title { font-weight: 700; font-size: 1.25rem; color: #1f2937; }
+    .p-dialog-content { padding: 1rem 1.5rem; }
+    .p-dialog-footer { padding: 1rem 1.5rem 1.5rem; border: 0; }
+  }
+
   .custom-checkbox {
     .p-checkbox-box {
       border-radius: 4px;
