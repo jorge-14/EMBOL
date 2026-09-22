@@ -21,10 +21,10 @@
           <th class="resource-heading" scope="col">
             <div class="resource-heading-content">
               <span>Recurso</span>
-              <div class="group-stepper" aria-label="Grupo de permisos visible">
-                <button type="button" aria-label="Grupo anterior" [disabled]="groupIndex() === 0" (click)="changeGroup(-1)">‹</button>
-                <span>{{ activeGroupName() }} · {{ groupIndex() + 1 }} de 2</span>
-                <button type="button" aria-label="Grupo siguiente" [disabled]="groupIndex() === 1" (click)="changeGroup(1)">›</button>
+              <div class="action-stepper" aria-label="Parámetros visibles">
+                <button type="button" aria-label="Parámetros anteriores" [disabled]="currentActionPage() === 0" (click)="changeActionPage(-1)">‹</button>
+                <span aria-live="polite">{{ visibleActionCount() }} de {{ config().actions.length }}</span>
+                <button type="button" aria-label="Parámetros siguientes" [disabled]="currentActionPage() >= lastActionPage()" (click)="changeActionPage(1)">›</button>
               </div>
             </div>
           </th>
@@ -42,16 +42,11 @@
                   <span class="category-arrow" [class.open]="isExpanded(group.name)">›</span>
                   {{ group.name }}
                 </button>
-                <div class="category-pagination" [attr.aria-label]="'Recursos de ' + group.name">
-                  <button type="button" [attr.aria-label]="'Recursos anteriores de ' + group.name" [disabled]="resourcePage(group) === 0" (click)="changeResourcePage(group, -1)">‹</button>
-                  <span class="category-count" aria-live="polite">{{ visibleResourceCount(group) }} de {{ group.resources.length }}</span>
-                  <button type="button" [attr.aria-label]="'Recursos siguientes de ' + group.name" [disabled]="visibleResourceCount(group) >= group.resources.length" (click)="changeResourcePage(group, 1)">›</button>
-                </div>
               </div>
             </th>
           </tr>
           @if (isExpanded(group.name)) {
-            @for (resource of pagedResources(group); track resource.name) {
+            @for (resource of group.resources; track resource.name) {
               <tr class="resource-row">
                 <th scope="row">
                   <label class="resource-label">
@@ -108,8 +103,8 @@
   @if (selected().size) {
     <div class="bulk-bar" role="region" aria-label="Acciones para recursos seleccionados">
       <span>{{ selected().size }} {{ selected().size === 1 ? 'recurso seleccionado' : 'recursos seleccionados' }}</span>
-      <button type="button" (click)="applyBulk(true)">Habilitar en grupo activo</button>
-      <button type="button" (click)="applyBulk(false)">Deshabilitar en grupo activo</button>
+      <button type="button" (click)="applyBulk(true)">Habilitar parámetros visibles</button>
+      <button type="button" (click)="applyBulk(false)">Deshabilitar parámetros visibles</button>
       <button type="button" class="cancel-button" (click)="clearSelected()">Cancelar</button>
     </div>
   }
