@@ -1,73 +1,116 @@
-<div class="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
-  <table class="w-full border-collapse">
-    <thead>
-      <tr class="bg-gray-50/50 border-b border-gray-200">
-        <th class="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest w-1/4">
-          RECURSO
-        </th>
-        @for (action of config().actions; track action.key) {
-          <th class="px-4 py-4 text-center text-[11px] font-bold uppercase tracking-widest"
-              [ngClass]="action.colorClass">
-            {{ action.label }}
-          </th>
-        }
-      </tr>
-    </thead>
-    <tbody class="divide-y divide-gray-100">
-      @for (group of config().groups; track group.name) {
-        <!-- Group Header -->
-        <tr class="bg-gray-50/30">
-          <td [attr.colspan]="config().actions.length + 1" class="px-6 py-2.5 text-sm font-semibold text-gray-600">
-            <div class="flex items-center justify-between gap-4">
-              <span>{{ group.name }}</span>
-              <div class="flex items-center gap-2 font-medium text-gray-500">
-                <input #groupPage type="number" value="0" hidden />
-                <button type="button" aria-label="Recursos anteriores de {{ group.name }}"
-                  [disabled]="groupPage.valueAsNumber === 0"
-                  (click)="groupPage.valueAsNumber = groupPage.valueAsNumber - 1"
-                  class="flex h-7 w-7 items-center justify-center rounded border border-gray-300 bg-white disabled:cursor-not-allowed disabled:opacity-40">‹</button>
-                <span aria-live="polite">
-                  {{ (groupPage.valueAsNumber + 1) * 10 < group.resources.length ? (groupPage.valueAsNumber + 1) * 10 : group.resources.length }} de {{ group.resources.length }}
-                </span>
-                <button type="button" aria-label="Recursos siguientes de {{ group.name }}"
-                  [disabled]="(groupPage.valueAsNumber + 1) * 10 >= group.resources.length"
-                  (click)="groupPage.valueAsNumber = groupPage.valueAsNumber + 1"
-                  class="flex h-7 w-7 items-center justify-center rounded border border-gray-300 bg-white disabled:cursor-not-allowed disabled:opacity-40">›</button>
+<section class="access-table">
+  <div class="table-toolbar">
+    <label class="search-field">
+      <span class="sr-only">Buscar recursos por nombre</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+      <input type="search" placeholder="Buscar recursos" [value]="search()" (input)="setSearch($event)" />
+    </label>
+    <button type="button" class="expand-button" (click)="toggleAll()">{{ allExpanded() ? 'Colapsar todo' : 'Expandir todo' }}</button>
+    <div class="legend" aria-label="Leyenda de estados">
+      <span><i class="legend-swatch granted">✓</i>Otorgado</span>
+      <span><i class="legend-swatch denied"></i>No otorgado</span>
+      <span><i class="legend-swatch unavailable">—</i>No aplica</span>
+      <span><i class="legend-swatch pending"></i>Cambio sin guardar</span>
+    </div>
+  </div>
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th class="resource-heading" scope="col">
+            <div class="resource-heading-content">
+              <span>Recurso</span>
+              <div class="group-stepper" aria-label="Grupo de permisos visible">
+                <button type="button" aria-label="Grupo anterior" [disabled]="groupIndex() === 0" (click)="changeGroup(-1)">‹</button>
+                <span>{{ activeGroupName() }} · {{ groupIndex() + 1 }} de 2</span>
+                <button type="button" aria-label="Grupo siguiente" [disabled]="groupIndex() === 1" (click)="changeGroup(1)">›</button>
               </div>
             </div>
-          </td>
+          </th>
+          @for (action of visibleActions(); track action.key) {
+            <th scope="col">{{ action.label }}</th>
+          }
         </tr>
-
-        <!-- Resources -->
-        @for (resource of group.resources.slice(groupPage.valueAsNumber * 10, (groupPage.valueAsNumber + 1) * 10); track resource.name) {
-          <tr class="hover:bg-gray-50/50 transition-colors">
-            <td class="px-6 py-4 text-sm font-medium text-gray-700">
-              {{ resource.name }}
-            </td>
-            @for (action of config().actions; track action.key) {
-              <td class="px-4 py-4 text-center">
-                @if (resource.permissions[action.key] !== null) {
-                  <button
-                    (click)="togglePermission(resource, action)"
-                    class="w-6 h-6 rounded border-2 transition-all flex items-center justify-center mx-auto"
-                    [ngClass]="resource.permissions[action.key]
-                      ? action.activeColorClass + ' border-transparent'
-                      : 'border-gray-200 bg-white'"
-                  >
-                    @if (resource.permissions[action.key]) {
-                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                      </svg>
-                    }
-                  </button>
-                } @else {
-                  <span class="text-gray-300">—</span>
-                }
-              </td>
-            }
+      </thead>
+      <tbody>
+        @for (group of filteredGroups(); track group.name) {
+          <tr class="category-row">
+            <th [attr.colspan]="visibleActions().length + 1" scope="rowgroup">
+              <div class="category-heading">
+                <button type="button" class="category-toggle" (click)="toggleGroup(group.name)" [attr.aria-expanded]="isExpanded(group.name)">
+                  <span class="category-arrow" [class.open]="isExpanded(group.name)">›</span>
+                  {{ group.name }}
+                </button>
+                <div class="category-pagination" [attr.aria-label]="'Recursos de ' + group.name">
+                  <button type="button" [attr.aria-label]="'Recursos anteriores de ' + group.name" [disabled]="resourcePage(group) === 0" (click)="changeResourcePage(group, -1)">‹</button>
+                  <span class="category-count" aria-live="polite">{{ visibleResourceCount(group) }} de {{ group.resources.length }}</span>
+                  <button type="button" [attr.aria-label]="'Recursos siguientes de ' + group.name" [disabled]="visibleResourceCount(group) >= group.resources.length" (click)="changeResourcePage(group, 1)">›</button>
+                </div>
+              </div>
+            </th>
           </tr>
+          @if (isExpanded(group.name)) {
+            @for (resource of pagedResources(group); track resource.name) {
+              <tr class="resource-row">
+                <th scope="row">
+                  <label class="resource-label">
+                    <input type="checkbox" [checked]="isSelected(group.name, resource.name)" (change)="toggleSelected(group.name, resource.name)" [attr.aria-label]="'Seleccionar ' + resource.name" />
+                    <span>{{ resource.name }}</span>
+                  </label>
+                </th>
+                @for (action of visibleActions(); track action.key) {
+                  <td>
+                    <div class="permission-cell" [class.is-pending]="pendingKeys().has(cellKey(group.name, resource.name, action.key))" [class.is-unavailable]="resource.permissions[action.key] === null">
+                      @if (resource.permissions[action.key] !== null) {
+                        <button type="button" class="permission-toggle" [class.is-granted]="resource.permissions[action.key] === true"
+                          [attr.aria-label]="action.label + ' en ' + resource.name + ': ' + (resource.permissions[action.key] ? 'otorgado' : 'no otorgado')"
+                          [attr.aria-pressed]="resource.permissions[action.key] === true"
+                          (click)="togglePermission(group.name, resource, action)">
+                          @if (resource.permissions[action.key]) { <span aria-hidden="true">✓</span> }
+                        </button>
+                        <button type="button" class="propagate-trigger" [attr.aria-label]="'Propagar ' + action.label + ' de ' + resource.name"
+                          [attr.aria-expanded]="activePopover() === cellKey(group.name, resource.name, action.key)"
+                          (click)="togglePopover(cellKey(group.name, resource.name, action.key))">↗</button>
+                        @if (activePopover() === cellKey(group.name, resource.name, action.key)) {
+                          <div class="propagate-popover" role="group" [attr.aria-label]="'Propagar ' + action.label + ' de ' + resource.name">
+                            <div class="popover-title">Propagar {{ action.label.toLocaleLowerCase() }}</div>
+                            <div class="popover-description">Aplicar el estado {{ resource.permissions[action.key] ? 'otorgado' : 'no otorgado' }} a:</div>
+                            <div class="popover-options">
+                              @for (principal of principals(); track principal) {
+                                @if (principal !== currentPrincipal()) {
+                                  <label><input type="checkbox" [checked]="propagationTargets().has(principal)" (change)="toggleTarget(principal)" />{{ principal }}</label>
+                                }
+                              }
+                            </div>
+                            <div class="popover-actions">
+                              <button type="button" (click)="closePopover()">Cancelar</button>
+                              <button type="button" class="apply-button" [disabled]="!propagationTargets().size" (click)="applyPropagation(group.name, resource, action)">Aplicar</button>
+                            </div>
+                          </div>
+                        }
+                      } @else {
+                        <span class="unavailable-mark" aria-label="No aplica">—</span>
+                      }
+                    </div>
+                  </td>
+                }
+              </tr>
+            }
+          }
+        } @empty {
+          <tr><td class="empty-state" [attr.colspan]="visibleActions().length + 1">No se encontraron recursos.</td></tr>
         }
-      }
-    </tbody>
-  </table>
-</div>
+      </tbody>
+    </table>
+  </div>
+
+  @if (selected().size) {
+    <div class="bulk-bar" role="region" aria-label="Acciones para recursos seleccionados">
+      <span>{{ selected().size }} {{ selected().size === 1 ? 'recurso seleccionado' : 'recursos seleccionados' }}</span>
+      <button type="button" (click)="applyBulk(true)">Habilitar en grupo activo</button>
+      <button type="button" (click)="applyBulk(false)">Deshabilitar en grupo activo</button>
+      <button type="button" class="cancel-button" (click)="clearSelected()">Cancelar</button>
+    </div>
+  }
+</section>

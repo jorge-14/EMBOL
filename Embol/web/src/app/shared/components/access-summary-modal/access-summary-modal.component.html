@@ -25,14 +25,10 @@
 
         <!-- Legend -->
         <div class="px-6 py-3 bg-gray-50/50 border-b border-gray-100 flex items-center gap-4 overflow-x-auto no-scrollbar">
-          <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">LEYENDA:</span>
-          <div class="flex items-center gap-3">
-            @for (action of config().actions; track action.key) {
-              <div class="flex items-center gap-1.5">
-                <div class="w-2 h-2 rounded-full" [ngClass]="getDotClass(action.key)"></div>
-                <span class="text-[10px] font-bold text-gray-500 uppercase">{{ action.label }}</span>
-              </div>
-            }
+          <span class="text-xs font-semibold text-[#6B7072] whitespace-nowrap">Permisos otorgados</span>
+          <div class="flex items-center gap-2">
+            <div class="w-2.5 h-2.5 rounded-sm bg-[#06B900]"></div>
+            <span class="text-xs text-[#6B7072]">Los permisos visibles en este resumen están otorgados</span>
           </div>
         </div>
 
@@ -54,7 +50,7 @@
                     >
                       <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                     </svg>
-                    <span class="text-xs font-bold text-gray-600 uppercase tracking-wider">{{ group.name }}</span>
+                    <span class="text-xs font-bold text-gray-600">{{ group.name }}</span>
                   </div>
                   <span class="text-[10px] text-gray-400">{{ group.resources.length }} recursos</span>
                 </button>
@@ -73,18 +69,13 @@
                           @for (action of config().actions; track action.key) {
                             @if (resource.permissions[action.key] === true) {
                               <div
-                                [class]="'flex items-center gap-1 px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase ' + getPermissionClass(action.key)"
+                                [class]="'flex items-center gap-1 px-2 py-0.5 rounded-full border text-[9px] font-bold ' + getPermissionClass(action.key)"
                               >
                                 <div class="w-1 h-1 rounded-full" [ngClass]="getDotClass(action.key)"></div>
                                 {{ action.label }}
                               </div>
                             }
                           }
-                          <div class="flex items-center ml-2">
-                             <span class="text-[10px] text-gray-300 font-medium">
-                               {{ 0 }} N/A
-                             </span>
-                          </div>
                         </div>
                       </div>
                     }
